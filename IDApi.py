@@ -10,12 +10,19 @@ class IDApi:
     timestamp = 0
     sec_key = ""
 
-    def __init__(self, partner_id, api_key, sid_server=SIDServer.TEST):
+    def __init__(self, partner_id, api_key, sid_server):
         if not partner_id or not api_key:
             raise Exception("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
         self.api_key = api_key
-        self.url = sid_server
+        if sid_server in [0, 1]:
+            sid_server_map = {
+                0: "3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
+                1: "la7am6gdm8.execute-api.us-west-2.amazonaws.com/prod",
+            }
+            self.url = sid_server_map[sid_server]
+        else:
+            self.url = sid_server
 
     def submit_job(self, partner_params: PartnerParameters, id_params: IDParameters):
         if not isinstance(partner_params, PartnerParameters):
