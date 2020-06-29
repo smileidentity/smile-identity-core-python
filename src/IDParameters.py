@@ -24,7 +24,7 @@ class IDParameters:
             "entered": entered,
         }
 
-    def get_required_params():
+    def get_required_params(self):
         return ["country", "id_type", "id_number"]
 
     def add(self, key, value):

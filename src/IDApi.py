@@ -1,9 +1,9 @@
 import http.client
 import json
-import IDParameters
-import PartnerParameters
-import SIDServer
-from Signature import Signature
+from .PartnerParameters import PartnerParameters
+from .IDParameters import IDParameters
+from src.Signature import Signature
+import requests
 
 
 class IDApi:
@@ -17,8 +17,8 @@ class IDApi:
         self.api_key = api_key
         if sid_server in [0, 1]:
             sid_server_map = {
-                0: "3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
-                1: "la7am6gdm8.execute-api.us-west-2.amazonaws.com/prod",
+                0: "https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
+                1: "https://la7am6gdm8.execute-api.us-west-2.amazonaws.com/prod",
             }
             self.url = sid_server_map[sid_server]
         else:
@@ -38,7 +38,7 @@ class IDApi:
         self.timestamp = sec_key_object["timestamp"]
         self.sec_key = sec_key_object["sec_key"]
         payload = self.configure_json(partner_params, id_params)
-        response = self.execute(payload)
+        response = self.execute_http(payload)
         return response
 
     def get_sec_key(self):
@@ -50,20 +50,19 @@ class IDApi:
             "sec_key": self.sec_key,
             "timestamp": self.timestamp,
             "partner_id": self.partner_id,
-            "partner_params": partner_params,
+            "partner_params": partner_params.get_params(),
         }
-        payload.update(id_params)
+        payload.update(id_params.get_params())
         return payload
 
-    def execute(self, payload):
-        headers = {
-            "Accept": "application/json",
-            "Accept-Language": "en_US",
-            "Content-type": "application/json"
-        }
-        conn = http.client.HTTPConnection(self.url)
-        conn.request("POST", "", json.dumps(payload), headers)
-        response = conn.getresponse()
-        data = response.read().decode()
-        conn.close()
-        return data
+    def execute_http(self, payload):
+        data = json.dumps(payload)
+        resp = requests.post(
+            url=self.url + "/id_verification",
+            data=data,
+            headers={
+                "Accept": "application/json",
+                "Accept-Language": "en_US",
+                "Content-type": "application/json"
+            })
+        return resp

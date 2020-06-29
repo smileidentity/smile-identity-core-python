@@ -19,9 +19,9 @@ class PartnerParameters:
 
     def get(self, key):
         if key in self.partner_params:
-            return None
-        else:
             return self.partner_params[key]
+        else:
+            None
 
     def get_params(self):
         return self.partner_params

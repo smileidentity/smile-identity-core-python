@@ -1,8 +1,10 @@
 import http.client
 import json
 
-import Options
-from Signature import Signature
+import requests
+
+from src import Options
+from src.Signature import Signature
 
 
 class Utilities:
@@ -15,8 +17,8 @@ class Utilities:
         self.sec_key = None
         if sid_server in [0, 1]:
             sid_server_map = {
-                0: "3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
-                1: "la7am6gdm8.execute-api.us-west-2.amazonaws.com/prod",
+                0: "https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
+                1: "https://la7am6gdm8.execute-api.us-west-2.amazonaws.com/prod",
             }
             self.url = sid_server_map[sid_server]
         else:
@@ -40,19 +42,19 @@ class Utilities:
 
     def query_job_status(self, user_id, job_id, option_params):
         job_status = self.execute(self.url + "/job_status", self.configure_job_query(user_id, job_id, option_params))
-        if job_status.status is not 200:
+        if job_status.status_code is not 200:
             raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "/job_status",
-                            job_status.status,
-                            job_status.reason, job_status.read)
+                            job_status.status_code,
+                            job_status.reason, job_status.json())
         else:
-            job_status_json_resp = json.loads(job_status.read)
+            job_status_json_resp = job_status.json()
             timestamp = job_status_json_resp["timestamp"]
             server_signature = job_status_json_resp["signature"]
             signature = Signature(self.partner_id, self.api_key)
             valid = signature.confirm_sec_key(timestamp, server_signature)
             if not valid:
                 raise Exception("Unable to confirm validity of the job_status response")
-            return job_status_json_resp
+            return job_status
 
     def configure_job_query(self, user_id, job_id, options):
         return {
@@ -61,8 +63,8 @@ class Utilities:
             "partner_id": self.partner_id,
             "job_id": job_id,
             "user_id": user_id,
-            "image_links": options["return_images"],
-            "history": options["return_history"],
+            "image_links": options.options["return_images"],
+            "history": options.options["return_history"],
         }
 
     def get_sec_key(self):
@@ -71,11 +73,13 @@ class Utilities:
 
     @staticmethod
     def execute(url, payload):
-        headers = {
-            "Accept": "application/json",
-            "Accept-Language": "en_US",
-            "Content-type": "application/json"
-        }
-        conn = http.client.HTTPConnection(url)
-        conn.request("POST", "", json.dumps(payload), headers)
-        return conn.getresponse()
+        data = json.dumps(payload)
+        resp = requests.post(
+            url=url,
+            data=data,
+            headers={
+                "Accept": "application/json",
+                "Accept-Language": "en_US",
+                "Content-type": "application/json"
+            })
+        return resp
