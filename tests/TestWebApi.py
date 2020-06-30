@@ -1,3 +1,4 @@
+import os
 import time
 import unittest
 from uuid import uuid4
@@ -7,7 +8,8 @@ from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
 from src import WebApi, PartnerParameters, IDParameters, ImageParameters, Options, Signature
-from tests.TestEnrollWithIDInfo import test_image_source
+
+test_image_source = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test_images/'))
 
 
 class TestWebApi(unittest.TestCase):
@@ -26,9 +28,6 @@ class TestWebApi(unittest.TestCase):
         self.image_params = ImageParameters()
         self.image_params.add(0, test_image_source + "/SID_Preview_Full.jpg")
         self.options_params = Options(None, True, True, True)
-        self.key = RSA.generate(2048)
-        self.public_key = self.key.publickey().export_key()
-        self.partner_id = "001"
         self.signatureObj = Signature(self.partner_id, self.public_key)
         self.cipher = PKCS1_v1_5.new(self.key.exportKey())
 
@@ -125,29 +124,100 @@ class TestWebApi(unittest.TestCase):
         self.assertEqual(ve.exception.args[0],
                          u"return_images needs to be a boolean")
 
+    def _get_job_status_response(self):
+        timestamp = int(time.time())
+        sec_timestamp = self.signatureObj.generate_sec_key(timestamp=timestamp)
+        return {
+            "upload_url": "https://some_url.com",
+            "smile_job_id": "0000000857",
+            "timestamp": timestamp,
+            "signature": sec_timestamp["sec_key"],
+            "job_complete": True,
+            "job_success": True,
+            "result": {
+                "ResultText": "Enroll User",
+                "ResultType": "SAIA",
+                "SmileJobID": "0000001897",
+                "JSONVersion": "1.0.0",
+                "IsFinalResult": "true",
+                "PartnerParams": {
+                    "job_id": "52d0de86-be3b-4219-9e96-8195b0018944",
+                    "user_id": "e54e0e98-8b8c-4215-89f5-7f9ea42bf650",
+                    "job_type": 4
+                },
+                "ConfidenceValue": "100",
+                "IsMachineResult": "true",
+            },
+            "image_links": {
+                "selfie_image": "https://smile-fr-results.s3.us-west-2.amazonaws.com/test/000000/023/023-0000001897-LoRSpxJUzmYgYS2R00XpaHJYLOiNXN/SID_Preview_FULL.jpg"
+            },
+            "code": "2302",
+            "history": [
+                {
+                    "ResultCode": "1210",
+                    "ResultText": "Enroll User",
+                    "ResultType": "DIVA",
+                    "SmileJobID": "0000000857",
+                    "JSONVersion": "1.0.0",
+                    "IsFinalResult": "true",
+                    "PartnerParams": {
+                        "job_id": "52d0de86-be3b-4219-9e96-8195b0018944",
+                        "user_id": "1511bf02-801a-4b57-ac8e-ef17e26bfeb4",
+                        "job_type": "1",
+                        "optional_info": "Partner can put whatever they want as long as it is a string",
+                        "more_optional_info": "There can be as much or as little or no optional info"
+                    }
+                },
+                {
+                    "ResultCode": "0814",
+                    "ResultText": "Provisional Enroll - Under Review",
+                    "SmileJobID": "0000000857",
+                    "ConfidenceValue": "97.000000",
+                    "PartnerParams": {
+                        "job_id": "52d0de86-be3b-4219-9e96-8195b0018944",
+                        "user_id": "1511bf02-801a-4b57-ac8e-ef17e26bfeb4",
+                        "job_type": "1",
+                        "optional_info": "Partner can put whatever they want as long as it is a string",
+                        "more_optional_info": "There can be as much or as little or no optional info",
+                    }
+                },
+                {
+                    "DOB": "1990-01-01",
+                    "IDType": "BVN",
+                    "Country": "Nigeria",
+                    "FullName": "Peter Parker",
+                    "ExpirationDate": "Not Available",
+                    "IDNumber": "A01234567",
+                    "ResultCode": "1012",
+                    "ResultText": "ID Validated",
+                    "ResultType": "ID Verification",
+                    "SmileJobID": "0000000857",
+                    "PartnerParams": {
+                        "job_id": "52d0de86-be3b-4219-9e96-8195b0018944",
+                        "user_id": "1511bf02-801a-4b57-ac8e-ef17e26bfeb4",
+                        "job_type": "1",
+                        "optional_info": "Partner can put whatever they want as long as it is a string",
+                        "more_optional_info": "There can be as much or as little or no optional info",
+                        "ExpirationDate": "Not Available"
+                    }
+                }
+            ]
+        }
+
     def test_validate_return_data(self):
         timestamp = int(time.time())
         sec_timestamp = self.signatureObj.generate_sec_key(timestamp=timestamp)
         with patch('WebApi.requests.post') as mocked_post, patch('WebApi.requests.put') as mocked_put:
             mocked_post.return_value.status_code = 200
             mocked_post.return_value.ok = True
-            mocked_post.return_value.text.return_value = {
-                "upload_url": 'https://some_url.com',
-                "smile_job_id": "1",
-                "timestamp": sec_timestamp["timestamp"],
-                "signature": sec_timestamp["sec_key"],
-                "job_complete": True
-            }
-            mocked_post.return_value.json.return_value = {
-                "upload_url": 'https://some_url.com',
-                "smile_job_id": "1",
-                "timestamp": sec_timestamp["timestamp"],
-                "signature": sec_timestamp["sec_key"],
-                "job_complete": True
-            }
+            mocked_post.return_value.text.return_value = self._get_job_status_response()
+            mocked_post.return_value.json.return_value = self._get_job_status_response()
 
             mocked_put.return_value.status_code = 200
             mocked_put.return_value.ok = True
 
             response = self.web_api.submit_job(self.partner_params, self.image_params,
                                                self.id_info_params, self.options_params)
+
+            self.assertEqual(response.status_code, 200)
+            self.assertIsNotNone(response.json())

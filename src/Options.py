@@ -1,5 +1,5 @@
 class Options:
-    def __init__(self, optional_callback=None, return_job_status=False, return_history=False, return_images=False):
+    def __init__(self, optional_callback=None, return_job_status=True, return_history=False, return_images=False):
         self.options = {
             "return_job_status": return_job_status,
             "return_history": return_history,

@@ -8,9 +8,8 @@ from src.Signature import Signature
 
 
 class Utilities:
-    def __init__(self, partner_id, call_back_url, api_key, sid_server):
+    def __init__(self, partner_id, api_key, sid_server):
         self.partner_id = partner_id
-        self.call_back_url = call_back_url
         self.api_key = api_key
         self.sid_server = sid_server
         self.timestamp = 0
@@ -31,18 +30,22 @@ class Utilities:
         self.sec_key = sec_key_object["sec_key"]
 
         if not option_params or option_params is None:
-            options = {
-                "return_history": False,
-                "return_images": False
-            }
+            options = Options(None, True, False, False)
         else:
             options = option_params
-
+        self.validate_partner_params(user_id, job_id)
         return self.query_job_status(user_id, job_id, options)
+
+    def validate_partner_params(self, user_id, job_id):
+        if not user_id:
+            raise ValueError("user_id cannot be empty")
+
+        if not job_id:
+            raise ValueError("job_id cannot be empty")
 
     def query_job_status(self, user_id, job_id, option_params):
         job_status = self.execute(self.url + "/job_status", self.configure_job_query(user_id, job_id, option_params))
-        if job_status.status_code is not 200:
+        if job_status.status_code != 200:
             raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "/job_status",
                             job_status.status_code,
                             job_status.reason, job_status.json())

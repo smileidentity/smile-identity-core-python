@@ -1,4 +1,4 @@
-from .IDApi import IDApi
+from .IdApi import IdApi
 from .IDParameters import IDParameters
 from .ImageParameters import ImageParameters
 from .Options import Options

@@ -1,4 +1,3 @@
-import http.client
 import json
 import os
 import time
@@ -6,7 +5,7 @@ import time
 import requests
 
 from src import PartnerParameters, Options, ImageParameters, IDParameters
-from src.IDApi import IDApi
+from src.IdApi import IdApi
 from src.Signature import Signature
 import zipfile
 
@@ -78,7 +77,7 @@ class WebApi:
         self.timestamp = sec_key_object["timestamp"]
         self.sec_key = sec_key_object["sec_key"]
         prep_upload = self.execute_http(self.url + "/upload", self.prepare_prep_upload_payload())
-        if prep_upload.status_code is not 200:
+        if prep_upload.status_code != 200:
             raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "upload",
                             prep_upload.status_code,
                             prep_upload.reason, prep_upload.json())
@@ -89,14 +88,13 @@ class WebApi:
             info_json = self.prepare_info_json(upload_url)
             zip_stream = self.create_zip(info_json)
             upload_response = self.upload(upload_url, zip_stream)
-            if prep_upload.status_code is not 200:
+            if prep_upload.status_code != 200:
                 raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "/upload",
                                 upload_response.status_code,
                                 upload_response.reason, upload_response.json())
 
             if self.return_job_status:
-                self.utilities = Utilities(partner_id=self.partner_id, call_back_url=None, api_key=self.api_key,
-                                           sid_server=self.sid_server)
+                self.utilities = Utilities(self.partner_id, self.api_key, self.sid_server)
                 job_status = self.poll_job_status(0)
                 job_status_response = job_status.json()
                 job_status_response["success"] = True
@@ -109,7 +107,7 @@ class WebApi:
                 }
 
     def _call_id_api(self, partner_params: PartnerParameters, id_info_params: IDParameters):
-        id_api = IDApi(self.partner_id, self.api_key, self.sid_server)
+        id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
         return id_api.submit_job(partner_params, id_info_params)
 
     @staticmethod
@@ -160,7 +158,7 @@ class WebApi:
         if options_params:
             params = options_params.get_params()
             for key in params:
-                if key is not "optional_callback" and not type(params[key]) == bool:
+                if key != "optional_callback" and not type(params[key]) == bool:
                     raise ValueError(key + " needs to be a boolean")
 
     def validate_return_data(self):

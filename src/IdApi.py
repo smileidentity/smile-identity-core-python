@@ -1,4 +1,3 @@
-import http.client
 import json
 from .PartnerParameters import PartnerParameters
 from .IDParameters import IDParameters
@@ -6,7 +5,7 @@ from src.Signature import Signature
 import requests
 
 
-class IDApi:
+class IdApi:
     timestamp = 0
     sec_key = ""
 
@@ -25,6 +24,14 @@ class IDApi:
             self.url = sid_server
 
     def submit_job(self, partner_params: PartnerParameters, id_params: IDParameters):
+        if not partner_params:
+            raise ValueError("Please ensure that you send through partner params")
+
+        if not id_params:
+            raise ValueError("Please ensure that you send through ID Information")
+
+        self.validate_id_params(id_params);
+
         if not isinstance(partner_params, PartnerParameters):
             raise TypeError("partner_params must be of type PartnerParameters")
 
@@ -54,6 +61,18 @@ class IDApi:
         }
         payload.update(id_params.get_params())
         return payload
+
+    @staticmethod
+    def validate_id_params(id_info_params: IDParameters):
+        params = id_info_params.get_params()
+        for field in id_info_params.get_required_params():
+            if field in params:
+                if params[field]:
+                    continue
+                else:
+                    raise ValueError(field + " cannot be empty")
+            else:
+                raise ValueError(field + " cannot be empty")
 
     def execute_http(self, payload):
         data = json.dumps(payload)
