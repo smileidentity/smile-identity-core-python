@@ -5,7 +5,7 @@ class IDParameters:
 
     def __init__(self, first_name, middle_name, last_name, country, id_type, id_number, dob, phone_number, entered):
 
-        required_fields = self.get_required_params()
+        required_fields = IDParameters.get_required_params()
 
         if entered:
             for field in required_fields:
@@ -24,7 +24,8 @@ class IDParameters:
             "entered": entered,
         }
 
-    def get_required_params(self):
+    @staticmethod
+    def get_required_params():
         return ["country", "id_type", "id_number"]
 
     def add(self, key, value):

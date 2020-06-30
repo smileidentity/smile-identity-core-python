@@ -65,7 +65,7 @@ class IdApi:
     @staticmethod
     def validate_id_params(id_info_params: IDParameters):
         params = id_info_params.get_params()
-        for field in id_info_params.get_required_params():
+        for field in IDParameters.get_required_params():
             if field in params:
                 if params[field]:
                     continue

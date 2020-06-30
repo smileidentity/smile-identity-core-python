@@ -124,7 +124,7 @@ class WebApi:
         if not id_params:
             raise ValueError("Please ensure that you send through partner params")
 
-        for field in id_params.get_required_params():
+        for field in IDParameters.get_required_params():
             if field is None:
                 raise ValueError(field + " cannot be empty")
 
@@ -141,7 +141,7 @@ class WebApi:
     def validate_enrol_with_id(id_info_params: IDParameters):
         params = id_info_params.get_params()
         if params["entered"]:
-            for field in id_info_params.get_required_params():
+            for field in IDParameters.get_required_params():
                 if field in params:
                     if params[field]:
                         continue
