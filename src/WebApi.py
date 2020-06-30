@@ -106,7 +106,7 @@ class WebApi:
                     "smile_job_id": smile_job_id
                 }
 
-    def _call_id_api(self, partner_params: PartnerParameters, id_info_params: IDParameters):
+    def __call_id_api(self, partner_params: PartnerParameters, id_info_params: IDParameters):
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
         return id_api.submit_job(partner_params, id_info_params)
 
@@ -150,7 +150,7 @@ class WebApi:
                 else:
                     raise ValueError(field + " cannot be empty")
 
-    def validate_options(self, options_params: Options):
+    def __validate_options(self, options_params: Options):
         if not self.call_back_url and not options_params:
             raise ValueError(
                 "Please choose to either get your response via the callback or job status query")
@@ -161,16 +161,16 @@ class WebApi:
                 if key != "optional_callback" and not type(params[key]) == bool:
                     raise ValueError(key + " needs to be a boolean")
 
-    def validate_return_data(self):
+    def __validate_return_data(self):
         if not self.call_back_url and not self.return_job_status:
             raise ValueError(
                 "Please choose to either get your response via the callback or job status query")
 
-    def get_sec_key(self):
+    def __get_sec_key(self):
         sec_key_gen = Signature(self.partner_id, self.api_key)
         return sec_key_gen.generate_sec_key()
 
-    def prepare_prep_upload_payload(self):
+    def __prepare_prep_upload_payload(self):
         return {
             "file_name": "selfie.zip",
             "timestamp": self.timestamp,
@@ -181,7 +181,7 @@ class WebApi:
             "callback_url": self.call_back_url,
         }
 
-    def prepare_info_json(self, upload_url):
+    def __prepare_info_json(self, upload_url):
         return {
             "package_information": {
                 "apiVersion": {
@@ -217,7 +217,7 @@ class WebApi:
             "server_information": upload_url,
         }
 
-    def prepare_image_payload(self):
+    def __prepare_image_payload(self):
         images = self.image_params.get_params()
         payload = []
         for image in images:
@@ -235,7 +235,7 @@ class WebApi:
                 })
         return payload
 
-    def create_zip(self, info_json):
+    def __create_zip(self, info_json):
         zip_file = zipfile.ZipFile("selfie.zip", 'w', zipfile.ZIP_DEFLATED)
         zip_file.writestr("info.json", data=json.dumps(info_json))
         images = self.image_params.get_params()
@@ -246,7 +246,7 @@ class WebApi:
         data = open(zip_file.filename, 'rb')
         return data
 
-    def poll_job_status(self, counter):
+    def __poll_job_status(self, counter):
         counter = counter + 1
         if counter < 4:
             time.sleep(2)

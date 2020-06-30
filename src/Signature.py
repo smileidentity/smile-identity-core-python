@@ -25,7 +25,7 @@ class Signature:
             "timestamp": timestamp
         }
 
-    def get_hash(self, timestamp):
+    def __get_hash(self, timestamp):
         to_hash = '{}:{}'.format(int(self.partner_id), timestamp)
         new_hash = str(to_hash).encode('utf-8')
         return hashlib.sha256(new_hash).hexdigest()

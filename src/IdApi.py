@@ -48,11 +48,11 @@ class IdApi:
         response = self.execute_http(payload)
         return response
 
-    def get_sec_key(self):
+    def __get_sec_key(self):
         sec_key_gen = Signature(self.partner_id, self.api_key)
         return sec_key_gen.generate_sec_key()
 
-    def configure_json(self, partner_params: PartnerParameters, id_params: IDParameters):
+    def __configure_json(self, partner_params: PartnerParameters, id_params: IDParameters):
         payload = {
             "sec_key": self.sec_key,
             "timestamp": self.timestamp,
@@ -74,7 +74,7 @@ class IdApi:
             else:
                 raise ValueError(field + " cannot be empty")
 
-    def execute_http(self, payload):
+    def __execute_http(self, payload):
         data = json.dumps(payload)
         resp = requests.post(
             url=self.url + "/id_verification",

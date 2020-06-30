@@ -36,14 +36,14 @@ class Utilities:
         self.validate_partner_params(user_id, job_id)
         return self.query_job_status(user_id, job_id, options)
 
-    def validate_partner_params(self, user_id, job_id):
+    def __validate_partner_params(self, user_id, job_id):
         if not user_id:
             raise ValueError("user_id cannot be empty")
 
         if not job_id:
             raise ValueError("job_id cannot be empty")
 
-    def query_job_status(self, user_id, job_id, option_params):
+    def __query_job_status(self, user_id, job_id, option_params):
         job_status = self.execute(self.url + "/job_status", self.configure_job_query(user_id, job_id, option_params))
         if job_status.status_code != 200:
             raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "/job_status",
@@ -59,7 +59,7 @@ class Utilities:
                 raise Exception("Unable to confirm validity of the job_status response")
             return job_status
 
-    def configure_job_query(self, user_id, job_id, options):
+    def __configure_job_query(self, user_id, job_id, options):
         return {
             "sec_key": self.sec_key,
             "timestamp": self.timestamp,
@@ -70,7 +70,7 @@ class Utilities:
             "history": options.options["return_history"],
         }
 
-    def get_sec_key(self):
+    def __get_sec_key(self):
         sec_key_gen = Signature(self.partner_id, self.api_key)
         return sec_key_gen.generate_sec_key()
 
