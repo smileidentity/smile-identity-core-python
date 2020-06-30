@@ -46,7 +46,7 @@ class WebApi:
 
         if not id_info_params:
             if job_type == 5:
-                self.validate_id_info_params()
+                self.validate_id_info_params(id_info_params)
             id_info_params = IDParameters(None, None, None, None, None,
                                           None,
                                           None,
@@ -54,7 +54,7 @@ class WebApi:
                                           False)
 
         if job_type == 5:
-            return self._call_id_api(partner_params, id_info_params)
+            return self.__call_id_api(partner_params, id_info_params)
 
         if options_params:
             options = options_params.get_params()
@@ -63,20 +63,20 @@ class WebApi:
             self.return_history = options["return_history"]
             self.return_images = options["return_images"]
 
-        self.validate_options(options_params)
+        self.__validate_options(options_params)
         self.validate_images(images_params)
         self.validate_enrol_with_id(id_info_params)
-        self.validate_return_data()
+        self.__validate_return_data()
 
         self.partner_params = partner_params
         self.image_params = images_params
         self.id_info_params = id_info_params
 
-        sec_key_object = self.get_sec_key()
+        sec_key_object = self.__get_sec_key()
 
         self.timestamp = sec_key_object["timestamp"]
         self.sec_key = sec_key_object["sec_key"]
-        prep_upload = self.execute_http(self.url + "/upload", self.prepare_prep_upload_payload())
+        prep_upload = self.execute_http(self.url + "/upload", self.__prepare_prep_upload_payload())
         if prep_upload.status_code != 200:
             raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "upload",
                             prep_upload.status_code,
@@ -85,8 +85,8 @@ class WebApi:
             prep_upload_json_resp = prep_upload.json()
             upload_url = prep_upload_json_resp["upload_url"]
             smile_job_id = prep_upload_json_resp["smile_job_id"]
-            info_json = self.prepare_info_json(upload_url)
-            zip_stream = self.create_zip(info_json)
+            info_json = self.__prepare_info_json(upload_url)
+            zip_stream = self.__create_zip(info_json)
             upload_response = self.upload(upload_url, zip_stream)
             if prep_upload.status_code != 200:
                 raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "/upload",
@@ -95,7 +95,7 @@ class WebApi:
 
             if self.return_job_status:
                 self.utilities = Utilities(self.partner_id, self.api_key, self.sid_server)
-                job_status = self.poll_job_status(0)
+                job_status = self.__poll_job_status(0)
                 job_status_response = job_status.json()
                 job_status_response["success"] = True
                 job_status_response["smile_job_id"] = smile_job_id
@@ -213,7 +213,7 @@ class WebApi:
                 }
             },
             "id_info": self.id_info_params.get_params(),
-            "images": self.prepare_image_payload(),
+            "images": self.__prepare_image_payload(),
             "server_information": upload_url,
         }
 
@@ -258,7 +258,7 @@ class WebApi:
                                                    self.options_params)
         job_status_response = job_status.json()
         if not job_status_response["job_complete"] and counter < 20:
-            self.poll_job_status(counter)
+            self.__poll_job_status(counter)
 
         return job_status
 
@@ -277,7 +277,6 @@ class WebApi:
 
     @staticmethod
     def upload(url, file):
-        files = {'file': file}
         resp = requests.put(
             url=url,
             data=file,

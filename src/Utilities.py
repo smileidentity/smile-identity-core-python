@@ -24,7 +24,7 @@ class Utilities:
             self.url = sid_server
 
     def get_job_status(self, user_id, job_id, option_params: Options):
-        sec_key_object = self.get_sec_key()
+        sec_key_object = self.__get_sec_key()
 
         self.timestamp = sec_key_object["timestamp"]
         self.sec_key = sec_key_object["sec_key"]
@@ -33,8 +33,8 @@ class Utilities:
             options = Options(None, True, False, False)
         else:
             options = option_params
-        self.validate_partner_params(user_id, job_id)
-        return self.query_job_status(user_id, job_id, options)
+        self.__validate_partner_params(user_id, job_id)
+        return self.__query_job_status(user_id, job_id, options)
 
     def __validate_partner_params(self, user_id, job_id):
         if not user_id:
@@ -44,7 +44,7 @@ class Utilities:
             raise ValueError("job_id cannot be empty")
 
     def __query_job_status(self, user_id, job_id, option_params):
-        job_status = self.execute(self.url + "/job_status", self.configure_job_query(user_id, job_id, option_params))
+        job_status = self.execute(self.url + "/job_status", self.__configure_job_query(user_id, job_id, option_params))
         if job_status.status_code != 200:
             raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "/job_status",
                             job_status.status_code,

@@ -41,11 +41,11 @@ class IdApi:
         if partner_params.get("job_type") != 5:
             raise ValueError("Please ensure that you are setting your job_type to 5 to query ID Api")
 
-        sec_key_object = self.get_sec_key()
+        sec_key_object = self.__get_sec_key()
         self.timestamp = sec_key_object["timestamp"]
         self.sec_key = sec_key_object["sec_key"]
-        payload = self.configure_json(partner_params, id_params)
-        response = self.execute_http(payload)
+        payload = self.__configure_json(partner_params, id_params)
+        response = self.__execute_http(payload)
         return response
 
     def __get_sec_key(self):

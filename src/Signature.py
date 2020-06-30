@@ -16,7 +16,7 @@ class Signature:
     def generate_sec_key(self, timestamp=None):
         if timestamp is None:
             timestamp = int(time.time())
-        hashed = self.get_hash(timestamp)
+        hashed = self.__get_hash(timestamp)
         encrypted = base64.b64encode(self.cipher.encrypt(hashed.encode('utf-8')))
 
         signature = "{}|{}".format(encrypted.decode(encoding='UTF-8'), hashed)
@@ -32,7 +32,7 @@ class Signature:
 
     def confirm_sec_key(self, timestamp, sec_key):
         encrypted, hashed = sec_key.split("|")
-        local_hash = self.get_hash(timestamp)
+        local_hash = self.__get_hash(timestamp)
         # python libraries only allow decryption from a private key
         # TODO: re look at this
         return True
