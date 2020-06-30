@@ -9,8 +9,6 @@ from Crypto.PublicKey import RSA
 
 from src import WebApi, PartnerParameters, IDParameters, ImageParameters, Options, Signature
 
-test_image_source = os.path.abspath(os.path.join(os.path.dirname(__file__), 'test_images/'))
-
 
 class TestWebApi(unittest.TestCase):
 
@@ -26,7 +24,7 @@ class TestWebApi(unittest.TestCase):
                                            u"",
                                            True)
         self.image_params = ImageParameters()
-        self.image_params.add(0, test_image_source + "/SID_Preview_Full.jpg")
+        self.image_params.add(2, "base6image")
         self.options_params = Options(None, True, True, True)
         self.signatureObj = Signature(self.partner_id, self.public_key)
         self.cipher = PKCS1_v1_5.new(self.key.exportKey())

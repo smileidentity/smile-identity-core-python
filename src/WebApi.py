@@ -76,7 +76,7 @@ class WebApi:
 
         self.timestamp = sec_key_object["timestamp"]
         self.sec_key = sec_key_object["sec_key"]
-        prep_upload = self.execute_http(self.url + "/upload", self.__prepare_prep_upload_payload())
+        prep_upload = WebApi.execute_http(self.url + "/upload", self.__prepare_prep_upload_payload())
         if prep_upload.status_code != 200:
             raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "upload",
                             prep_upload.status_code,
@@ -87,7 +87,7 @@ class WebApi:
             smile_job_id = prep_upload_json_resp["smile_job_id"]
             info_json = self.__prepare_info_json(upload_url)
             zip_stream = self.__create_zip(info_json)
-            upload_response = self.upload(upload_url, zip_stream)
+            upload_response = WebApi.upload(upload_url, zip_stream)
             if prep_upload.status_code != 200:
                 raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "/upload",
                                 upload_response.status_code,
