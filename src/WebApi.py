@@ -240,7 +240,7 @@ class WebApi:
         zip_file.writestr("info.json", data=json.dumps(info_json))
         images = self.image_params.get_params()
         for image in images:
-            if image["image"].lower().endswith(('.png', '.jpg', '.jpeg')):
+            if image["image"].lower().endswith(('.png', '.jpg')):
                 zip_file.write(os.path.join(image["image"]), os.path.basename(image["image"]))
         zip_file.close()
         data = open(zip_file.filename, 'rb')
