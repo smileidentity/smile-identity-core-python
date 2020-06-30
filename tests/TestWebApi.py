@@ -205,7 +205,7 @@ class TestWebApi(unittest.TestCase):
     def test_validate_return_data(self):
         timestamp = int(time.time())
         sec_timestamp = self.signatureObj.generate_sec_key(timestamp=timestamp)
-        with patch('WebApi.requests.post') as mocked_post, patch('WebApi.requests.put') as mocked_put:
+        with patch('requests.post') as mocked_post, patch('requests.put') as mocked_put:
             mocked_post.return_value.status_code = 200
             mocked_post.return_value.ok = True
             mocked_post.return_value.text.return_value = self._get_job_status_response()
