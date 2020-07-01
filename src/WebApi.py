@@ -32,7 +32,7 @@ class WebApi:
     def submit_job(self, partner_params, images_params,
                    id_info_params, options_params):
 
-        self.validate_partner_params(partner_params)
+        WebApi.validate_partner_params(partner_params)
         job_type = partner_params["job_type"]
 
         if not id_info_params:
