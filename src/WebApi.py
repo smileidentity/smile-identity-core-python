@@ -79,7 +79,7 @@ class WebApi:
             smile_job_id = prep_upload_json_resp["smile_job_id"]
             info_json = self.__prepare_info_json(upload_url, partner_params, images_params, id_info_params,
                                                  sec_key_object["sec_key"], sec_key_object["timestamp"])
-            zip_stream = self.__create_zip(info_json, images_params)
+            zip_stream = WebApi.create_zip(info_json, images_params)
             upload_response = WebApi.upload(upload_url, zip_stream)
             if prep_upload.status_code != 200:
                 raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "/upload",
@@ -229,7 +229,7 @@ class WebApi:
         return payload
 
     @staticmethod
-    def __create_zip(info_json, image_params):
+    def create_zip(info_json, image_params):
         zip_file = zipfile.ZipFile("selfie.zip", 'w', zipfile.ZIP_DEFLATED)
         zip_file.writestr("info.json", data=json.dumps(info_json))
         for image in image_params:
