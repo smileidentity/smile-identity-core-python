@@ -1,6 +1,4 @@
 import json
-from .PartnerParameters import PartnerParameters
-from .IDParameters import IDParameters
 from src.Signature import Signature
 import requests
 
@@ -23,28 +21,21 @@ class IdApi:
         else:
             self.url = sid_server
 
-    def submit_job(self, partner_params: PartnerParameters, id_params: IDParameters):
+    def submit_job(self, partner_params, id_params):
         if not partner_params:
             raise ValueError("Please ensure that you send through partner params")
 
         if not id_params:
             raise ValueError("Please ensure that you send through ID Information")
 
-        self.validate_id_params(id_params);
-
-        if not isinstance(partner_params, PartnerParameters):
-            raise TypeError("partner_params must be of type PartnerParameters")
-
-        if not isinstance(id_params, IDParameters):
-            raise TypeError("id_params must be of type IDParameters")
+        self.validate_id_params(id_params)
 
         if partner_params.get("job_type") != 5:
             raise ValueError("Please ensure that you are setting your job_type to 5 to query ID Api")
 
         sec_key_object = self.__get_sec_key()
-        self.timestamp = sec_key_object["timestamp"]
-        self.sec_key = sec_key_object["sec_key"]
-        payload = self.__configure_json(partner_params, id_params)
+        payload = self.__configure_json(partner_params, id_params, sec_key_object["sec_key"],
+                                        sec_key_object["timestamp"])
         response = self.__execute_http(payload)
         return response
 
@@ -52,22 +43,21 @@ class IdApi:
         sec_key_gen = Signature(self.partner_id, self.api_key)
         return sec_key_gen.generate_sec_key()
 
-    def __configure_json(self, partner_params: PartnerParameters, id_params: IDParameters):
+    def __configure_json(self, partner_params, id_params, sec_key, timestamp):
         payload = {
-            "sec_key": self.sec_key,
-            "timestamp": self.timestamp,
+            "sec_key": sec_key,
+            "timestamp": timestamp,
             "partner_id": self.partner_id,
-            "partner_params": partner_params.get_params(),
+            "partner_params": partner_params,
         }
-        payload.update(id_params.get_params())
+        payload.update(id_params)
         return payload
 
     @staticmethod
-    def validate_id_params(id_info_params: IDParameters):
-        params = id_info_params.get_params()
-        for field in IDParameters.get_required_params():
-            if field in params:
-                if params[field]:
+    def validate_id_params(id_info_params):
+        for field in ["country", "id_type", "id_number"]:
+            if field in id_info_params:
+                if id_info_params[field]:
                     continue
                 else:
                     raise ValueError(field + " cannot be empty")

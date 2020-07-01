@@ -4,7 +4,6 @@ import time
 
 import requests
 
-from src import PartnerParameters, Options, ImageParameters, IDParameters
 from src.IdApi import IdApi
 from src.Signature import Signature
 import zipfile
@@ -18,15 +17,6 @@ class WebApi:
         self.call_back_url = call_back_url
         self.api_key = api_key
         self.sid_server = sid_server
-        self.return_job_status = False
-        self.return_history = False
-        self.return_images = False
-        self.partner_params = None
-        self.image_params = None
-        self.id_info_params = None
-        self.options_params = None
-        self.timestamp = 0
-        self.sec_key = None
         self.utilities = None
 
         if sid_server in [0, 1]:
@@ -38,45 +28,47 @@ class WebApi:
         else:
             self.url = sid_server
 
-    def submit_job(self, partner_params: PartnerParameters, images_params: ImageParameters,
-                   id_info_params: IDParameters, options_params: Options):
+    def submit_job(self, partner_params, images_params,
+                   id_info_params, options_params):
 
         self.validate_partner_params(partner_params)
-        job_type = partner_params.get_params()["job_type"]
+        job_type = partner_params["job_type"]
 
         if not id_info_params:
             if job_type == 5:
-                self.validate_id_info_params(id_info_params)
-            id_info_params = IDParameters(None, None, None, None, None,
-                                          None,
-                                          None,
-                                          None,
-                                          False)
+                WebApi.validate_id_info_params(id_info_params)
+            id_info_params = {
+                "first_name": None,
+                "middle_name": None,
+                "last_name": None,
+                "country": None,
+                "id_type": None,
+                "id_number": None,
+                "dob": None,
+                "phone_number": None,
+                "entered": False,
+            }
 
         if job_type == 5:
             return self.__call_id_api(partner_params, id_info_params)
 
-        if options_params:
-            options = options_params.get_params()
-            self.options_params = options_params
-            self.return_job_status = options["return_job_status"]
-            self.return_history = options["return_history"]
-            self.return_images = options["return_images"]
+        if not options_params:
+            options_params = {
+                "return_job_status": True,
+                "return_history": False,
+                "return_images": False,
+            }
 
         self.__validate_options(options_params)
         self.validate_images(images_params)
         self.validate_enrol_with_id(id_info_params)
-        self.__validate_return_data()
-
-        self.partner_params = partner_params
-        self.image_params = images_params
-        self.id_info_params = id_info_params
+        self.__validate_return_data(options_params)
 
         sec_key_object = self.__get_sec_key()
 
-        self.timestamp = sec_key_object["timestamp"]
-        self.sec_key = sec_key_object["sec_key"]
-        prep_upload = WebApi.execute_http(self.url + "/upload", self.__prepare_prep_upload_payload())
+        prep_upload = WebApi.execute_http(self.url + "/upload",
+                                          self.__prepare_prep_upload_payload(partner_params, sec_key_object["sec_key"],
+                                                                             sec_key_object["timestamp"]))
         if prep_upload.status_code != 200:
             raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "upload",
                             prep_upload.status_code,
@@ -85,17 +77,19 @@ class WebApi:
             prep_upload_json_resp = prep_upload.json()
             upload_url = prep_upload_json_resp["upload_url"]
             smile_job_id = prep_upload_json_resp["smile_job_id"]
-            info_json = self.__prepare_info_json(upload_url)
-            zip_stream = self.__create_zip(info_json)
+            info_json = self.__prepare_info_json(upload_url, partner_params, images_params, id_info_params,
+                                                 sec_key_object["sec_key"], sec_key_object["timestamp"])
+            zip_stream = self.__create_zip(info_json, images_params)
             upload_response = WebApi.upload(upload_url, zip_stream)
             if prep_upload.status_code != 200:
                 raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "/upload",
                                 upload_response.status_code,
                                 upload_response.reason, upload_response.json())
 
-            if self.return_job_status:
+            if options_params["return_job_status"]:
                 self.utilities = Utilities(self.partner_id, self.api_key, self.sid_server)
-                job_status = self.__poll_job_status(0)
+                job_status = self.__poll_job_status(0, partner_params, options_params, sec_key_object["sec_key"],
+                                                    sec_key_object["timestamp"])
                 job_status_response = job_status.json()
                 job_status_response["success"] = True
                 job_status_response["smile_job_id"] = smile_job_id
@@ -106,63 +100,62 @@ class WebApi:
                     "smile_job_id": smile_job_id
                 }
 
-    def __call_id_api(self, partner_params: PartnerParameters, id_info_params: IDParameters):
+    def __call_id_api(self, partner_params, id_info_params):
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
         return id_api.submit_job(partner_params, id_info_params)
 
     @staticmethod
-    def validate_partner_params(partner_params: PartnerParameters):
+    def validate_partner_params(partner_params):
         if not partner_params:
             raise ValueError("Please ensure that you send through partner params")
 
-        params = partner_params.get_params()
-        if not params["user_id"] or not params["job_id"] or not params["job_type"]:
+        if not partner_params["user_id"] or not partner_params["job_id"] or not partner_params["job_type"]:
             raise ValueError("Partner Parameter Arguments may not be null or empty")
 
     @staticmethod
-    def validate_id_info_params(id_params: IDParameters):
+    def validate_id_info_params(id_params):
         if not id_params:
             raise ValueError("Please ensure that you send through partner params")
 
-        for field in IDParameters.get_required_params():
+        for field in ["country", "id_type", "id_number"]:
             if field is None:
                 raise ValueError(field + " cannot be empty")
 
     @staticmethod
-    def validate_images(images_params: ImageParameters):
+    def validate_images(images_params):
         if not images_params:
             raise ValueError("Please ensure that you send through image details")
 
-        images = images_params.get_params()
-        if len(images) < 1:
+        if not isinstance(images_params, list):
+            raise ValueError("Please ensure that you send through image details as a list")
+
+        if len(images_params) < 1:
             raise ValueError("Please ensure that you send through image details")
 
     @staticmethod
-    def validate_enrol_with_id(id_info_params: IDParameters):
-        params = id_info_params.get_params()
-        if params["entered"]:
-            for field in IDParameters.get_required_params():
-                if field in params:
-                    if params[field]:
+    def validate_enrol_with_id(id_info_params):
+        if id_info_params["entered"]:
+            for field in ["country", "id_type", "id_number"]:
+                if field in id_info_params:
+                    if id_info_params[field]:
                         continue
                     else:
                         raise ValueError(field + " cannot be empty")
                 else:
                     raise ValueError(field + " cannot be empty")
 
-    def __validate_options(self, options_params: Options):
+    def __validate_options(self, options_params):
         if not self.call_back_url and not options_params:
             raise ValueError(
                 "Please choose to either get your response via the callback or job status query")
 
         if options_params:
-            params = options_params.get_params()
-            for key in params:
-                if key != "optional_callback" and not type(params[key]) == bool:
+            for key in options_params:
+                if key != "optional_callback" and not type(options_params[key]) == bool:
                     raise ValueError(key + " needs to be a boolean")
 
-    def __validate_return_data(self):
-        if not self.call_back_url and not self.return_job_status:
+    def __validate_return_data(self, options):
+        if not self.call_back_url and not options["return_job_status"]:
             raise ValueError(
                 "Please choose to either get your response via the callback or job status query")
 
@@ -170,18 +163,18 @@ class WebApi:
         sec_key_gen = Signature(self.partner_id, self.api_key)
         return sec_key_gen.generate_sec_key()
 
-    def __prepare_prep_upload_payload(self):
+    def __prepare_prep_upload_payload(self, partner_params, sec_key, timestamp):
         return {
             "file_name": "selfie.zip",
-            "timestamp": self.timestamp,
-            "sec_key": self.sec_key,
+            "timestamp": timestamp,
+            "sec_key": sec_key,
             "smile_client_id": self.partner_id,
-            "partner_params": self.partner_params.get_params(),
+            "partner_params": partner_params,
             "model_parameters": {},
             "callback_url": self.call_back_url,
         }
 
-    def __prepare_info_json(self, upload_url):
+    def __prepare_info_json(self, upload_url, partner_params, image_params, id_info_params, sec_key, timestamp):
         return {
             "package_information": {
                 "apiVersion": {
@@ -192,10 +185,10 @@ class WebApi:
                 "language": "python"
             },
             "misc_information": {
-                "sec_key": self.sec_key,
+                "sec_key": sec_key,
                 "retry": "false",
-                "partner_params": self.partner_params.get_params(),
-                "timestamp": self.timestamp,
+                "partner_params": partner_params,
+                "timestamp": timestamp,
                 "file_name": "selfie.zip",
                 "smile_client_id": self.partner_id,
                 "callback_url": self.call_back_url,
@@ -212,15 +205,15 @@ class WebApi:
                     "countryName": ""
                 }
             },
-            "id_info": self.id_info_params.get_params(),
-            "images": self.__prepare_image_payload(),
+            "id_info": id_info_params,
+            "images": WebApi.prepare_image_payload(image_params),
             "server_information": upload_url,
         }
 
-    def __prepare_image_payload(self):
-        images = self.image_params.get_params()
+    @staticmethod
+    def prepare_image_payload(image_params):
         payload = []
-        for image in images:
+        for image in image_params:
             if image["image"].lower().endswith(('.png', '.jpg', '.jpeg')):
                 payload.append({
                     "image_type_id": image["image_type_id"],
@@ -235,30 +228,30 @@ class WebApi:
                 })
         return payload
 
-    def __create_zip(self, info_json):
+    @staticmethod
+    def __create_zip(info_json, image_params):
         zip_file = zipfile.ZipFile("selfie.zip", 'w', zipfile.ZIP_DEFLATED)
         zip_file.writestr("info.json", data=json.dumps(info_json))
-        images = self.image_params.get_params()
-        for image in images:
+        for image in image_params:
             if image["image"].lower().endswith(('.png', '.jpg')):
                 zip_file.write(os.path.join(image["image"]), os.path.basename(image["image"]))
         zip_file.close()
         data = open(zip_file.filename, 'rb')
         return data
 
-    def __poll_job_status(self, counter):
+    def __poll_job_status(self, counter, partner_params, options_params, sec_key, timestamp):
         counter = counter + 1
         if counter < 4:
             time.sleep(2)
         else:
             time.sleep(4)
 
-        job_status = self.utilities.get_job_status(self.partner_params.get("user_id"),
-                                                   self.partner_params.get("job_id"),
-                                                   self.options_params)
+        job_status = self.utilities.get_job_status(partner_params.get("user_id"),
+                                                   partner_params.get("job_id"),
+                                                   options_params, sec_key, timestamp)
         job_status_response = job_status.json()
         if not job_status_response["job_complete"] and counter < 20:
-            self.__poll_job_status(counter)
+            self.__poll_job_status(counter, partner_params, options_params, sec_key, timestamp)
 
         return job_status
 

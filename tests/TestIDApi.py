@@ -7,7 +7,7 @@ from unittest.mock import patch
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
-from src import WebApi, PartnerParameters, IDParameters, ImageParameters, Options, Signature, IdApi
+from src import Signature, IdApi
 
 
 class TestIdApi(unittest.TestCase):
@@ -17,14 +17,28 @@ class TestIdApi(unittest.TestCase):
         self.public_key = self.key.publickey().export_key()
         self.partner_id = "001"
         self.id_api = IdApi("001", self.public_key, 0)
-        self.partner_params = PartnerParameters(str(uuid4()), str(uuid4()), 5)
-        self.id_info_params = IDParameters(u"FirstName", u"MiddleName", u"LastName", u"NG", u"PASSPORT",
-                                           u"A00000000",
-                                           u"1989-09-20",
-                                           u"",
-                                           True)
+        self.partner_params = {
+            "user_id": str(uuid4()),
+            "job_id": str(uuid4()),
+            "job_type": 5,
+        }
+        self.id_info_params = {
+            "first_name": "FirstName",
+            "middle_name": "LastName",
+            "last_name": "MiddleName",
+            "country": "NG",
+            "id_type": "PASSPORT",
+            "id_number": "A00000000",
+            "dob": "1989-09-20",
+            "phone_number": "",
+            "entered": True,
+        }
 
-        self.options_params = Options(None, True, True, True)
+        self.options_params = {
+            "return_job_status": True,
+            "return_history": True,
+            "return_images": True,
+        }
         self.signatureObj = Signature(self.partner_id, self.public_key)
         self.cipher = PKCS1_v1_5.new(self.key.exportKey())
 
@@ -44,25 +58,25 @@ class TestIdApi(unittest.TestCase):
         self.assertEqual(ve.exception.args[0], u"Please ensure that you send through ID Information")
 
     def test_invalid_job_type(self):
-        self.partner_params.add("job_type", 0)
+        self.partner_params["job_type"] = 0
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
         self.assertEqual(ve.exception.args[0], u"Please ensure that you are setting your job_type to 5 to query ID Api")
 
     def test_id_info_params(self):
-        self.id_info_params.add("country", None)
+        self.id_info_params["country"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
         self.assertEqual(ve.exception.args[0], u"country cannot be empty")
 
-        self.id_info_params.add(u"country", u"NG")
-        self.id_info_params.add(u"id_type", None)
+        self.id_info_params["country"] = "NG"
+        self.id_info_params["id_type"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
         self.assertEqual(ve.exception.args[0], u"id_type cannot be empty")
 
-        self.id_info_params.add(u"id_type", u"PASSPORT")
-        self.id_info_params.add(u"id_number", None)
+        self.id_info_params["id_type"] = "PASSPORT"
+        self.id_info_params["id_number"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
         self.assertEqual(ve.exception.args[0], u"id_number cannot be empty")

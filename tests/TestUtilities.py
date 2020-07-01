@@ -1,13 +1,12 @@
-import hashlib
 import time
 import unittest
 from unittest.mock import patch
 from uuid import uuid4
 
-from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
+from Crypto.PublicKey import RSA
 
-from src import Signature, Utilities, PartnerParameters, Options
+from src import Signature, Utilities
 
 
 class TestSignature(unittest.TestCase):
@@ -18,9 +17,17 @@ class TestSignature(unittest.TestCase):
         self.partner_id = "001"
         self.signatureObj = Signature(self.partner_id, self.public_key)
         self.cipher = PKCS1_v1_5.new(self.key.exportKey())
-        self.partner_params = PartnerParameters(str(uuid4()), str(uuid4()), 1)
+        self.partner_params = {
+            "user_id": str(uuid4()),
+            "job_id": str(uuid4()),
+            "job_type": 1,
+        }
         self.utilities = Utilities(self.partner_id, self.public_key, 0)
-        self.options_params = Options(None, True, True, True)
+        self.options_params = {
+            "return_job_status": True,
+            "return_history": True,
+            "return_images": True,
+        }
 
     def test_instance(self):
         self.assertEqual(self.utilities.partner_id, "001")

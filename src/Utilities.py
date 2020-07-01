@@ -1,9 +1,7 @@
-import http.client
 import json
 
 import requests
 
-from src import Options
 from src.Signature import Signature
 
 
@@ -12,8 +10,6 @@ class Utilities:
         self.partner_id = partner_id
         self.api_key = api_key
         self.sid_server = sid_server
-        self.timestamp = 0
-        self.sec_key = None
         if sid_server in [0, 1]:
             sid_server_map = {
                 0: "https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
@@ -23,28 +19,30 @@ class Utilities:
         else:
             self.url = sid_server
 
-    def get_job_status(self, user_id, job_id, option_params: Options):
-        sec_key_object = self.__get_sec_key()
-
-        self.timestamp = sec_key_object["timestamp"]
-        self.sec_key = sec_key_object["sec_key"]
+    def get_job_status(self, user_id, job_id, option_params, sec_key, timestamp):
 
         if not option_params or option_params is None:
-            options = Options(None, True, False, False)
+            options = {
+                "return_job_status": True,
+                "return_history": False,
+                "return_images": False,
+            }
         else:
             options = option_params
-        self.__validate_partner_params(user_id, job_id)
-        return self.__query_job_status(user_id, job_id, options)
+        Utilities.validate_partner_params(user_id, job_id)
+        return self.__query_job_status(user_id, job_id, options, sec_key, timestamp)
 
-    def __validate_partner_params(self, user_id, job_id):
+    @staticmethod
+    def validate_partner_params(user_id, job_id):
         if not user_id:
             raise ValueError("user_id cannot be empty")
 
         if not job_id:
             raise ValueError("job_id cannot be empty")
 
-    def __query_job_status(self, user_id, job_id, option_params):
-        job_status = self.execute(self.url + "/job_status", self.__configure_job_query(user_id, job_id, option_params))
+    def __query_job_status(self, user_id, job_id, option_params, sec_key, timestamp):
+        job_status = self.execute(self.url + "/job_status",
+                                  self.__configure_job_query(user_id, job_id, option_params, sec_key, timestamp))
         if job_status.status_code != 200:
             raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "/job_status",
                             job_status.status_code,
@@ -59,15 +57,15 @@ class Utilities:
                 raise Exception("Unable to confirm validity of the job_status response")
             return job_status
 
-    def __configure_job_query(self, user_id, job_id, options):
+    def __configure_job_query(self, user_id, job_id, options, sec_key, timestamp):
         return {
-            "sec_key": self.sec_key,
-            "timestamp": self.timestamp,
+            "sec_key": sec_key,
+            "timestamp": timestamp,
             "partner_id": self.partner_id,
             "job_id": job_id,
             "user_id": user_id,
-            "image_links": options.options["return_images"],
-            "history": options.options["return_history"],
+            "image_links": options["return_images"],
+            "history": options["return_history"],
         }
 
     def __get_sec_key(self):
