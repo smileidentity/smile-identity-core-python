@@ -17,6 +17,11 @@ class TestIdApi(unittest.TestCase):
         self.public_key = self.key.publickey().export_key()
         self.partner_id = "001"
         self.id_api = IdApi("001", self.public_key, 0)
+        self.__reset_params()
+        self.signatureObj = Signature(self.partner_id, self.public_key)
+        self.cipher = PKCS1_v1_5.new(self.key.exportKey())
+
+    def __reset_params(self):
         self.partner_params = {
             "user_id": str(uuid4()),
             "job_id": str(uuid4()),
@@ -33,49 +38,51 @@ class TestIdApi(unittest.TestCase):
             "phone_number": "",
             "entered": True,
         }
-
         self.options_params = {
             "return_job_status": True,
             "return_history": True,
             "return_images": True,
         }
-        self.signatureObj = Signature(self.partner_id, self.public_key)
-        self.cipher = PKCS1_v1_5.new(self.key.exportKey())
 
     def test_instance(self):
+        self.__reset_params()
         self.assertEqual(self.id_api.partner_id, "001")
         self.assertEqual(self.id_api.api_key, self.public_key)
         self.assertEqual(self.id_api.url, 'https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test')
 
     def test_no_partner_params(self):
+        self.__reset_params()
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(None, self.id_info_params)
         self.assertEqual(ve.exception.args[0], u"Please ensure that you send through partner params")
 
     def test_no_id_info_params(self):
+        self.__reset_params()
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, None)
         self.assertEqual(ve.exception.args[0], u"Please ensure that you send through ID Information")
 
     def test_invalid_job_type(self):
-        self.partner_params["job_type"] = 0
+        self.__reset_params()
+        self.partner_params["job_type"] = 1
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
         self.assertEqual(ve.exception.args[0], u"Please ensure that you are setting your job_type to 5 to query ID Api")
 
     def test_id_info_params(self):
+        self.__reset_params()
         self.id_info_params["country"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
         self.assertEqual(ve.exception.args[0], u"country cannot be empty")
 
-        self.id_info_params["country"] = "NG"
+        self.__reset_params()
         self.id_info_params["id_type"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
         self.assertEqual(ve.exception.args[0], u"id_type cannot be empty")
 
-        self.id_info_params["id_type"] = "PASSPORT"
+        self.__reset_params()
         self.id_info_params["id_number"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
@@ -119,6 +126,7 @@ class TestIdApi(unittest.TestCase):
                 }
 
     def test_validate_return_data(self):
+        self.__reset_params()
         timestamp = int(time.time())
         sec_timestamp = self.signatureObj.generate_sec_key(timestamp=timestamp)
         with patch('requests.post') as mocked_post:

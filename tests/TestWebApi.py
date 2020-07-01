@@ -15,7 +15,12 @@ class TestWebApi(unittest.TestCase):
         self.key = RSA.generate(2048)
         self.public_key = self.key.publickey().export_key()
         self.partner_id = "001"
+        self.__reset_params()
         self.web_api = WebApi("001", 'https://a_callback.com', self.public_key, 0)
+        self.signatureObj = Signature(self.partner_id, self.public_key)
+        self.cipher = PKCS1_v1_5.new(self.key.exportKey())
+
+    def __reset_params(self):
         self.partner_params = {
             "user_id": str(uuid4()),
             "job_id": str(uuid4()),
@@ -39,28 +44,30 @@ class TestWebApi(unittest.TestCase):
             "return_history": True,
             "return_images": True,
         }
-        self.signatureObj = Signature(self.partner_id, self.public_key)
-        self.cipher = PKCS1_v1_5.new(self.key.exportKey())
 
     def test_instance(self):
+        self.__reset_params()
         self.assertEqual(self.web_api.partner_id, "001")
         self.assertEqual(self.web_api.api_key, self.public_key)
         self.assertEqual(self.web_api.call_back_url, 'https://a_callback.com')
         self.assertEqual(self.web_api.url, 'https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test')
 
     def test_no_image_params(self):
+        self.__reset_params()
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, None,
                                                self.id_info_params, self.options_params)
         self.assertEqual(ve.exception.args[0], u"Please ensure that you send through image details")
 
     def test_no_partner_params(self):
+        self.__reset_params()
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(None, self.image_params,
                                                self.id_info_params, self.options_params)
         self.assertEqual(ve.exception.args[0], u"Please ensure that you send through partner params")
 
     def test_missing_partner_params(self):
+        self.__reset_params()
         self.partner_params["user_id"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
@@ -68,14 +75,14 @@ class TestWebApi(unittest.TestCase):
         value_exception = ve.exception
         self.assertEqual(value_exception.args[0], u"Partner Parameter Arguments may not be null or empty")
 
-        self.partner_params["user_id"] = str(uuid4())
+        self.__reset_params()
         self.partner_params["job_id"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
                                                self.id_info_params, self.options_params)
         self.assertEqual(ve.exception.args[0], u"Partner Parameter Arguments may not be null or empty")
 
-        self.partner_params["job_id"] = str(uuid4())
+        self.__reset_params()
         self.partner_params["job_type"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
@@ -83,20 +90,21 @@ class TestWebApi(unittest.TestCase):
         self.assertEqual(ve.exception.args[0], u"Partner Parameter Arguments may not be null or empty")
 
     def test_id_info_params(self):
+        self.__reset_params()
         self.id_info_params["country"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
                                                self.id_info_params, self.options_params)
         self.assertEqual(ve.exception.args[0], u"country cannot be empty")
 
-        self.id_info_params["country"] = "NG"
+        self.__reset_params()
         self.id_info_params["id_type"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
                                                self.id_info_params, self.options_params)
         self.assertEqual(ve.exception.args[0], u"id_type cannot be empty")
 
-        self.id_info_params["id_type"] = "PASSPORT"
+        self.__reset_params()
         self.id_info_params["id_number"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
@@ -112,6 +120,7 @@ class TestWebApi(unittest.TestCase):
     #                      u"Please choose to either get your response via the callback or job status query")
 
     def test_boolean_options_params_non_jt5(self):
+        self.__reset_params()
         self.options_params["return_job_status"] = "Test"
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
@@ -119,7 +128,7 @@ class TestWebApi(unittest.TestCase):
         self.assertEqual(ve.exception.args[0],
                          u"return_job_status needs to be a boolean")
 
-        self.options_params["return_job_status"] = True
+        self.__reset_params()
         self.options_params["return_history"] = "tEST"
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
@@ -127,7 +136,7 @@ class TestWebApi(unittest.TestCase):
         self.assertEqual(ve.exception.args[0],
                          u"return_history needs to be a boolean")
 
-        self.options_params["return_history"] = True
+        self.__reset_params()
         self.options_params["return_images"] = "tEST"
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
@@ -216,6 +225,7 @@ class TestWebApi(unittest.TestCase):
         }
 
     def test_validate_return_data(self):
+        self.__reset_params()
         timestamp = int(time.time())
         sec_timestamp = self.signatureObj.generate_sec_key(timestamp=timestamp)
         with patch('requests.post') as mocked_post, patch('requests.put') as mocked_put:

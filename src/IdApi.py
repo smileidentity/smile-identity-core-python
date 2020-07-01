@@ -22,8 +22,7 @@ class IdApi:
             self.url = sid_server
 
     def submit_job(self, partner_params, id_params):
-        if not partner_params:
-            raise ValueError("Please ensure that you send through partner params")
+        IdApi.validate_partner_params(partner_params)
 
         if not id_params:
             raise ValueError("Please ensure that you send through ID Information")
@@ -52,6 +51,26 @@ class IdApi:
         }
         payload.update(id_params)
         return payload
+
+    @staticmethod
+    def validate_partner_params(partner_params):
+        if not partner_params:
+            raise ValueError("Please ensure that you send through partner params")
+
+        if not partner_params["user_id"] or not partner_params["job_id"] or not partner_params["job_type"]:
+            raise ValueError("Partner Parameter Arguments may not be null or empty")
+
+        if not isinstance(partner_params["user_id"], str):
+            raise ValueError("Please ensure user_id is a string")
+
+        if not isinstance(partner_params["job_id"], str):
+            raise ValueError("Please ensure job_id is a string")
+
+        if not isinstance(partner_params["job_id"], str):
+            raise ValueError("Please ensure job_id is a string")
+
+        if not isinstance(partner_params["job_type"], int):
+            raise ValueError("Please ensure job_id is a number")
 
     @staticmethod
     def validate_id_params(id_info_params):
