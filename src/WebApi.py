@@ -1,3 +1,4 @@
+import io
 import json
 import os
 import time
@@ -230,14 +231,13 @@ class WebApi:
 
     @staticmethod
     def create_zip(info_json, image_params):
-        zip_file = zipfile.ZipFile("selfie.zip", 'w', zipfile.ZIP_DEFLATED)
-        zip_file.writestr("info.json", data=json.dumps(info_json))
-        for image in image_params:
-            if image["image"].lower().endswith(('.png', '.jpg')):
-                zip_file.write(os.path.join(image["image"]), os.path.basename(image["image"]))
-        zip_file.close()
-        data = open(zip_file.filename, 'rb')
-        return data
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
+            zip_file.writestr("info.json", data=json.dumps(info_json))
+            for image in image_params:
+                if image["image"].lower().endswith(('.png', '.jpg')):
+                    zip_file.write(os.path.join(image["image"]), os.path.basename(image["image"]))
+        return zip_buffer.getvalue()
 
     def __poll_job_status(self, counter, partner_params, options_params, sec_key, timestamp):
         counter = counter + 1
