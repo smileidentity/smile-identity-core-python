@@ -38,6 +38,10 @@ class IdApi:
         payload = self.__configure_json(partner_params, id_params, sec_key_object["sec_key"],
                                         sec_key_object["timestamp"])
         response = self.__execute_http(payload)
+        if response.status_code != 200:
+            raise Exception("Failed to post entity to {}, status={}, response={}".format(self.url + "/id_verification",
+                                                                                         response.status_code,
+                                                                                         response.json()))
         return response
 
     def __get_sec_key(self):
