@@ -237,8 +237,6 @@ class TestWebApi(unittest.TestCase):
                                                    self.id_info_params, self.options_params)
         self.assertEqual(ve.exception.args[0],
                          u"Failed to post entity to https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test/upload, status=400, response={'code': '2204', 'error': 'unauthorized'}")
-        # self.assertIsNotNone(response.json())
-        # self.assertEqual(ve.exception.args[0], u"Please ensure that you send through ID Information")
 
     def test_validate_return_data(self):
         self.__reset_params()
