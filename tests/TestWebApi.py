@@ -111,13 +111,13 @@ class TestWebApi(unittest.TestCase):
                                                self.id_info_params, self.options_params)
         self.assertEqual(ve.exception.args[0], u"id_number cannot be empty")
 
-    # def test_non_required_options_params_jt5(self):
-    #     self.partner_params.add("job_type", 5)
-    #     with self.assertRaises(ValueError) as ve:
-    #         response = self.web_api.submit_job(self.partner_params, self.image_params,
-    #                                            self.id_info_params, None)
-    #     self.assertEqual(ve.exception.args[0],
-    #                      u"Please choose to either get your response via the callback or job status query")
+    def test_non_valid_image(self):
+        self.__reset_params()
+        self.image_params.append({"image_type_id": "0", "image": "path/to/image.jpg"})
+        with self.assertRaises(FileNotFoundError) as ve:
+            response = self.web_api.submit_job(self.partner_params, self.image_params,
+                                               self.id_info_params, self.options_params)
+        self.assertEqual(ve.exception.args[0], u"No such file or directory path/to/image.jpg")
 
     def test_boolean_options_params_non_jt5(self):
         self.__reset_params()

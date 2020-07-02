@@ -145,6 +145,11 @@ class WebApi:
         if len(images_params) < 1:
             raise ValueError("Please ensure that you send through image details")
 
+        for image in images_params:
+            if image["image"].lower().endswith(('.png', '.jpg')):
+                if not os.path.exists(image["image"]):
+                    raise FileNotFoundError("No such file or directory %s" % (image["image"]))
+
     @staticmethod
     def validate_enrol_with_id(id_info_params):
         if id_info_params["entered"]:
