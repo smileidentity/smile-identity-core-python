@@ -224,6 +224,22 @@ class TestWebApi(unittest.TestCase):
             ]
         }
 
+    def test_error_return_data(self):
+        self.__reset_params()
+        with self.assertRaises(Exception) as ve:
+            with patch('requests.post') as mocked_post:
+                mocked_post.return_value.status_code = 400
+                mocked_post.return_value.ok = True
+                mocked_post.return_value.text.return_value = {'code': '2204', 'error': 'unauthorized'}
+                mocked_post.return_value.json.return_value = {'code': '2204', 'error': 'unauthorized'}
+
+                response = self.web_api.submit_job(self.partner_params, self.image_params,
+                                                   self.id_info_params, self.options_params)
+        self.assertEqual(ve.exception.args[0],
+                         u"Failed to post entity to https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test/upload, status=400, response={'code': '2204', 'error': 'unauthorized'}")
+        # self.assertIsNotNone(response.json())
+        # self.assertEqual(ve.exception.args[0], u"Please ensure that you send through ID Information")
+
     def test_validate_return_data(self):
         self.__reset_params()
         timestamp = int(time.time())

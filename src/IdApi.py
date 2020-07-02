@@ -1,4 +1,6 @@
 import json
+
+from src.Utilities import Utilities
 from src.Signature import Signature
 import requests
 
@@ -22,12 +24,12 @@ class IdApi:
             self.url = sid_server
 
     def submit_job(self, partner_params, id_params):
-        IdApi.validate_partner_params(partner_params)
+        Utilities.validate_partner_params(partner_params)
 
         if not id_params:
             raise ValueError("Please ensure that you send through ID Information")
 
-        self.validate_id_params(id_params)
+        Utilities.validate_id_params(id_params)
 
         if partner_params.get("job_type") != 5:
             raise ValueError("Please ensure that you are setting your job_type to 5 to query ID Api")
@@ -51,37 +53,6 @@ class IdApi:
         }
         payload.update(id_params)
         return payload
-
-    @staticmethod
-    def validate_partner_params(partner_params):
-        if not partner_params:
-            raise ValueError("Please ensure that you send through partner params")
-
-        if not partner_params["user_id"] or not partner_params["job_id"] or not partner_params["job_type"]:
-            raise ValueError("Partner Parameter Arguments may not be null or empty")
-
-        if not isinstance(partner_params["user_id"], str):
-            raise ValueError("Please ensure user_id is a string")
-
-        if not isinstance(partner_params["job_id"], str):
-            raise ValueError("Please ensure job_id is a string")
-
-        if not isinstance(partner_params["job_id"], str):
-            raise ValueError("Please ensure job_id is a string")
-
-        if not isinstance(partner_params["job_type"], int):
-            raise ValueError("Please ensure job_id is a number")
-
-    @staticmethod
-    def validate_id_params(id_info_params):
-        for field in ["country", "id_type", "id_number"]:
-            if field in id_info_params:
-                if id_info_params[field]:
-                    continue
-                else:
-                    raise ValueError(field + " cannot be empty")
-            else:
-                raise ValueError(field + " cannot be empty")
 
     def __execute_http(self, payload):
         data = json.dumps(payload)

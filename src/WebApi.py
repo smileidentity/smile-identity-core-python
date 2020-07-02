@@ -32,12 +32,12 @@ class WebApi:
     def submit_job(self, partner_params, images_params,
                    id_info_params, options_params):
 
-        WebApi.validate_partner_params(partner_params)
+        Utilities.validate_partner_params(partner_params)
         job_type = partner_params["job_type"]
 
         if not id_info_params:
             if job_type == 5:
-                WebApi.validate_id_info_params(id_info_params)
+                Utilities.validate_id_info_params(id_info_params)
             id_info_params = {
                 "first_name": None,
                 "middle_name": None,
@@ -62,7 +62,7 @@ class WebApi:
 
         self.__validate_options(options_params)
         self.validate_images(images_params)
-        self.validate_enrol_with_id(id_info_params)
+        Utilities.validate_id_params(id_info_params)
         self.__validate_return_data(options_params)
 
         sec_key_object = self.__get_sec_key()
@@ -71,9 +71,9 @@ class WebApi:
                                           self.__prepare_prep_upload_payload(partner_params, sec_key_object["sec_key"],
                                                                              sec_key_object["timestamp"]))
         if prep_upload.status_code != 200:
-            raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "upload",
-                            prep_upload.status_code,
-                            prep_upload.reason, prep_upload.json())
+            raise Exception("Failed to post entity to {}, status={}, response={}".format(self.url + "/upload",
+                                                                                         prep_upload.status_code,
+                                                                                         prep_upload.json()))
         else:
             prep_upload_json_resp = prep_upload.json()
             upload_url = prep_upload_json_resp["upload_url"]
@@ -83,9 +83,9 @@ class WebApi:
             zip_stream = WebApi.create_zip(info_json, images_params)
             upload_response = WebApi.upload(upload_url, zip_stream)
             if prep_upload.status_code != 200:
-                raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "/upload",
-                                upload_response.status_code,
-                                upload_response.reason, upload_response.json())
+                raise Exception("Failed to post entity to {}, status={}, response={}".format(upload_url,
+                                                                                             prep_upload.status_code,
+                                                                                             prep_upload.json()))
 
             if options_params["return_job_status"]:
                 self.utilities = Utilities(self.partner_id, self.api_key, self.sid_server)
@@ -106,35 +106,6 @@ class WebApi:
         return id_api.submit_job(partner_params, id_info_params)
 
     @staticmethod
-    def validate_partner_params(partner_params):
-        if not partner_params:
-            raise ValueError("Please ensure that you send through partner params")
-
-        if not partner_params["user_id"] or not partner_params["job_id"] or not partner_params["job_type"]:
-            raise ValueError("Partner Parameter Arguments may not be null or empty")
-
-        if not isinstance(partner_params["user_id"], str):
-            raise ValueError("Please ensure user_id is a string")
-
-        if not isinstance(partner_params["job_id"], str):
-            raise ValueError("Please ensure job_id is a string")
-
-        if not isinstance(partner_params["job_id"], str):
-            raise ValueError("Please ensure job_id is a string")
-
-        if not isinstance(partner_params["job_type"], int):
-            raise ValueError("Please ensure job_id is a number")
-
-    @staticmethod
-    def validate_id_info_params(id_params):
-        if not id_params:
-            raise ValueError("Please ensure that you send through partner params")
-
-        for field in ["country", "id_type", "id_number"]:
-            if field is None:
-                raise ValueError(field + " cannot be empty")
-
-    @staticmethod
     def validate_images(images_params):
         if not images_params:
             raise ValueError("Please ensure that you send through image details")
@@ -149,18 +120,6 @@ class WebApi:
             if image["image"].lower().endswith(('.png', '.jpg')):
                 if not os.path.exists(image["image"]):
                     raise FileNotFoundError("No such file or directory %s" % (image["image"]))
-
-    @staticmethod
-    def validate_enrol_with_id(id_info_params):
-        if id_info_params["entered"]:
-            for field in ["country", "id_type", "id_number"]:
-                if field in id_info_params:
-                    if id_info_params[field]:
-                        continue
-                    else:
-                        raise ValueError(field + " cannot be empty")
-                else:
-                    raise ValueError(field + " cannot be empty")
 
     def __validate_options(self, options_params):
         if not self.call_back_url and not options_params:
@@ -263,9 +222,7 @@ class WebApi:
         else:
             time.sleep(4)
 
-        job_status = self.utilities.get_job_status(partner_params.get("user_id"),
-                                                   partner_params.get("job_id"),
-                                                   options_params, sec_key, timestamp)
+        job_status = self.utilities.get_job_status(partner_params, options_params, sec_key, timestamp)
         job_status_response = job_status.json()
         if not job_status_response["job_complete"] and counter < 20:
             self.__poll_job_status(counter, partner_params, options_params, sec_key, timestamp)

@@ -19,8 +19,9 @@ class Utilities:
         else:
             self.url = sid_server
 
-    def get_job_status(self, user_id, job_id, option_params, sec_key, timestamp):
+    def get_job_status(self, partner_params, option_params, sec_key, timestamp):
 
+        Utilities.validate_partner_params(partner_params)
         if not option_params or option_params is None:
             options = {
                 "return_job_status": True,
@@ -29,16 +30,8 @@ class Utilities:
             }
         else:
             options = option_params
-        Utilities.validate_partner_params(user_id, job_id)
-        return self.__query_job_status(user_id, job_id, options, sec_key, timestamp)
-
-    @staticmethod
-    def validate_partner_params(user_id, job_id):
-        if not user_id:
-            raise ValueError("user_id cannot be empty")
-
-        if not job_id:
-            raise ValueError("job_id cannot be empty")
+        return self.__query_job_status(partner_params.get("user_id"), partner_params.get("job_id"), options, sec_key,
+                                       timestamp)
 
     def __query_job_status(self, user_id, job_id, option_params, sec_key, timestamp):
         job_status = self.execute(self.url + "/job_status",
@@ -71,6 +64,38 @@ class Utilities:
     def __get_sec_key(self):
         sec_key_gen = Signature(self.partner_id, self.api_key)
         return sec_key_gen.generate_sec_key()
+
+    @staticmethod
+    def validate_partner_params(partner_params):
+        if not partner_params:
+            raise ValueError("Please ensure that you send through partner params")
+
+        if not partner_params["user_id"] or not partner_params["job_id"] or not partner_params["job_type"]:
+            raise ValueError("Partner Parameter Arguments may not be null or empty")
+
+        if not isinstance(partner_params["user_id"], str):
+            raise ValueError("Please ensure user_id is a string")
+
+        if not isinstance(partner_params["job_id"], str):
+            raise ValueError("Please ensure job_id is a string")
+
+        if not isinstance(partner_params["job_id"], str):
+            raise ValueError("Please ensure job_id is a string")
+
+        if not isinstance(partner_params["job_type"], int):
+            raise ValueError("Please ensure job_id is a number")
+
+    @staticmethod
+    def validate_id_params(id_info_params):
+        if id_info_params["entered"]:
+            for field in ["country", "id_type", "id_number"]:
+                if field in id_info_params:
+                    if id_info_params[field]:
+                        continue
+                    else:
+                        raise ValueError(field + " cannot be empty")
+                else:
+                    raise ValueError(field + " cannot be empty")
 
     @staticmethod
     def execute(url, payload):
