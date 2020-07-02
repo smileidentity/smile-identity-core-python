@@ -271,6 +271,5 @@ dmypy.json
 [Ss]cripts
 pyvenv.cfg
 pip-selfcheck.json
-*.zip
 
 # End of https://www.toptal.com/developers/gitignore/api/venv,python,pycharm,macos
