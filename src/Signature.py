@@ -6,7 +6,7 @@ from Crypto.Cipher import PKCS1_v1_5
 
 
 class Signature:
-    def __init__(self, partner_id, api_key) -> None:
+    def __init__(self, partner_id, api_key):
         self.partner_id = partner_id
         self.api_key = api_key
         self.decoded_api_key = api_key  # base64.b64decode(self.api_key)
