@@ -397,6 +397,12 @@ class TestUtilities(unittest.TestCase):
             self.assertEqual(ve.exception.args[0], u"country cannot be empty")
 
             self.__reset_params()
+            self.id_info_params["country"] = "ZW"
+            with self.assertRaises(ValueError) as ve:
+                Utilities.validate_id_params(self.utilities.url, self.id_info_params, self.partner_params)
+            self.assertEqual(ve.exception.args[0], u"country ZW is invalid")
+
+            self.__reset_params()
             self.id_info_params["id_type"] = None
             with self.assertRaises(ValueError) as ve:
                 Utilities.validate_id_params(self.utilities.url, self.id_info_params, self.partner_params)
