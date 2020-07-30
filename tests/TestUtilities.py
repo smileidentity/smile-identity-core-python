@@ -9,7 +9,7 @@ from Crypto.PublicKey import RSA
 from src import Signature, Utilities
 
 
-class TestSignature(unittest.TestCase):
+class TestUtilities(unittest.TestCase):
 
     def setUp(self):
         self.key = RSA.generate(2048)
@@ -17,12 +17,28 @@ class TestSignature(unittest.TestCase):
         self.partner_id = "001"
         self.signatureObj = Signature(self.partner_id, self.public_key)
         self.cipher = PKCS1_v1_5.new(self.key.exportKey())
+        self.__reset_params()
+        self.utilities = Utilities(self.partner_id, self.public_key, 0)
+
+    def __reset_params(self):
         self.partner_params = {
             "user_id": str(uuid4()),
             "job_id": str(uuid4()),
             "job_type": 1,
         }
-        self.utilities = Utilities(self.partner_id, self.public_key, 0)
+        self.id_info_params = {
+            "first_name": "FirstName",
+            "middle_name": "LastName",
+            "last_name": "MiddleName",
+            "country": "NG",
+            "id_type": "PASSPORT",
+            "id_number": "A00000000",
+            "dob": "1989-09-20",
+            "phone_number": "",
+            "entered": True,
+        }
+        self.image_params = []
+        self.image_params.append({"image_type_id": "2", "image": "base6image"})
         self.options_params = {
             "return_job_status": True,
             "return_history": True,
@@ -112,39 +128,298 @@ class TestSignature(unittest.TestCase):
             ]
         }
 
+    @staticmethod
+    def _get_smile_services_response():
+        return {
+            "id_types": {
+                "GH": {
+                    "SSNIT": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "VOTER_ID": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "DRIVERS_LICENSE": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "PASSPORT": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ]
+                },
+                "NG": {
+                    "NIN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "CAC": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "company",
+                        "job_id"
+                    ],
+                    "TIN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "VOTER_ID": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "BVN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "PHONE_NUMBER": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                        "first_name",
+                        "last_name"
+                    ],
+                    "DRIVERS_LICENSE": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                        "first_name",
+                        "last_name",
+                        "dob"
+                    ],
+                    "PASSPORT": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                        "first_name",
+                        "last_name",
+                        "dob"
+                    ]
+                },
+                "KE": {
+                    "NATIONAL_ID": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "ALIEN_CARD": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "PASSPORT": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ]
+                },
+                "ZA": {
+                    "NATIONAL_ID": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "NATIONAL_ID_NO_PHOTO": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ]
+                }
+            },
+            "bank_codes": [
+                {
+                    "name": "Access Bank",
+                    "code": "044"
+                },
+                {
+                    "name": "Access Bank (Diamond Bank)",
+                    "code": "063"
+                },
+                {
+                    "name": "Ecobank",
+                    "code": "050"
+                },
+                {
+                    "name": "Enterprise Bank",
+                    "code": "084"
+                },
+                {
+                    "name": "Fidelity Bank",
+                    "code": "070"
+                },
+                {
+                    "name": "First Bank",
+                    "code": "011"
+                },
+                {
+                    "name": "First City Monument Bank",
+                    "code": "214"
+                },
+                {
+                    "name": "Guaranty Trust Bank",
+                    "code": "058"
+                },
+                {
+                    "name": "Heritage Bank",
+                    "code": "030"
+                },
+                {
+                    "name": "Jaiz Bank",
+                    "code": "301"
+                },
+                {
+                    "name": "Keystone Bank",
+                    "code": "082"
+                },
+                {
+                    "name": "Mainstreet Bank",
+                    "code": "014"
+                },
+                {
+                    "name": "Polaris Bank",
+                    "code": "076"
+                },
+                {
+                    "name": "Stanbic IBTC",
+                    "code": "039"
+                },
+                {
+                    "name": "Skye Bank",
+                    "code": "076"
+                },
+                {
+                    "name": "Sterling Bank",
+                    "code": "232"
+                },
+                {
+                    "name": "Union Bank",
+                    "code": "032"
+                },
+                {
+                    "name": "UBA",
+                    "code": "033"
+                },
+                {
+                    "name": "Unity Bank",
+                    "code": "215"
+                },
+                {
+                    "name": "Wema Bank",
+                    "code": "035"
+                },
+                {
+                    "name": "Zenith Bank",
+                    "code": "057"
+                }
+            ]
+        }
+
     def test_no_partner_params(self):
+        self.__reset_params()
         with self.assertRaises(ValueError) as ve:
-            response = self.utilities.get_job_status(None, self.partner_params.get("job_id"), None)
-        self.assertEqual(ve.exception.args[0], u"user_id cannot be empty")
+            response = Utilities.validate_partner_params(None)
+        self.assertEqual(ve.exception.args[0], u"Please ensure that you send through partner params")
 
+    def test_missing_partner_params(self):
+        self.__reset_params()
+        self.partner_params["user_id"] = None
         with self.assertRaises(ValueError) as ve:
-            response = self.utilities.get_job_status(self.partner_params.get("user_id"), None, None)
-        self.assertEqual(ve.exception.args[0], u"job_id cannot be empty")
+            response = Utilities.validate_partner_params(self.partner_params)
+        value_exception = ve.exception
+        self.assertEqual(value_exception.args[0], u"Partner Parameter Arguments may not be null or empty")
 
-        with patch('requests.post') as mocked_post:
-            mocked_post.return_value.status_code = 200
-            mocked_post.return_value.ok = True
-            mocked_post.return_value.text.return_value = self._get_job_status_response()
-            mocked_post.return_value.json.return_value = self._get_job_status_response()
+        self.__reset_params()
+        self.partner_params["job_id"] = None
+        with self.assertRaises(ValueError) as ve:
+            response = Utilities.validate_partner_params(self.partner_params)
+        self.assertEqual(ve.exception.args[0], u"Partner Parameter Arguments may not be null or empty")
 
-            job_status = self.utilities.get_job_status(self.partner_params.get("user_id"),
-                                                       self.partner_params.get("job_id"),
-                                                       None)
-            job_status_response = job_status.json()
+        self.__reset_params()
+        self.partner_params["job_type"] = None
+        with self.assertRaises(ValueError) as ve:
+            response = Utilities.validate_partner_params(self.partner_params)
+        self.assertEqual(ve.exception.args[0], u"Partner Parameter Arguments may not be null or empty")
 
-            self.assertEqual(job_status.status_code, 200)
-            self.assertIsNotNone(job_status.json())
+    def test_id_info_params(self):
+        self.__reset_params()
+        with patch('requests.get') as mocked_get:
+            mocked_get.return_value.status_code = 200
+            mocked_get.return_value.ok = True
+            mocked_get.return_value.text.return_value = TestUtilities._get_smile_services_response()
+            mocked_get.return_value.json.return_value = TestUtilities._get_smile_services_response()
+
+            self.id_info_params["country"] = None
+            with self.assertRaises(ValueError) as ve:
+                Utilities.validate_id_params(self.utilities.url, self.id_info_params, self.partner_params)
+            self.assertEqual(ve.exception.args[0], u"country cannot be empty")
+
+            self.__reset_params()
+            self.id_info_params["id_type"] = None
+            with self.assertRaises(ValueError) as ve:
+                Utilities.validate_id_params(self.utilities.url, self.id_info_params, self.partner_params)
+            self.assertEqual(ve.exception.args[0], u"id_type cannot be empty")
+
+            self.__reset_params()
+            self.id_info_params["id_number"] = None
+            with self.assertRaises(ValueError) as ve:
+                Utilities.validate_id_params(self.utilities.url, self.id_info_params, self.partner_params)
+            self.assertEqual(ve.exception.args[0], u"key id_number cannot be empty")
 
     def test_response(self):
+        self.__reset_params()
+        timestamp = int(time.time())
+        sec_timestamp = self.signatureObj.generate_sec_key(timestamp=timestamp)
         with patch('requests.post') as mocked_post:
             mocked_post.return_value.status_code = 200
             mocked_post.return_value.ok = True
             mocked_post.return_value.text.return_value = self._get_job_status_response()
             mocked_post.return_value.json.return_value = self._get_job_status_response()
 
-            job_status = self.utilities.get_job_status(self.partner_params.get("user_id"),
-                                                       self.partner_params.get("job_id"),
-                                                       self.options_params)
+            job_status = self.utilities.get_job_status(self.partner_params, self.options_params,
+                                                       sec_timestamp["sec_key"], timestamp)
             job_status_response = job_status.json()
 
             self.assertEqual(job_status.status_code, 200)

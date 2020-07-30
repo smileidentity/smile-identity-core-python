@@ -86,7 +86,7 @@ class TestIdApi(unittest.TestCase):
         self.id_info_params["id_number"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
-        self.assertEqual(ve.exception.args[0], u"id_number cannot be empty")
+        self.assertEqual(ve.exception.args[0], u"key id_number cannot be empty")
 
     def get_id_response(self):
         timestamp = int(time.time())

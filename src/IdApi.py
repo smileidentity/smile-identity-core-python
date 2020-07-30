@@ -29,7 +29,7 @@ class IdApi:
         if not id_params:
             raise ValueError("Please ensure that you send through ID Information")
 
-        Utilities.validate_id_params(id_params)
+        Utilities.validate_id_params(self.url, id_params,partner_params)
 
         if partner_params.get("job_type") != 5:
             raise ValueError("Please ensure that you are setting your job_type to 5 to query ID Api")

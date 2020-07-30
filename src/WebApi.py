@@ -62,7 +62,7 @@ class WebApi:
 
         self.__validate_options(options_params)
         self.validate_images(images_params)
-        Utilities.validate_id_params(id_info_params)
+        Utilities.validate_id_params(self.url, id_info_params, partner_params)
         self.__validate_return_data(options_params)
 
         sec_key_object = self.__get_sec_key()

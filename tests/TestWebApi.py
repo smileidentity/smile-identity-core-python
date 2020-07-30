@@ -109,7 +109,7 @@ class TestWebApi(unittest.TestCase):
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
                                                self.id_info_params, self.options_params)
-        self.assertEqual(ve.exception.args[0], u"id_number cannot be empty")
+        self.assertEqual(ve.exception.args[0], u"key id_number cannot be empty")
 
     def test_non_valid_image(self):
         self.__reset_params()

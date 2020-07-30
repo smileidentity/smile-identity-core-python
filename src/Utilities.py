@@ -34,8 +34,9 @@ class Utilities:
                                        timestamp)
 
     def __query_job_status(self, user_id, job_id, option_params, sec_key, timestamp):
-        job_status = self.execute(self.url + "/job_status",
-                                  self.__configure_job_query(user_id, job_id, option_params, sec_key, timestamp))
+        job_status = Utilities.execute_post(self.url + "/job_status",
+                                            self.__configure_job_query(user_id, job_id, option_params, sec_key,
+                                                                       timestamp))
         if job_status.status_code != 200:
             raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "/job_status",
                             job_status.status_code,
@@ -86,9 +87,9 @@ class Utilities:
             raise ValueError("Please ensure job_id is a number")
 
     @staticmethod
-    def validate_id_params(id_info_params):
+    def validate_id_params(url, id_info_params, partner_params):
         if id_info_params["entered"]:
-            for field in ["country", "id_type", "id_number"]:
+            for field in ["country", "id_type"]:
                 if field in id_info_params:
                     if id_info_params[field]:
                         continue
@@ -96,9 +97,39 @@ class Utilities:
                         raise ValueError(field + " cannot be empty")
                 else:
                     raise ValueError(field + " cannot be empty")
+        response = Utilities.execute_get(url + "/services")
+        if response.status_code != 200:
+            raise Exception("Failed to get to {}, status={}, response={}".format(url + "/services",
+                                                                                 response.status_code,
+                                                                                 response.json()))
+        response_json = response.json()
+        if response_json["id_types"]:
+            if not id_info_params["country"] in response_json["id_types"]:
+                raise ValueError("country " + id_info_params["country"] + " is invalid")
+            selected_country = response_json["id_types"][id_info_params["country"]]
+            if not id_info_params["id_type"] in selected_country:
+                raise ValueError("id_type " + id_info_params["id_type"] + " is invalid")
+            id_params = selected_country[id_info_params["id_type"]]
+            for key in id_params:
+                if key not in id_info_params and key not in partner_params:
+                    raise ValueError("key " + key + " is required")
+                if key in id_info_params and not id_info_params[key]:
+                    raise ValueError("key " + key + " cannot be empty")
+                if key in partner_params and not partner_params[key]:
+                    raise ValueError("key " + key + " cannot be empty")
 
     @staticmethod
-    def execute(url, payload):
+    def execute_get(url):
+        resp = requests.get(
+            url=url,
+            headers={
+                "Accept": "application/json",
+                "Accept-Language": "en_US",
+            })
+        return resp
+
+    @staticmethod
+    def execute_post(url, payload):
         data = json.dumps(payload)
         resp = requests.post(
             url=url,
