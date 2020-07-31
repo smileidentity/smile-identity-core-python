@@ -91,16 +91,16 @@ class Utilities:
             raise ValueError("Please ensure job_id is a number")
 
     @staticmethod
-    def validate_id_params(url, id_info_params, partner_params, use_validation_api):
+    def validate_id_params(url, id_info_params, partner_params, use_validation_api=True):
         if id_info_params["entered"]:
             for field in ["country", "id_type", "id_number"]:
                 if field in id_info_params:
                     if id_info_params[field]:
                         continue
                     else:
-                        raise ValueError(field + " cannot be empty")
+                        raise ValueError("key " + field + " cannot be empty")
                 else:
-                    raise ValueError(field + " cannot be empty")
+                    raise ValueError("key " + field + " cannot be empty")
         if not use_validation_api:
             return
 

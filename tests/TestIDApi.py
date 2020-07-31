@@ -74,13 +74,13 @@ class TestIdApi(unittest.TestCase):
         self.id_info_params["country"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
-        self.assertEqual(ve.exception.args[0], u"country cannot be empty")
+        self.assertEqual(ve.exception.args[0], u"key country cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_type"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
-        self.assertEqual(ve.exception.args[0], u"id_type cannot be empty")
+        self.assertEqual(ve.exception.args[0], u"key id_type cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_number"] = None

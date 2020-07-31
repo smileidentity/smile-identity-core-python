@@ -30,14 +30,14 @@ class WebApi:
             self.url = sid_server
 
     def submit_job(self, partner_params, images_params,
-                   id_info_params, options_params):
+                   id_info_params, options_params, use_validation_api=True):
 
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params["job_type"]
 
         if not id_info_params:
             if job_type == 5:
-                Utilities.validate_id_info_params(id_info_params)
+                Utilities.validate_id_params(self.url, id_info_params, partner_params, use_validation_api)
             id_info_params = {
                 "first_name": None,
                 "middle_name": None,

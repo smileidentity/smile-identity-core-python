@@ -23,13 +23,13 @@ class IdApi:
         else:
             self.url = sid_server
 
-    def submit_job(self, partner_params, id_params):
+    def submit_job(self, partner_params, id_params, use_validation_api=True):
         Utilities.validate_partner_params(partner_params)
 
         if not id_params:
             raise ValueError("Please ensure that you send through ID Information")
 
-        Utilities.validate_id_params(self.url, id_params,partner_params)
+        Utilities.validate_id_params(self.url, id_params, partner_params, use_validation_api)
 
         if partner_params.get("job_type") != 5:
             raise ValueError("Please ensure that you are setting your job_type to 5 to query ID Api")
