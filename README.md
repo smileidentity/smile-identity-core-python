@@ -78,7 +78,8 @@ connection =  WebApi("125", "default_callback.com", "<the decoded-version of-you
                                                id_info_params, options_params)
 ```
 
-
+use_validation_api is optional and defaults to true this will call the smile server and gets all required
+input information for a job type and id type and checks if you  have provided required information else it will throw an exception
 ```
 
 In the case of a Job Type 5 you can simply omit the the image_params and options_params keys. Remember that the response is immediate, so there is no need to query the job_status. There is also no enrollment so no images are required. The response for a job type 5 can be found in the response section below.
@@ -86,7 +87,8 @@ In the case of a Job Type 5 you can simply omit the the image_params and options
 ```
 $ response = connection.submit_job(partner_params, None, id_info, None);
 
-
+use_validation_api is optional and defaults to true this will call the smile server and gets all required
+input information for a job type and id type and checks if you  have provided required information else it will throw an exception
 
 **Response:**
 
@@ -317,6 +319,8 @@ Your call to the library will be similar to the below code snippet:
       connection =  IDApi(<String partner_id>, <String decoded_version_of_api_key>, <Integer 0 || 1>);
   response = connection.submit_job(partner_params, id_info_params);  
 ```
+use_validation_api is optional and defaults to true this will call the smile server and gets all required
+input information for a job type and id type and checks if you  have provided required information else it will throw an exception
 
 **Response**
 
