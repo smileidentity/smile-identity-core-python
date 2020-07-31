@@ -20,6 +20,10 @@ class Utilities:
             self.url = sid_server
 
     def get_job_status(self, partner_params, option_params, sec_key, timestamp):
+        if sec_key is None:
+            sec_key_object = self.__get_sec_key()
+            sec_key = sec_key_object["sec_key"]
+            timestamp = sec_key_object["timestamp"]
 
         Utilities.validate_partner_params(partner_params)
         if not option_params or option_params is None:
@@ -87,9 +91,9 @@ class Utilities:
             raise ValueError("Please ensure job_id is a number")
 
     @staticmethod
-    def validate_id_params(url, id_info_params, partner_params):
+    def validate_id_params(url, id_info_params, partner_params, use_validation_api):
         if id_info_params["entered"]:
-            for field in ["country", "id_type"]:
+            for field in ["country", "id_type", "id_number"]:
                 if field in id_info_params:
                     if id_info_params[field]:
                         continue
@@ -97,6 +101,9 @@ class Utilities:
                         raise ValueError(field + " cannot be empty")
                 else:
                     raise ValueError(field + " cannot be empty")
+        if not use_validation_api:
+            return
+
         response = Utilities.execute_get(url + "/services")
         if response.status_code != 200:
             raise Exception("Failed to get to {}, status={}, response={}".format(url + "/services",
