@@ -104,7 +104,7 @@ class Utilities:
         if not use_validation_api:
             return
 
-        response = Utilities.smile_services(sid_server, id_info_params, partner_params)
+        response = Utilities.smile_services(sid_server)
         if response.status_code != 200:
             raise Exception("Failed to get to {}, status={}, response={}".format(url + "/services",
                                                                                  response.status_code,
@@ -140,7 +140,7 @@ class Utilities:
             raise Exception("Failed to get to {}, status={}, response={}".format(url + "/services",
                                                                                  response.status_code,
                                                                                  response.json()))
-        return response.json()
+        return response
 
     @staticmethod
     def execute_get(url):

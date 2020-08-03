@@ -125,14 +125,93 @@ class TestIdApi(unittest.TestCase):
                 "signature": sec_timestamp["sec_key"]
                 }
 
+    @staticmethod
+    def _get_smile_services_response():
+        return {
+            "id_types": {
+                "NG": {
+                    "NIN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "CAC": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "company",
+                        "job_id"
+                    ],
+                    "TIN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "VOTER_ID": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "BVN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "PHONE_NUMBER": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                        "first_name",
+                        "last_name"
+                    ],
+                    "DRIVERS_LICENSE": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                        "first_name",
+                        "last_name",
+                        "dob"
+                    ],
+                    "PASSPORT": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                        "first_name",
+                        "last_name",
+                        "dob"
+                    ]
+                },
+            }
+        }
+
     def test_error_return_data(self):
         self.__reset_params()
         with self.assertRaises(Exception) as ve:
-            with patch('requests.post') as mocked_post:
+            with patch('requests.post') as mocked_post, patch('requests.get') as mocked_get:
                 mocked_post.return_value.status_code = 400
                 mocked_post.return_value.ok = True
                 mocked_post.return_value.text.return_value = {'code': '2204', 'error': 'unauthorized'}
                 mocked_post.return_value.json.return_value = {'code': '2204', 'error': 'unauthorized'}
+
+                mocked_get.return_value.status_code = 200
+                mocked_get.return_value.ok = True
+                mocked_get.return_value.text.return_value = TestIdApi._get_smile_services_response()
+                mocked_get.return_value.json.return_value = TestIdApi._get_smile_services_response()
 
                 response = self.id_api.submit_job(self.partner_params, self.id_info_params)
         self.assertEqual(ve.exception.args[0],
