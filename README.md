@@ -404,15 +404,23 @@ This returns the job status as stringified json data.
 ```python
 from SmileId import Utilities
 
- connection =  Utilities(<partner_id>, <the decoded-version of-your-api-key>, <sid_server>)
- connection.validate_id_params(url, id_info_params, partner_params, use_validation_api=True);
+ Utilities.validate_id_params(sid_server<0 for test or 1 for live or a string url>, id_info_params, partner_params, use_validation_api=True)
 
 print(job_status);
 ```
 This will validate id parameters using the smile services endpoint which checks 
 the provided user id and partner params. If use_validation_api  is  False it will only do a local
 validation to check for country, id type and id number but by default this is  True and will check
-against the smile services endpoint
+against the smile services endpoint and if any key is missing will throw an exception
+
+```python
+from SmileId import Utilities
+
+ Utilities.smile_services(sid_server<0 for test or 1 for live or a string url>)
+
+print(job_status);
+```
+This will return the smile services endpoint as a json object and  can then be used  for validation as per requirement
 
 ## Development
 

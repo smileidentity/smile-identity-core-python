@@ -91,7 +91,7 @@ class Utilities:
             raise ValueError("Please ensure job_id is a number")
 
     @staticmethod
-    def validate_id_params(url, id_info_params, partner_params, use_validation_api=True):
+    def validate_id_params(sid_server, id_info_params, partner_params, use_validation_api=True):
         if id_info_params["entered"]:
             for field in ["country", "id_type", "id_number"]:
                 if field in id_info_params:
@@ -104,7 +104,7 @@ class Utilities:
         if not use_validation_api:
             return
 
-        response = Utilities.execute_get(url + "/services")
+        response = Utilities.smile_services(sid_server, id_info_params, partner_params)
         if response.status_code != 200:
             raise Exception("Failed to get to {}, status={}, response={}".format(url + "/services",
                                                                                  response.status_code,
@@ -124,6 +124,23 @@ class Utilities:
                     raise ValueError("key " + key + " cannot be empty")
                 if key in partner_params and not partner_params[key]:
                     raise ValueError("key " + key + " cannot be empty")
+
+    @staticmethod
+    def smile_services(sid_server):
+        if sid_server in [0, 1]:
+            sid_server_map = {
+                0: "https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
+                1: "https://la7am6gdm8.execute-api.us-west-2.amazonaws.com/prod",
+            }
+            url = sid_server_map[sid_server]
+        else:
+            url = sid_server
+        response = Utilities.execute_get(url + "/services")
+        if response.status_code != 200:
+            raise Exception("Failed to get to {}, status={}, response={}".format(url + "/services",
+                                                                                 response.status_code,
+                                                                                 response.json()))
+        return response.json()
 
     @staticmethod
     def execute_get(url):
