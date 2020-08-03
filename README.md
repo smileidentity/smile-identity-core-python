@@ -18,7 +18,7 @@ The **Utilities Class** allows you as the Partner to have access to our general 
 
 ## Documentation
 
-This library requires specific input parameters, for more detail on these parameters please refer to our [documentation for Web API](https://docs.smileidentity.com/products/web-api/java).
+This library requires specific input parameters, for more detail on these parameters please refer to our [documentation for Web API](https://docs.smileidentity.com/products/web-api/python).
 
 Please note that you will have to be a Smile Identity Partner to be able to query our services. You can sign up on the [Portal](https://test-smileid.herokuapp.com/signup?products[]=1-IDVALIDATION&products[]=2-AUTHENTICATION).
 
@@ -393,12 +393,26 @@ You may want to receive more information about a job. This is built into Web Api
 ```python
 from SmileId import Utilities
 
- job_status =  Utilities(<partner_id>, <the decoded-version of-your-api-key>, <sid_server>).get_job_status(<user_id>, <job_id>, <return_image_links> , <return_history>);
+ connection =  Utilities(<partner_id>, <the decoded-version of-your-api-key>, <sid_server>)
+ connection.get_job_status(<partner_params>, <option_params>, <sec_key>, <timestamp>);
 
 print(job_status);
 ```
 
 This returns the job status as stringified json data.
+
+```python
+from SmileId import Utilities
+
+ connection =  Utilities(<partner_id>, <the decoded-version of-your-api-key>, <sid_server>)
+ connection.validate_id_params(url, id_info_params, partner_params, use_validation_api=True);
+
+print(job_status);
+```
+This will validate id parameters using the smile services endpoint which checks 
+the provided user id and partner params. If use_validation_api  is  False it will only do a local
+validation to check for country, id type and id number but by default this is  True and will check
+against the smile services endpoint
 
 ## Development
 
@@ -415,4 +429,4 @@ This is the https://packaging.python.org/tutorials/packaging-projects/ that you 
 Tests are based on unittest as documented  here https://docs.python.org/3/library/unittest.html and to  run tests run python -m unittest in the root folder of the project
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/smileidentity/smile-identity-core-java
+Bug reports and pull requests are welcome on GitHub at https://github.com/smileidentity/smile-identity-core-python
