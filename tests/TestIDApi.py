@@ -66,7 +66,7 @@ class TestIdApi(unittest.TestCase):
         self.__reset_params()
         self.partner_params["job_type"] = 1
         with self.assertRaises(ValueError) as ve:
-            response = self.id_api.submit_job(self.partner_params, self.id_info_params)
+            response = self.id_api.submit_job(self.partner_params, self.id_info_params, False)
         self.assertEqual(ve.exception.args[0], u"Please ensure that you are setting your job_type to 5 to query ID Api")
 
     def test_id_info_params(self):
@@ -227,7 +227,7 @@ class TestIdApi(unittest.TestCase):
             mocked_post.return_value.text.return_value = self.get_id_response()
             mocked_post.return_value.json.return_value = self.get_id_response()
 
-            response = self.id_api.submit_job(self.partner_params, self.id_info_params)
+            response = self.id_api.submit_job(self.partner_params, self.id_info_params, False)
 
             self.assertEqual(response.status_code, 200)
             self.assertIsNotNone(response.json())

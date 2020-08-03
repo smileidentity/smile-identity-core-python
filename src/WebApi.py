@@ -51,7 +51,7 @@ class WebApi:
             }
 
         if job_type == 5:
-            return self.__call_id_api(partner_params, id_info_params)
+            return self.__call_id_api(partner_params, id_info_params,use_validation_api)
 
         if not options_params:
             options_params = {
@@ -62,7 +62,7 @@ class WebApi:
 
         self.__validate_options(options_params)
         self.validate_images(images_params)
-        Utilities.validate_id_params(self.url, id_info_params, partner_params)
+        Utilities.validate_id_params(self.url, id_info_params, partner_params,use_validation_api)
         self.__validate_return_data(options_params)
 
         sec_key_object = self.__get_sec_key()
@@ -101,9 +101,9 @@ class WebApi:
                     "smile_job_id": smile_job_id
                 }
 
-    def __call_id_api(self, partner_params, id_info_params):
+    def __call_id_api(self, partner_params, id_info_params,use_validation_api):
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
-        return id_api.submit_job(partner_params, id_info_params)
+        return id_api.submit_job(partner_params, id_info_params,use_validation_api)
 
     @staticmethod
     def validate_images(images_params):
