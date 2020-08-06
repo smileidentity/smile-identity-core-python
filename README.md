@@ -261,7 +261,7 @@ Sometimes, you may want to get a particular job status at a later time. You may 
 
 You will already have your Web Api or Utilities class initialised as follows:
 ```python
-  connection = WebApi(<String partner_id>, <String default_callback_url>, <String decoded_version_of_api_key>, <Integer 0 || 1>)
+connection = WebApi(<String partner_id>, <String default_callback_url>, <String decoded_version_of_api_key>, <Integer 0 || 1>)
   OR 
 connection =  Utilities(<String partner_id>, <String default_callback_url>, <String decoded_version_of_api_key>, <Integer 0 || 1>)
 ```
