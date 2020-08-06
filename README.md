@@ -49,33 +49,32 @@ from SmileId import Signature
 
 Your call to the library will be similar to the below code snippet:
 ```python
-connection =  WebApi("125", "default_callback.com", "<the decoded-version of-your-api-key>", 0);
-      partner_params = {
-                "user_id": str(uuid4()),
-                "job_id": str(uuid4()),
-                "job_type": 1,
-            }
-    id_info_params = {
-        "first_name": "FirstName",
-        "middle_name": "LastName",
-        "last_name": "MiddleName",
-        "country": "NG",
-        "id_type": "PASSPORT",
-        "id_number": "A00000000",
-        "dob": "1989-09-20",
-        "phone_number": "",
-        "entered": True,
-    }
-    image_params = []
-    image_params.append({"image_type_id": "2", "image": "base6image"})
-    options_params = {
-        "return_job_status": True,
-        "return_history": True,
-        "return_images": True,
-    }
-    
-    response = web_api.submit_job(partner_params, image_params,
-                                               id_info_params, options_params)
+connection =  WebApi("125", "default_callback.com", "<the decoded-version of-your-api-key>", 0)
+partner_params = {
+    "user_id": str(uuid4()),
+    "job_id": str(uuid4()),
+    "job_type": 1,
+}
+id_info_params = {
+    "first_name": "FirstName",
+    "middle_name": "LastName",
+    "last_name": "MiddleName",
+    "country": "NG",
+    "id_type": "PASSPORT",
+    "id_number": "A00000000",
+    "dob": "1989-09-20",
+    "phone_number": "",
+    "entered": True,
+}
+image_params = []
+image_params.append({"image_type_id": "2", "image": "base6image"})
+options_params = {
+    "return_job_status": True,
+    "return_history": True,
+    "return_images": True,
+}
+
+response = web_api.submit_job(partner_params, image_params,id_info_params, options_params)
 ```
 
 use_validation_api is optional and defaults to true this will call the smile server and gets all required
@@ -85,7 +84,7 @@ input information for a job type and id type and checks if you  have provided re
 In the case of a Job Type 5 you can simply omit the the image_params and options_params keys. Remember that the response is immediate, so there is no need to query the job_status. There is also no enrollment so no images are required. The response for a job type 5 can be found in the response section below.
 
 ```
-$ response = connection.submit_job(partner_params, None, id_info, None);
+$ response = connection.submit_job(partner_params, None, id_info, None)
 
 use_validation_api is optional and defaults to true this will call the smile server and gets all required
 input information for a job type and id type and checks if you  have provided required information else it will throw an exception
@@ -262,27 +261,27 @@ Sometimes, you may want to get a particular job status at a later time. You may 
 
 You will already have your Web Api or Utilities class initialised as follows:
 ```python
-  connection = WebApi(<String partner_id>, <String default_callback_url>, <String decoded_version_of_api_key>, <Integer 0 || 1>);
+  connection = WebApi(<String partner_id>, <String default_callback_url>, <String decoded_version_of_api_key>, <Integer 0 || 1>)
   OR 
-connection =  Utilities(<String partner_id>, <String default_callback_url>, <String decoded_version_of_api_key>, <Integer 0 || 1>);
+connection =  Utilities(<String partner_id>, <String default_callback_url>, <String decoded_version_of_api_key>, <Integer 0 || 1>)
 ```
 Thereafter, simply call get_job_status with the correct parameters using the classes we have provided:
 ```python
-  // create the stringified json for the partner params using our class (i.e. user_id, job_id, and job_type that you would are querying)
-  partner_params = {
-            "user_id": str(uuid4()),
-            "job_id": str(uuid4()),
-            "job_type": 1,
-        }
+# create the stringified json for the partner params using our class (i.e. user_id, job_id, and job_type that you would are querying)
+partner_params = {
+    "user_id": str(uuid4()),
+    "job_id": str(uuid4()),
+    "job_type": 1,
+}
 
-  // create the options - whether you would like to return_history and return_image_links in the job status response
- options_params = {
-            "return_job_status": True,
-            "return_history": True,
-            "return_images": True,
-        }
+# create the options - whether you would like to return_history and return_image_links in the job status response
+options_params = {
+    "return_job_status": True,
+    "return_history": True,
+    "return_images": True,
+}
 
-  response = connection.get_job_status(partner_params, options_params);
+response = connection.get_job_status(partner_params, options_params)
 ```
 
 
@@ -300,24 +299,24 @@ from SmileId import IdApi
 
 Your call to the library will be similar to the below code snippet:
 ```python
-    partner_params = {
-            "user_id": str(uuid4()),
-            "job_id": str(uuid4()),
-            "job_type": 5,
-        }
-    id_info_params = {
-            "first_name": "FirstName",
-            "middle_name": "LastName",
-            "last_name": "MiddleName",
-            "country": "NG",
-            "id_type": "PASSPORT",
-            "id_number": "A00000000",
-            "dob": "1989-09-20",
-            "phone_number": "",
-            "entered": True,
-        }
-      connection =  IDApi(<String partner_id>, <String decoded_version_of_api_key>, <Integer 0 || 1>);
-  response = connection.submit_job(partner_params, id_info_params);  
+partner_params = {
+    "user_id": str(uuid4()),
+    "job_id": str(uuid4()),
+    "job_type": 5,
+}
+id_info_params = {
+    "first_name": "FirstName",
+    "middle_name": "LastName",
+    "last_name": "MiddleName",
+    "country": "NG",
+    "id_type": "PASSPORT",
+    "id_number": "A00000000",
+    "dob": "1989-09-20",
+    "phone_number": "",
+    "entered": True,
+}
+connection =  IDApi(<String partner_id>, <String decoded_version_of_api_key>, <Integer 0 || 1>)
+response = connection.submit_job(partner_params, id_info_params)  
 ```
 use_validation_api is optional and defaults to true this will call the smile server and gets all required
 input information for a job type and id type and checks if you  have provided required information else it will throw an exception
@@ -370,9 +369,9 @@ from SmileId  import Signature
 
 try :
   connection =  Signature(self.partner_id,api_keyy)
-  signatureJsonStr = connection.generate_sec_key(timestamp); // where timestamp is optional
+  signatureJsonStr = connection.generate_sec_key(timestamp) # where timestamp is optional
 
-  // In order to utilise the signature you can then use a json parser and extract the signature
+  # In order to utilise the signature you can then use a json parser and extract the signature
  Except : 
  ...
 ```
@@ -380,8 +379,8 @@ try :
 The response will be a stringified json object:
 ```python
 {
-  sec_key: "<the generated sec key>",
- timestamp: "<timestamp that you passed in or that was generated>"
+    sec_key: "<the generated sec key>",
+    timestamp: "<timestamp that you passed in or that was generated>"
 }
 ```
 
@@ -393,10 +392,10 @@ You may want to receive more information about a job. This is built into Web Api
 ```python
 from SmileId import Utilities
 
- connection =  Utilities(<partner_id>, <the decoded-version of-your-api-key>, <sid_server>)
- connection.get_job_status(<partner_params>, <option_params>, <sec_key>, <timestamp>);
+connection =  Utilities(<partner_id>, <the decoded-version of-your-api-key>, <sid_server>)
+job_status = connection.get_job_status(<partner_params>, <option_params>, <sec_key>, <timestamp>)
 
-print(job_status);
+print(job_status)
 ```
 
 This returns the job status as stringified json data.
@@ -404,9 +403,8 @@ This returns the job status as stringified json data.
 ```python
 from SmileId import Utilities
 
- Utilities.validate_id_params(sid_server<0 for test or 1 for live or a string url>, id_info_params, partner_params, use_validation_api=True)
+Utilities.validate_id_params(sid_server<0 for test or 1 for live or a string url>, id_info_params, partner_params, use_validation_api=True)
 
-print(job_status);
 ```
 This will validate id parameters using the smile services endpoint which checks 
 the provided user id and partner params. If use_validation_api  is  False it will only do a local
@@ -418,7 +416,6 @@ from SmileId import Utilities
 
  Utilities.smile_services(sid_server<0 for test or 1 for live or a string url>)
 
-print(job_status);
 ```
 This will return the smile services endpoint as a json object and  can then be used  for validation as per requirement
 

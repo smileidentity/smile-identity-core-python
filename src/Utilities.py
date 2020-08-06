@@ -92,15 +92,17 @@ class Utilities:
 
     @staticmethod
     def validate_id_params(sid_server, id_info_params, partner_params, use_validation_api=True):
-        if id_info_params["entered"]:
-            for field in ["country", "id_type", "id_number"]:
-                if field in id_info_params:
-                    if id_info_params[field]:
-                        continue
-                    else:
-                        raise ValueError("key " + field + " cannot be empty")
+        if not id_info_params["entered"]:
+            return
+
+        for field in ["country", "id_type", "id_number"]:
+            if field in id_info_params:
+                if id_info_params[field]:
+                    continue
                 else:
                     raise ValueError("key " + field + " cannot be empty")
+            else:
+                raise ValueError("key " + field + " cannot be empty")
         if not use_validation_api:
             return
 
