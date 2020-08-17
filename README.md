@@ -28,8 +28,8 @@ View the package on [Pypi](https://pypi.org/project/smile-id-core/).
 
 Add the group, name and version to your application's build file, it will look similar based on your build tool:
 
-```Python
-pip  install smile-id-core
+```python
+pip install smile-id-core
 ```
 
 You now may use the classes as follows:
@@ -40,19 +40,16 @@ Import the necessary dependant classes for Web Api:
 
 ```python
 from SmileId import WebApi
-from SmileId import IdApi
-from SmileId import Utilities
-from SmileId import Signature
 ```
 
 ##### submit_job method
 
 Your call to the library will be similar to the below code snippet:
 ```python
-connection =  WebApi("125", "default_callback.com", "<the decoded-version of-your-api-key>", 0)
+connection = WebApi("125", "default_callback.com", "<the decoded-version of-your-api-key>", 0)
 partner_params = {
-    "user_id": str(uuid4()),
-    "job_id": str(uuid4()),
+    "user_id": str("uuid4"),
+    "job_id": str("uuid4"),
     "job_type": 1,
 }
 id_info_params = {
@@ -73,8 +70,8 @@ options_params = {
     "return_history": True,
     "return_images": True,
 }
+response = connection.submit_job(partner_params, image_params, id_info_params, options_params)
 
-response = web_api.submit_job(partner_params, image_params,id_info_params, options_params)
 ```
 
 use_validation_api is optional and defaults to true this will call the smile server and gets all required
@@ -99,155 +96,157 @@ Should you choose to *set return_job_status to false*, the response will be a JS
 However, if you have *set return_job_status to true (with image_links and history)* then you will receive JSON Object response like below:
 ```
 {
-   "job_success":true,
-   "result":{
-      "ConfidenceValue":"99",
-      "JSONVersion":"1.0.0",
-      "Actions":{
-         "Verify_ID_Number":"Verified",
-         "Return_Personal_Info":"Returned",
-         "Human_Review_Update_Selfie":"Not Applicable",
-         "Human_Review_Compare":"Not Applicable",
-         "Update_Registered_Selfie_On_File":"Not Applicable",
-         "Liveness_Check":"Not Applicable",
-         "Register_Selfie":"Approved",
-         "Human_Review_Liveness_Check":"Not Applicable",
-         "Selfie_To_ID_Authority_Compare":"Completed",
-         "Selfie_To_ID_Card_Compare":"Not Applicable",
-         "Selfie_To_Registered_Selfie_Compare":"Not Applicable"
-      },
-      "ResultText":"Enroll User",
-      "IsFinalResult":"true",
-      "IsMachineResult":"true",
-      "ResultType":"SAIA",
-      "PartnerParams":{
-         "job_type":"1",
-         "optional_info":"we are one",
-         "user_id":"HBBBBBBH57g",
-         "job_id":"HBBBBBBHg"
-      },
-      "Source":"WebAPI",
-      "ResultCode":"0810",
-      "SmileJobID":"0000001111"
-   },
-   "code":"2302",
-   "job_complete":true,
-   "signature":"HKBhxcv+1qaLy\C7PjVtk257dE=|1577b051a4313ed5e3e4d29893a66f966e31af0a2d2f6bec2a7f2e00f2701259",
-   "history":[
-      {
-         "ConfidenceValue":"99",
-         "JSONVersion":"1.0.0",
-         "Actions":{
-            "Verify_ID_Number":"Verified",
-            "Return_Personal_Info":"Returned",
-            "Human_Review_Update_Selfie":"Not Applicable",
-            "Human_Review_Compare":"Not Applicable",
-            "Update_Registered_Selfie_On_File":"Not Applicable",
-            "Liveness_Check":"Not Applicable",
-            "Register_Selfie":"Approved",
-            "Human_Review_Liveness_Check":"Not Applicable",
-            "Selfie_To_ID_Authority_Compare":"Completed",
-            "Selfie_To_ID_Card_Compare":"Not Applicable",
-            "Selfie_To_Registered_Selfie_Compare":"Not Applicable"
-         },
-         "ResultText":"Enroll User",
-         "IsFinalResult":"true",
-         "IsMachineResult":"true",
-         "ResultType":"SAIA",
-         "PartnerParams":{
-            "job_type":"1",
-            "optional_info":"we are one",
-            "user_id":"HBBBBBBH57g",
-            "job_id":"HBBBBBBHg"
-         },
-         "Source":"WebAPI",
-         "ResultCode":"0810",
-         "SmileJobID":"0000001111"
-      }
-   ],
-   "image_links":{
-      "selfie_image":"image_link"
-   },
-   "timestamp":"2019-10-10T12:32:04.622Z",
-   "success": true,
-   "smile_job_id": "0000001111"
+    "job_success": true,
+    "result": {
+        "ConfidenceValue": "99",
+        "JSONVersion": "1.0.0",
+        "Actions": {
+            "Verify_ID_Number": "Verified",
+            "Return_Personal_Info": "Returned",
+            "Human_Review_Update_Selfie": "Not Applicable",
+            "Human_Review_Compare": "Not Applicable",
+            "Update_Registered_Selfie_On_File": "Not Applicable",
+            "Liveness_Check": "Not Applicable",
+            "Register_Selfie": "Approved",
+            "Human_Review_Liveness_Check": "Not Applicable",
+            "Selfie_To_ID_Authority_Compare": "Completed",
+            "Selfie_To_ID_Card_Compare": "Not Applicable",
+            "Selfie_To_Registered_Selfie_Compare": "Not Applicable"
+        },
+        "ResultText": "Enroll User",
+        "IsFinalResult": "true",
+        "IsMachineResult": "true",
+        "ResultType": "SAIA",
+        "PartnerParams": {
+            "job_type": "1",
+            "optional_info": "we are one",
+            "user_id": "HBBBBBBH57g",
+            "job_id": "HBBBBBBHg"
+        },
+        "Source": "WebAPI",
+        "ResultCode": "0810",
+        "SmileJobID": "0000001111"
+    },
+    "code": "2302",
+    "job_complete": true,
+    "signature": "HKBhxcv+1qaLy\C7PjVtk257dE=|1577b051a4313ed5e3e4d29893a66f966e31af0a2d2f6bec2a7f2e00f2701259",
+    "history": [
+        {
+            "ConfidenceValue": "99",
+            "JSONVersion": "1.0.0",
+            "Actions": {
+                "Verify_ID_Number": "Verified",
+                "Return_Personal_Info": "Returned",
+                "Human_Review_Update_Selfie": "Not Applicable",
+                "Human_Review_Compare": "Not Applicable",
+                "Update_Registered_Selfie_On_File": "Not Applicable",
+                "Liveness_Check": "Not Applicable",
+                "Register_Selfie": "Approved",
+                "Human_Review_Liveness_Check": "Not Applicable",
+                "Selfie_To_ID_Authority_Compare": "Completed",
+                "Selfie_To_ID_Card_Compare": "Not Applicable",
+                "Selfie_To_Registered_Selfie_Compare": "Not Applicable"
+            },
+            "ResultText": "Enroll User",
+            "IsFinalResult": "true",
+            "IsMachineResult": "true",
+            "ResultType": "SAIA",
+            "PartnerParams": {
+                "job_type": "1",
+                "optional_info": "we are one",
+                "user_id": "HBBBBBBH57g",
+                "job_id": "HBBBBBBHg"
+            },
+            "Source": "WebAPI",
+            "ResultCode": "0810",
+            "SmileJobID": "0000001111"
+        }
+    ],
+    "image_links": {
+        "selfie_image": "image_link"
+    },
+    "timestamp": "2019-10-10T12:32:04.622Z",
+    "success": true,
+    "smile_job_id": "0000001111"
 }
+
 ```
 
 You can also *view your response asynchronously at the callback* that you have set, it will look as follows:
 ```
 {
-   "job_success":true,
-   "result":{
-      "ConfidenceValue":"99",
-      "JSONVersion":"1.0.0",
-      "Actions":{
-         "Verify_ID_Number":"Verified",
-         "Return_Personal_Info":"Returned",
-         "Human_Review_Update_Selfie":"Not Applicable",
-         "Human_Review_Compare":"Not Applicable",
-         "Update_Registered_Selfie_On_File":"Not Applicable",
-         "Liveness_Check":"Not Applicable",
-         "Register_Selfie":"Approved",
-         "Human_Review_Liveness_Check":"Not Applicable",
-         "Selfie_To_ID_Authority_Compare":"Completed",
-         "Selfie_To_ID_Card_Compare":"Not Applicable",
-         "Selfie_To_Registered_Selfie_Compare":"Not Applicable"
-      },
-      "ResultText":"Enroll User",
-      "IsFinalResult":"true",
-      "IsMachineResult":"true",
-      "ResultType":"SAIA",
-      "PartnerParams":{
-         "job_type":"1",
-         "optional_info":"we are one",
-         "user_id":"HBBBBBBH57g",
-         "job_id":"HBBBBBBHg"
-      },
-      "Source":"WebAPI",
-      "ResultCode":"0810",
-      "SmileJobID":"0000001111"
-   },
-   "code":"2302",
-   "job_complete":true,
-   "signature":"HKBhxcv+1qaLy\C7PjVtk257dE=|1577b051a4313ed5e3e4d29893a66f966e31af0a2d2f6bec2a7f2e00f2701259",
-   "history":[
-      {
-         "ConfidenceValue":"99",
-         "JSONVersion":"1.0.0",
-         "Actions":{
-            "Verify_ID_Number":"Verified",
-            "Return_Personal_Info":"Returned",
-            "Human_Review_Update_Selfie":"Not Applicable",
-            "Human_Review_Compare":"Not Applicable",
-            "Update_Registered_Selfie_On_File":"Not Applicable",
-            "Liveness_Check":"Not Applicable",
-            "Register_Selfie":"Approved",
-            "Human_Review_Liveness_Check":"Not Applicable",
-            "Selfie_To_ID_Authority_Compare":"Completed",
-            "Selfie_To_ID_Card_Compare":"Not Applicable",
-            "Selfie_To_Registered_Selfie_Compare":"Not Applicable"
-         },
-         "ResultText":"Enroll User",
-         "IsFinalResult":"true",
-         "IsMachineResult":"true",
-         "ResultType":"SAIA",
-         "PartnerParams":{
-            "job_type":"1",
-            "optional_info":"we are one",
-            "user_id":"HBBBBBBH57g",
-            "job_id":"HBBBBBBHg"
-         },
-         "Source":"WebAPI",
-         "ResultCode":"0810",
-         "SmileJobID":"0000001111"
-      }
-   ],
-   "image_links":{
-      "selfie_image":"image_link"
-   },
-   "timestamp":"2019-10-10T12:32:04.622Z"
+    "job_success": true,
+    "result": {
+        "ConfidenceValue": "99",
+        "JSONVersion": "1.0.0",
+        "Actions": {
+            "Verify_ID_Number": "Verified",
+            "Return_Personal_Info": "Returned",
+            "Human_Review_Update_Selfie": "Not Applicable",
+            "Human_Review_Compare": "Not Applicable",
+            "Update_Registered_Selfie_On_File": "Not Applicable",
+            "Liveness_Check": "Not Applicable",
+            "Register_Selfie": "Approved",
+            "Human_Review_Liveness_Check": "Not Applicable",
+            "Selfie_To_ID_Authority_Compare": "Completed",
+            "Selfie_To_ID_Card_Compare": "Not Applicable",
+            "Selfie_To_Registered_Selfie_Compare": "Not Applicable"
+        },
+        "ResultText": "Enroll User",
+        "IsFinalResult": "true",
+        "IsMachineResult": "true",
+        "ResultType": "SAIA",
+        "PartnerParams": {
+            "job_type": "1",
+            "optional_info": "we are one",
+            "user_id": "HBBBBBBH57g",
+            "job_id": "HBBBBBBHg"
+        },
+        "Source": "WebAPI",
+        "ResultCode": "0810",
+        "SmileJobID": "0000001111"
+    },
+    "code": "2302",
+    "job_complete": true,
+    "signature": "HKBhxcv+1qaLy\C7PjVtk257dE=|1577b051a4313ed5e3e4d29893a66f966e31af0a2d2f6bec2a7f2e00f2701259",
+    "history": [
+        {
+            "ConfidenceValue": "99",
+            "JSONVersion": "1.0.0",
+            "Actions": {
+                "Verify_ID_Number": "Verified",
+                "Return_Personal_Info": "Returned",
+                "Human_Review_Update_Selfie": "Not Applicable",
+                "Human_Review_Compare": "Not Applicable",
+                "Update_Registered_Selfie_On_File": "Not Applicable",
+                "Liveness_Check": "Not Applicable",
+                "Register_Selfie": "Approved",
+                "Human_Review_Liveness_Check": "Not Applicable",
+                "Selfie_To_ID_Authority_Compare": "Completed",
+                "Selfie_To_ID_Card_Compare": "Not Applicable",
+                "Selfie_To_Registered_Selfie_Compare": "Not Applicable"
+            },
+            "ResultText": "Enroll User",
+            "IsFinalResult": "true",
+            "IsMachineResult": "true",
+            "ResultType": "SAIA",
+            "PartnerParams": {
+                "job_type": "1",
+                "optional_info": "we are one",
+                "user_id": "HBBBBBBH57g",
+                "job_id": "HBBBBBBHg"
+            },
+            "Source": "WebAPI",
+            "ResultCode": "0810",
+            "SmileJobID": "0000001111"
+        }
+    ],
+    "image_links": {
+        "selfie_image": "image_link"
+    },
+    "timestamp": "2019-10-10T12:32:04.622Z"
 }
+
 ```
 
 If you have queried a job type 5, your response be a JSON String that will contain the following:
@@ -262,7 +261,7 @@ Sometimes, you may want to get a particular job status at a later time. You may 
 You will already have your Web Api or Utilities class initialised as follows:
 ```python
 connection = WebApi(<String partner_id>, <String default_callback_url>, <String decoded_version_of_api_key>, <Integer 0 || 1>)
-  OR 
+#OR 
 connection =  Utilities(<String partner_id>, <String default_callback_url>, <String decoded_version_of_api_key>, <Integer 0 || 1>)
 ```
 Thereafter, simply call get_job_status with the correct parameters using the classes we have provided:
@@ -315,8 +314,9 @@ id_info_params = {
     "phone_number": "",
     "entered": True,
 }
-connection =  IDApi(<String partner_id>, <String decoded_version_of_api_key>, <Integer 0 || 1>)
-response = connection.submit_job(partner_params, id_info_params)  
+connection = IDApi("< String partner_id >", "< String decoded_version_of_api_key >", "< Integer 0 | | 1 >")
+response = connection.submit_job(partner_params, id_info_params)
+  
 ```
 use_validation_api is optional and defaults to true this will call the smile server and gets all required
 input information for a job type and id type and checks if you  have provided required information else it will throw an exception
@@ -326,31 +326,32 @@ input information for a job type and id type and checks if you  have provided re
 Your response will return a JSON String containing the below:
 ```
 {
-   "JSONVersion":"1.0.0",
-   "SmileJobID":"0000001105",
-   "PartnerParams":{
-      "user_id":"T6yzdOezucdsPrY0QG9LYNDGOrC",
-      "job_id":"FS1kd1dd15JUpd87gTBDapvFxv0",
-      "job_type":5
-   },
-   "ResultType":"ID Verification",
-   "ResultText":"ID Number Validated",
-   "ResultCode":"1012",
-   "IsFinalResult":"true",
-   "Actions":{
-      "Verify_ID_Number":"Verified",
-      "Return_Personal_Info":"Returned"
-   },
-   "Country":"NG",
-   "IDType":"PASSPORT",
-   "IDNumber":"A04150107",
-   "ExpirationDate":"2017-10-28",
-   "FullName":"ADEYEMI KEHINDE ADUNOLA",
-   "DOB":"1989-09-20",
-   "Photo":"SomeBase64Image",
-   "sec_key":"pjxsxEY69zEHjSPFvPEQTqu17vpZbw+zTNqaFxRWpYDiO+7wzKc9zvPU2lRGiKg7rff6nGPBvQ6rA7/wYkcLrlD2SuR2Q8hOcDFgni3PJHutij7j6ThRdpTwJRO2GjLXN5HHDB52NjAvKPyclSDANHrG1qb/tloO7x4bFJ7tKYE=|8faebe00b317654548f8b739dc631431b67d2d4e6ab65c6d53539aaad1600ac7",
-   "timestamp":1570698930193
+    "JSONVersion": "1.0.0",
+    "SmileJobID": "0000001105",
+    "PartnerParams": {
+        "user_id": "T6yzdOezucdsPrY0QG9LYNDGOrC",
+        "job_id": "FS1kd1dd15JUpd87gTBDapvFxv0",
+        "job_type": 5
+    },
+    "ResultType": "ID Verification",
+    "ResultText": "ID Number Validated",
+    "ResultCode": "1012",
+    "IsFinalResult": "true",
+    "Actions": {
+        "Verify_ID_Number": "Verified",
+        "Return_Personal_Info": "Returned"
+    },
+    "Country": "NG",
+    "IDType": "PASSPORT",
+    "IDNumber": "A04150107",
+    "ExpirationDate": "2017-10-28",
+    "FullName": "ADEYEMI KEHINDE ADUNOLA",
+    "DOB": "1989-09-20",
+    "Photo": "SomeBase64Image",
+    "sec_key": "pjxsxEY69zEHjSPFvPEQTqu17vpZbw+zTNqaFxRWpYDiO+7wzKc9zvPU2lRGiKg7rff6nGPBvQ6rA7/wYkcLrlD2SuR2Q8hOcDFgni3PJHutij7j6ThRdpTwJRO2GjLXN5HHDB52NjAvKPyclSDANHrG1qb/tloO7x4bFJ7tKYE=|8faebe00b317654548f8b739dc631431b67d2d4e6ab65c6d53539aaad1600ac7",
+    "timestamp": 1570698930193
 }
+
 ```
 
 #### Signature Class
@@ -367,20 +368,20 @@ Then call the Signature class as follows:
 ```python
 from SmileId  import Signature
 
-try :
-  connection =  Signature(self.partner_id,api_keyy)
-  signatureJsonStr = connection.generate_sec_key(timestamp) # where timestamp is optional
+try:
+    connection = Signature(self.partner_id, api_keyy)
+    signatureJsonStr = connection.generate_sec_key(timestamp)  # where timestamp is optional
+    # In order to utilise the signature you can then use a json parser and extract the signature
+except:
+    print("An exception occurred")
 
-  # In order to utilise the signature you can then use a json parser and extract the signature
- Except : 
- ...
 ```
 
 The response will be a stringified json object:
 ```python
 {
-    sec_key: "<the generated sec key>",
-    timestamp: "<timestamp that you passed in or that was generated>"
+    "sec_key": "<the generated sec key>",
+    "timestamp": "<timestamp that you passed in or that was generated>"
 }
 ```
 
@@ -392,10 +393,10 @@ You may want to receive more information about a job. This is built into Web Api
 ```python
 from SmileId import Utilities
 
-connection =  Utilities(<partner_id>, <the decoded-version of-your-api-key>, <sid_server>)
-job_status = connection.get_job_status(<partner_params>, <option_params>, <sec_key>, <timestamp>)
-
+connection = Utilities("<partner_id>", "<the decoded-version of-your-api-key>", "<sid_server>")
+job_status = connection.get_job_status("<partner_params>", "<option_params>", "<sec_key>", "<timestamp>")
 print(job_status)
+
 ```
 
 This returns the job status as stringified json data.
@@ -403,7 +404,7 @@ This returns the job status as stringified json data.
 ```python
 from SmileId import Utilities
 
-Utilities.validate_id_params(sid_server<0 for test or 1 for live or a string url>, id_info_params, partner_params, use_validation_api=True)
+Utilities.validate_id_params("sid_server<0 for test or 1 for live or a string url>", "id_info_params", "partner_params", "use_validation_api=True")
 
 ```
 This will validate id parameters using the smile services endpoint which checks 
@@ -414,7 +415,7 @@ against the smile services endpoint and if any key is missing will throw an exce
 ```python
 from SmileId import Utilities
 
- Utilities.smile_services(sid_server<0 for test or 1 for live or a string url>)
+Utilities.smile_services("sid_server<0 for test or 1 for live or a string url>")
 
 ```
 This will return the smile services endpoint as a json object and  can then be used  for validation as per requirement

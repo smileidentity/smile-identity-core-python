@@ -1,0 +1,280 @@
+SmileIdentityCore
+=================
+
+The official Smile Identity library exposes four classes namely; the
+WebApi class, the IDApi class, the Signature class and the Utilities
+class.
+
+The **WebApi Class** allows you as the Partner to validate a user’s
+identity against the relevant Identity Authorities/Third Party databases
+that Smile Identity has access to using ID information provided by your
+customer/user (including photo for compare). It has the following public
+method:
+
+-  submit\_job
+
+The **IDApi Class** lets you performs basic KYC Services including
+verifying an ID number as well as retrieve a user's Personal
+Information. It has the following public methods:
+
+-  submit\_job
+
+The **Signature Class** allows you as the Partner to generate a sec key
+to interact with our servers. It has the following public methods:
+
+-  generate\ *sec*\ key
+
+The **Utilities Class** allows you as the Partner to have access to our
+general Utility functions to gain access to your data. It has the
+following public methods:
+
+-  get\ *job*\ status
+-  validate\ *id*\ params
+-  validate\ *partner*\ params
+
+Documentation
+-------------
+
+This library requires specific input parameters, for more detail on
+these parameters please refer to our `documentation for Web
+API <https://docs.smileidentity.com/products/web-api/python>`__.
+
+Please note that you will have to be a Smile Identity Partner to be able
+to query our services. You can sign up on the
+`Portal <https://test-smileid.herokuapp.com/signup?products[]=1-IDVALIDATION&products[]=2-AUTHENTICATION>`__.
+
+Installation
+------------
+
+View the package on `Pypi <https://pypi.org/project/smile-id-core/>`__.
+
+Add the group, name and version to your application's build file, it
+will look similar based on your build tool:
+
+``Python pip  install smile-id-core``
+
+You now may use the classes as follows:
+
+WebApi Class
+^^^^^^^^^^^^
+
+Import the necessary dependant classes for Web Api:
+
+``python from SmileId import WebApi from SmileId import IdApi from SmileId import Utilities from SmileId import Signature``
+
+submit\_job method
+''''''''''''''''''
+
+Your call to the library will be similar to the below code snippet:
+``python connection =  WebApi("125", "default_callback.com", "<the decoded-version of-your-api-key>", 0) partner_params = {     "user_id": str(uuid4()),     "job_id": str(uuid4()),     "job_type": 1, } id_info_params = {     "first_name": "FirstName",     "middle_name": "LastName",     "last_name": "MiddleName",     "country": "NG",     "id_type": "PASSPORT",     "id_number": "A00000000",     "dob": "1989-09-20",     "phone_number": "",     "entered": True, } image_params = [] image_params.append({"image_type_id": "2", "image": "base6image"}) options_params = {     "return_job_status": True,     "return_history": True,     "return_images": True, } response = connection.submit_job(partner_params, image_params,id_info_params, options_params)``
+
+use\ *validation*\ api is optional and defaults to true this will call
+the smile server and gets all required
+input information for a job type and id type and checks if you have
+provided required information else it will throw an exception
+\`\`\`
+
+In the case of a Job Type 5 you can simply omit the the image\ *params
+and options*\ params keys. Remember that the response is immediate, so
+there is no need to query the job\_status. There is also no enrollment
+so no images are required. The response for a job type 5 can be found in
+the response section below.
+
+\`\`\`
+$ response = connection.submit\ *job(partner*\ params, None, id\_info,
+None)
+
+use\ *validation*\ api is optional and defaults to true this will call
+the smile server and gets all required
+input information for a job type and id type and checks if you have
+provided required information else it will throw an exception
+
+**Response:**
+
+Should you choose to *set return\ *job*\ status to false*, the response
+will be a JSON String containing:
+``{success: true, smile_job_id: smile_job_id}``
+
+However, if you have \*set return\ *job*\ status to true (with
+image\_links and history)\* then you will receive JSON Object response
+like below:
+``{    "job_success":true,    "result":{       "ConfidenceValue":"99",       "JSONVersion":"1.0.0",       "Actions":{          "Verify_ID_Number":"Verified",          "Return_Personal_Info":"Returned",          "Human_Review_Update_Selfie":"Not Applicable",          "Human_Review_Compare":"Not Applicable",          "Update_Registered_Selfie_On_File":"Not Applicable",          "Liveness_Check":"Not Applicable",          "Register_Selfie":"Approved",          "Human_Review_Liveness_Check":"Not Applicable",          "Selfie_To_ID_Authority_Compare":"Completed",          "Selfie_To_ID_Card_Compare":"Not Applicable",          "Selfie_To_Registered_Selfie_Compare":"Not Applicable"       },       "ResultText":"Enroll User",       "IsFinalResult":"true",       "IsMachineResult":"true",       "ResultType":"SAIA",       "PartnerParams":{          "job_type":"1",          "optional_info":"we are one",          "user_id":"HBBBBBBH57g",          "job_id":"HBBBBBBHg"       },       "Source":"WebAPI",       "ResultCode":"0810",       "SmileJobID":"0000001111"    },    "code":"2302",    "job_complete":true,    "signature":"HKBhxcv+1qaLy\C7PjVtk257dE=|1577b051a4313ed5e3e4d29893a66f966e31af0a2d2f6bec2a7f2e00f2701259",    "history":[       {          "ConfidenceValue":"99",          "JSONVersion":"1.0.0",          "Actions":{             "Verify_ID_Number":"Verified",             "Return_Personal_Info":"Returned",             "Human_Review_Update_Selfie":"Not Applicable",             "Human_Review_Compare":"Not Applicable",             "Update_Registered_Selfie_On_File":"Not Applicable",             "Liveness_Check":"Not Applicable",             "Register_Selfie":"Approved",             "Human_Review_Liveness_Check":"Not Applicable",             "Selfie_To_ID_Authority_Compare":"Completed",             "Selfie_To_ID_Card_Compare":"Not Applicable",             "Selfie_To_Registered_Selfie_Compare":"Not Applicable"          },          "ResultText":"Enroll User",          "IsFinalResult":"true",          "IsMachineResult":"true",          "ResultType":"SAIA",          "PartnerParams":{             "job_type":"1",             "optional_info":"we are one",             "user_id":"HBBBBBBH57g",             "job_id":"HBBBBBBHg"          },          "Source":"WebAPI",          "ResultCode":"0810",          "SmileJobID":"0000001111"       }    ],    "image_links":{       "selfie_image":"image_link"    },    "timestamp":"2019-10-10T12:32:04.622Z",    "success": true,    "smile_job_id": "0000001111" }``
+
+You can also *view your response asynchronously at the callback* that
+you have set, it will look as follows:
+``{    "job_success":true,    "result":{       "ConfidenceValue":"99",       "JSONVersion":"1.0.0",       "Actions":{          "Verify_ID_Number":"Verified",          "Return_Personal_Info":"Returned",          "Human_Review_Update_Selfie":"Not Applicable",          "Human_Review_Compare":"Not Applicable",          "Update_Registered_Selfie_On_File":"Not Applicable",          "Liveness_Check":"Not Applicable",          "Register_Selfie":"Approved",          "Human_Review_Liveness_Check":"Not Applicable",          "Selfie_To_ID_Authority_Compare":"Completed",          "Selfie_To_ID_Card_Compare":"Not Applicable",          "Selfie_To_Registered_Selfie_Compare":"Not Applicable"       },       "ResultText":"Enroll User",       "IsFinalResult":"true",       "IsMachineResult":"true",       "ResultType":"SAIA",       "PartnerParams":{          "job_type":"1",          "optional_info":"we are one",          "user_id":"HBBBBBBH57g",          "job_id":"HBBBBBBHg"       },       "Source":"WebAPI",       "ResultCode":"0810",       "SmileJobID":"0000001111"    },    "code":"2302",    "job_complete":true,    "signature":"HKBhxcv+1qaLy\C7PjVtk257dE=|1577b051a4313ed5e3e4d29893a66f966e31af0a2d2f6bec2a7f2e00f2701259",    "history":[       {          "ConfidenceValue":"99",          "JSONVersion":"1.0.0",          "Actions":{             "Verify_ID_Number":"Verified",             "Return_Personal_Info":"Returned",             "Human_Review_Update_Selfie":"Not Applicable",             "Human_Review_Compare":"Not Applicable",             "Update_Registered_Selfie_On_File":"Not Applicable",             "Liveness_Check":"Not Applicable",             "Register_Selfie":"Approved",             "Human_Review_Liveness_Check":"Not Applicable",             "Selfie_To_ID_Authority_Compare":"Completed",             "Selfie_To_ID_Card_Compare":"Not Applicable",             "Selfie_To_Registered_Selfie_Compare":"Not Applicable"          },          "ResultText":"Enroll User",          "IsFinalResult":"true",          "IsMachineResult":"true",          "ResultType":"SAIA",          "PartnerParams":{             "job_type":"1",             "optional_info":"we are one",             "user_id":"HBBBBBBH57g",             "job_id":"HBBBBBBHg"          },          "Source":"WebAPI",          "ResultCode":"0810",          "SmileJobID":"0000001111"       }    ],    "image_links":{       "selfie_image":"image_link"    },    "timestamp":"2019-10-10T12:32:04.622Z" }``
+
+If you have queried a job type 5, your response be a JSON String that
+will contain the following:
+\`\`\`
+
+\`\`\`
+
+get\ *job*\ status method
+'''''''''''''''''''''''''
+
+Sometimes, you may want to get a particular job status at a later time.
+You may use the get\ *job*\ status function to do this:
+
+You will already have your Web Api or Utilities class initialised as
+follows:
+``python connection = WebApi(<String partner_id>, <String default_callback_url>, <String decoded_version_of_api_key>, <Integer 0 || 1>)   OR  connection =  Utilities(<String partner_id>, <String default_callback_url>, <String decoded_version_of_api_key>, <Integer 0 || 1>)``
+Thereafter, simply call get\ *job*\ status with the correct parameters
+using the classes we have provided:
+\`\`\`python
+
+create the stringified json for the partner params using our class (i.e. user\ *id, job*\ id, and job\_type that you would are querying)
+========================================================================================================================================
+
+partner\_params = {
+::
+
+    "user_id": str(uuid4()),
+    "job_id": str(uuid4()),
+    "job_type": 1,
+
+}
+
+create the options - whether you would like to return\ *history and return*\ image\_links in the job status response
+====================================================================================================================
+
+options\_params = {
+::
+
+    "return_job_status": True,
+    "return_history": True,
+    "return_images": True,
+
+}
+
+response = connection.get\ *job*\ status(partner\ *params,
+options*\ params)
+\`\`\`
+
+IDApi Class
+^^^^^^^^^^^^
+
+An API that lets you performs basic KYC Services including verifying an
+ID number as well as retrieve a user's Personal Information
+
+Import the necessary dependant classes for ID Api:
+
+``python from SmileId import IdApi``
+
+submit\_job method
+''''''''''''''''''
+
+Your call to the library will be similar to the below code snippet:
+``python partner_params = {     "user_id": str(uuid4()),     "job_id": str(uuid4()),     "job_type": 5, } id_info_params = {     "first_name": "FirstName",     "middle_name": "LastName",     "last_name": "MiddleName",     "country": "NG",     "id_type": "PASSPORT",     "id_number": "A00000000",     "dob": "1989-09-20",     "phone_number": "",     "entered": True, } connection =  IDApi(<String partner_id>, <String decoded_version_of_api_key>, <Integer 0 || 1>) response = connection.submit_job(partner_params, id_info_params)``
+use\ *validation*\ api is optional and defaults to true this will call
+the smile server and gets all required
+input information for a job type and id type and checks if you have
+provided required information else it will throw an exception
+
+**Response**
+
+Your response will return a JSON String containing the below:
+``{    "JSONVersion":"1.0.0",    "SmileJobID":"0000001105",    "PartnerParams":{       "user_id":"T6yzdOezucdsPrY0QG9LYNDGOrC",       "job_id":"FS1kd1dd15JUpd87gTBDapvFxv0",       "job_type":5    },    "ResultType":"ID Verification",    "ResultText":"ID Number Validated",    "ResultCode":"1012",    "IsFinalResult":"true",    "Actions":{       "Verify_ID_Number":"Verified",       "Return_Personal_Info":"Returned"    },    "Country":"NG",    "IDType":"PASSPORT",    "IDNumber":"A04150107",    "ExpirationDate":"2017-10-28",    "FullName":"ADEYEMI KEHINDE ADUNOLA",    "DOB":"1989-09-20",    "Photo":"SomeBase64Image",    "sec_key":"pjxsxEY69zEHjSPFvPEQTqu17vpZbw+zTNqaFxRWpYDiO+7wzKc9zvPU2lRGiKg7rff6nGPBvQ6rA7/wYkcLrlD2SuR2Q8hOcDFgni3PJHutij7j6ThRdpTwJRO2GjLXN5HHDB52NjAvKPyclSDANHrG1qb/tloO7x4bFJ7tKYE=|8faebe00b317654548f8b739dc631431b67d2d4e6ab65c6d53539aaad1600ac7",    "timestamp":1570698930193 }``
+
+Signature Class
+^^^^^^^^^^^^^^^
+
+To calculate your signature first import the necessary class:
+``python from SmileId  import Signature``
+
+generate\ *sec*\ key method
+'''''''''''''''''''''''''''
+
+Then call the Signature class as follows:
+
+\`\`\`python
+from SmileId import Signature
+
+try :
+connection = Signature(self.partner\ *id,api*\ keyy)
+signatureJsonStr = connection.generate\ *sec*\ key(timestamp) # where
+timestamp is optional
+
+# In order to utilise the signature you can then use a json parser and
+extract the signature
+Except :
+...
+\`\`\`
+
+The response will be a stringified json object:
+``python {     sec_key: "<the generated sec key>",     timestamp: "<timestamp that you passed in or that was generated>" }``
+
+Utilities Class
+^^^^^^^^^^^^^^^
+
+You may want to receive more information about a job. This is built into
+Web Api if you choose to set return\ *job*\ status as true in the
+options class. However, you also have the option to build the
+functionality yourself by using the Utilities class. Please note that if
+you are querying a job immediately after submitting it, you will need to
+poll it for the duration of the job.
+
+\`\`\`python
+from SmileId import Utilities
+
+connection = Utilities(, , )
+job\ *status = connection.get*\ job\_status(, , , )
+
+print(job\_status)
+\`\`\`
+
+This returns the job status as stringified json data.
+
+\`\`\`python
+from SmileId import Utilities
+
+Utilities.validate\ *id*\ params(sid\ *server<0 for test or 1 for live
+or a string url>, id*\ info\ *params, partner*\ params,
+use\ *validation*\ api=True)
+
+\`\`\`
+This will validate id parameters using the smile services endpoint which
+checks
+the provided user id and partner params. If use\ *validation*\ api is
+False it will only do a local
+validation to check for country, id type and id number but by default
+this is True and will check
+against the smile services endpoint and if any key is missing will throw
+an exception
+
+\`\`\`python
+from SmileId import Utilities
+
+Utilities.smile\ *services(sid*\ server<0 for test or 1 for live or a
+string url>)
+
+\`\`\`
+This will return the smile services endpoint as a json object and can
+then be used for validation as per requirement
+
+Development
+-----------
+
+Reference: https://virtualenv.pypa.io/en/latest/installation.html
+1) First setup virtual env.
+2 ) After checking out the repo, run ``pip install -r requirements`` to
+install all required packageds.
+
+Deployment
+----------
+
+This is the https://packaging.python.org/tutorials/packaging-projects/
+that you can always reference for history.
+
+Testing
+^^^^^^^
+
+Tests are based on unittest as documented here
+https://docs.python.org/3/library/unittest.html and to run tests run
+python -m unittest in the root folder of the project
+
+Contributing
+------------
+
+Bug reports and pull requests are welcome on GitHub at
+https://github.com/smileidentity/smile-identity-core-python
