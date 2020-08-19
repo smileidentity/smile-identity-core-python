@@ -6,7 +6,7 @@ from uuid import uuid4
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
-from src import Signature, Utilities
+from smile_id_core import Signature, Utilities
 
 
 class TestUtilities(unittest.TestCase):

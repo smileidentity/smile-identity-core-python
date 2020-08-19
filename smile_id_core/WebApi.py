@@ -5,15 +5,19 @@ import time
 
 import requests
 
-from src.IdApi import IdApi
-from src.Signature import Signature
+from smile_id_core.IdApi import IdApi
+from smile_id_core.Signature import Signature
+from smile_id_core.Utilities import Utilities
+from smile_id_core.ServerError import ServerError
 import zipfile
 
-from src.Utilities import Utilities
+__all__ = ['WebApi']
 
 
 class WebApi:
     def __init__(self, partner_id, call_back_url, api_key, sid_server):
+        if not partner_id or not api_key:
+            raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
         self.call_back_url = call_back_url
         self.api_key = api_key
@@ -51,7 +55,7 @@ class WebApi:
             }
 
         if job_type == 5:
-            return self.__call_id_api(partner_params, id_info_params,use_validation_api)
+            return self.__call_id_api(partner_params, id_info_params, use_validation_api)
 
         if not options_params:
             options_params = {
@@ -62,7 +66,7 @@ class WebApi:
 
         self.__validate_options(options_params)
         self.validate_images(images_params)
-        Utilities.validate_id_params(self.url, id_info_params, partner_params,use_validation_api)
+        Utilities.validate_id_params(self.url, id_info_params, partner_params, use_validation_api)
         self.__validate_return_data(options_params)
 
         sec_key_object = self.__get_sec_key()
@@ -71,9 +75,9 @@ class WebApi:
                                           self.__prepare_prep_upload_payload(partner_params, sec_key_object["sec_key"],
                                                                              sec_key_object["timestamp"]))
         if prep_upload.status_code != 200:
-            raise Exception("Failed to post entity to {}, status={}, response={}".format(self.url + "/upload",
-                                                                                         prep_upload.status_code,
-                                                                                         prep_upload.json()))
+            raise ServerError("Failed to post entity to {}, status={}, response={}".format(self.url + "/upload",
+                                                                                            prep_upload.status_code,
+                                                                                            prep_upload.json()))
         else:
             prep_upload_json_resp = prep_upload.json()
             upload_url = prep_upload_json_resp["upload_url"]
@@ -83,9 +87,9 @@ class WebApi:
             zip_stream = WebApi.create_zip(info_json, images_params)
             upload_response = WebApi.upload(upload_url, zip_stream)
             if prep_upload.status_code != 200:
-                raise Exception("Failed to post entity to {}, status={}, response={}".format(upload_url,
-                                                                                             prep_upload.status_code,
-                                                                                             prep_upload.json()))
+                raise ServerError("Failed to post entity to {}, status={}, response={}".format(upload_url,
+                                                                                                prep_upload.status_code,
+                                                                                                prep_upload.json()))
 
             if options_params["return_job_status"]:
                 self.utilities = Utilities(self.partner_id, self.api_key, self.sid_server)
@@ -101,9 +105,9 @@ class WebApi:
                     "smile_job_id": smile_job_id
                 }
 
-    def __call_id_api(self, partner_params, id_info_params,use_validation_api):
+    def __call_id_api(self, partner_params, id_info_params, use_validation_api):
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
-        return id_api.submit_job(partner_params, id_info_params,use_validation_api)
+        return id_api.submit_job(partner_params, id_info_params, use_validation_api)
 
     @staticmethod
     def validate_images(images_params):

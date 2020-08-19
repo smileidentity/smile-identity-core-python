@@ -1,8 +1,10 @@
 import json
-
-from src.Utilities import Utilities
-from src.Signature import Signature
+from smile_id_core.Signature import Signature
+from smile_id_core.Utilities import Utilities
+from smile_id_core.ServerError import ServerError
 import requests
+
+__all__ = ['IdApi']
 
 
 class IdApi:
@@ -11,7 +13,7 @@ class IdApi:
 
     def __init__(self, partner_id, api_key, sid_server):
         if not partner_id or not api_key:
-            raise Exception("partner_id or api_key cannot be null or empty")
+            raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
         self.api_key = api_key
         if sid_server in [0, 1]:
@@ -39,9 +41,10 @@ class IdApi:
                                         sec_key_object["timestamp"])
         response = self.__execute_http(payload)
         if response.status_code != 200:
-            raise Exception("Failed to post entity to {}, status={}, response={}".format(self.url + "/id_verification",
-                                                                                         response.status_code,
-                                                                                         response.json()))
+            raise ServerError(
+                "Failed to post entity to {}, status={}, response={}".format(self.url + "/id_verification",
+                                                                             response.status_code,
+                                                                             response.json()))
         return response
 
     def __get_sec_key(self):

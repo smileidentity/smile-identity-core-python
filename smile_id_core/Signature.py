@@ -4,9 +4,13 @@ import hashlib
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
 
+__all__ = ['Signature']
+
 
 class Signature:
     def __init__(self, partner_id, api_key):
+        if not partner_id or not api_key:
+            raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
         self.api_key = api_key
         self.decoded_api_key = api_key  # base64.b64decode(self.api_key)
