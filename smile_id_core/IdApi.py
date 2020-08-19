@@ -1,7 +1,7 @@
 import json
 from smile_id_core.Signature import Signature
 from smile_id_core.Utilities import Utilities
-from smile_id_core.SmileIdError import SmileIdError
+from smile_id_core.ServerError import ServerError
 import requests
 
 __all__ = ['IdApi']
@@ -41,7 +41,7 @@ class IdApi:
                                         sec_key_object["timestamp"])
         response = self.__execute_http(payload)
         if response.status_code != 200:
-            raise SmileIdError(
+            raise ServerError(
                 "Failed to post entity to {}, status={}, response={}".format(self.url + "/id_verification",
                                                                              response.status_code,
                                                                              response.json()))
