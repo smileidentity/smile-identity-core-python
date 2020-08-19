@@ -2,11 +2,16 @@ import json
 
 import requests
 
-from src.Signature import Signature
+from smile_id_core.Signature import Signature
+from smile_id_core.SmileIdError import SmileIdError
+
+__all__ = ['Utilities']
 
 
 class Utilities:
     def __init__(self, partner_id, api_key, sid_server):
+        if not partner_id or not api_key:
+            raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
         self.api_key = api_key
         self.sid_server = sid_server
@@ -42,9 +47,9 @@ class Utilities:
                                             self.__configure_job_query(user_id, job_id, option_params, sec_key,
                                                                        timestamp))
         if job_status.status_code != 200:
-            raise Exception("Failed to post entity to {}, response={}:{} - {}", self.url + "/job_status",
-                            job_status.status_code,
-                            job_status.reason, job_status.json())
+            raise SmileIdError("Failed to post entity to {}, response={}:{} - {}", self.url + "/job_status",
+                               job_status.status_code,
+                               job_status.reason, job_status.json())
         else:
             job_status_json_resp = job_status.json()
             timestamp = job_status_json_resp["timestamp"]
@@ -52,7 +57,7 @@ class Utilities:
             signature = Signature(self.partner_id, self.api_key)
             valid = signature.confirm_sec_key(timestamp, server_signature)
             if not valid:
-                raise Exception("Unable to confirm validity of the job_status response")
+                raise SmileIdError("Unable to confirm validity of the job_status response")
             return job_status
 
     def __configure_job_query(self, user_id, job_id, options, sec_key, timestamp):
@@ -108,9 +113,9 @@ class Utilities:
 
         response = Utilities.smile_services(sid_server)
         if response.status_code != 200:
-            raise Exception("Failed to get to {}, status={}, response={}".format(url + "/services",
-                                                                                 response.status_code,
-                                                                                 response.json()))
+            raise SmileIdError("Failed to get to {}, status={}, response={}".format(url + "/services",
+                                                                                    response.status_code,
+                                                                                    response.json()))
         response_json = response.json()
         if response_json["id_types"]:
             if not id_info_params["country"] in response_json["id_types"]:
@@ -139,9 +144,9 @@ class Utilities:
             url = sid_server
         response = Utilities.execute_get(url + "/services")
         if response.status_code != 200:
-            raise Exception("Failed to get to {}, status={}, response={}".format(url + "/services",
-                                                                                 response.status_code,
-                                                                                 response.json()))
+            raise SmileIdError("Failed to get to {}, status={}, response={}".format(url + "/services",
+                                                                                    response.status_code,
+                                                                                    response.json()))
         return response
 
     @staticmethod

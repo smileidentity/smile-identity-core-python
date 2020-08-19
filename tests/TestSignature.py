@@ -4,7 +4,7 @@ import unittest
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
 
-from src import Signature
+from smile_id_core import Signature
 
 
 class TestSignature(unittest.TestCase):
