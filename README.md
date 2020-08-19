@@ -84,7 +84,7 @@ except ServerError:
     print("handle ServerError")
 except FileNotFoundError:
     # Sent a file which could not be found
-    print("handle ServerError")
+    print("handle FileNotFoundError")
 
 
 ```
@@ -284,12 +284,12 @@ If you have queried a job type 5, your response be a JSON String that will conta
    },
    "Country":"NG",
    "IDType":"PASSPORT",
-   "IDNumber":"A12345678",
+   "IDNumber":"A12345",
    "ExpirationDate":"2017-10-28",
    "FullName":"John Doe",
-   "DOB":"1993-10-21",
+   "DOB":"1900-09-20",
    "Photo":"SomeBase64Image",
-   "sec_key":"pjxsxEY69zEHjSPFvPEQTqu17vpZbw+zTNqaFxRWpYDiO+7wzKc9zvPU2lRGiKg7rff6nGPBvQ6rA7/wYkcLrlD2SuR2Q8hOcDFgni3PJHutij7j6ThRdpTwJRO2GjLXN5HHDB52NjAvKPyclSDANHrG1qb/tloO7x4bFJ7tKYE=|8faebe00b317654548f8b739dc631431b67d2d4e6ab65c6d53539aaad1600ac7",
+   "sec_key":"pjxsx...",
    "timestamp":1570698930193
 }
 ```
@@ -374,7 +374,7 @@ except ValueError:
     print("handle ValueError")
 except ServerError:
     # Server returned an error
-    print("handle ServerError")
+    print("handle ServerErrorServerError")
   
 ```
 use_validation_api is optional and defaults to true this will call the smile server and gets all required
@@ -383,32 +383,32 @@ input information for a job type and id type and checks if you  have provided re
 **Response**
 
 Your response will return a JSON String containing the below:
-```
+```json
 {
-    "JSONVersion": "1.0.0",
-    "SmileJobID": "0000001105",
-    "PartnerParams": {
-        "user_id": "T6yzdOezucdsPrY0QG9LYNDGOrC",
-        "job_id": "FS1kd1dd15JUpd87gTBDapvFxv0",
-        "job_type": 5
-    },
-    "ResultType": "ID Verification",
-    "ResultText": "ID Number Validated",
-    "ResultCode": "1012",
-    "IsFinalResult": "true",
-    "Actions": {
-        "Verify_ID_Number": "Verified",
-        "Return_Personal_Info": "Returned"
-    },
-    "Country": "NG",
-    "IDType": "PASSPORT",
-    "IDNumber": "A04150107",
-    "ExpirationDate": "2017-10-28",
-    "FullName": "ADEYEMI KEHINDE ADUNOLA",
-    "DOB": "1989-09-20",
-    "Photo": "SomeBase64Image",
-    "sec_key": "pjxsxEY69zEHjSPFvPEQTqu17vpZbw+zTNqaFxRWpYDiO+7wzKc9zvPU2lRGiKg7rff6nGPBvQ6rA7/wYkcLrlD2SuR2Q8hOcDFgni3PJHutij7j6ThRdpTwJRO2GjLXN5HHDB52NjAvKPyclSDANHrG1qb/tloO7x4bFJ7tKYE=|8faebe00b317654548f8b739dc631431b67d2d4e6ab65c6d53539aaad1600ac7",
-    "timestamp": 1570698930193
+   "JSONVersion":"1.0.0",
+   "SmileJobID":"0000001105",
+   "PartnerParams":{
+      "user_id":"T6yzdOezucdsPrY0QG9LYNDGOrC",
+      "job_id":"FS1kd1dd15JUpd87gTBDapvFxv0",
+      "job_type":5
+   },
+   "ResultType":"ID Verification",
+   "ResultText":"ID Number Validated",
+   "ResultCode":"1012",
+   "IsFinalResult":"true",
+   "Actions":{
+      "Verify_ID_Number":"Verified",
+      "Return_Personal_Info":"Returned"
+   },
+   "Country":"NG",
+   "IDType":"PASSPORT",
+   "IDNumber":"A12345",
+   "ExpirationDate":"2017-10-28",
+   "FullName":"John Doe",
+   "DOB":"1900-09-20",
+   "Photo":"SomeBase64Image",
+   "sec_key":"pjxsx...",
+   "timestamp":1570698930193
 }
 
 ```
@@ -430,6 +430,7 @@ from  smile_id_core import Signature,ServerError
 
 connection = Signature("partner_id", "api_key")
 signatureJsonStr = connection.generate_sec_key(timestamp)  # where timestamp is optional
+# In order to utilise the signature you can then use a json parser and extract the signature
 
 ```
 

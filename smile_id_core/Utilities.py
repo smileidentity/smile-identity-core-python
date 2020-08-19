@@ -48,8 +48,8 @@ class Utilities:
                                                                        timestamp))
         if job_status.status_code != 200:
             raise ServerError("Failed to post entity to {}, response={}:{} - {}", self.url + "/job_status",
-                              job_status.status_code,
-                              job_status.reason, job_status.json())
+                               job_status.status_code,
+                               job_status.reason, job_status.json())
         else:
             job_status_json_resp = job_status.json()
             timestamp = job_status_json_resp["timestamp"]
@@ -113,9 +113,9 @@ class Utilities:
 
         response = Utilities.get_smile_id_services(sid_server)
         if response.status_code != 200:
-            raise ServerError("Failed to get to {}, status={}, response={}".format("/services",
-                                                                                   response.status_code,
-                                                                                   response.json()))
+            raise ServerError("Failed to get to {}, status={}, response={}".format(url + "/services",
+                                                                                    response.status_code,
+                                                                                    response.json()))
         response_json = response.json()
         if response_json["id_types"]:
             if not id_info_params["country"] in response_json["id_types"]:
@@ -145,8 +145,8 @@ class Utilities:
         response = Utilities.execute_get(url + "/services")
         if response.status_code != 200:
             raise ServerError("Failed to get to {}, status={}, response={}".format(url + "/services",
-                                                                                   response.status_code,
-                                                                                   response.json()))
+                                                                                    response.status_code,
+                                                                                    response.json()))
         return response
 
     @staticmethod
