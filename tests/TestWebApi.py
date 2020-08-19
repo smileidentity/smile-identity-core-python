@@ -95,21 +95,21 @@ class TestWebApi(unittest.TestCase):
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
                                                self.id_info_params, self.options_params)
-        self.assertEqual(ve.exception.args[0], u"country cannot be empty")
+        self.assertEqual(ve.exception.args[0], u"key country cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_type"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
                                                self.id_info_params, self.options_params)
-        self.assertEqual(ve.exception.args[0], u"id_type cannot be empty")
+        self.assertEqual(ve.exception.args[0], u"key id_type cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_number"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
                                                self.id_info_params, self.options_params)
-        self.assertEqual(ve.exception.args[0], u"id_number cannot be empty")
+        self.assertEqual(ve.exception.args[0], u"key id_number cannot be empty")
 
     def test_non_valid_image(self):
         self.__reset_params()
@@ -124,7 +124,7 @@ class TestWebApi(unittest.TestCase):
         self.options_params["return_job_status"] = "Test"
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
-                                               self.id_info_params, self.options_params)
+                                               self.id_info_params, self.options_params,False)
         self.assertEqual(ve.exception.args[0],
                          u"return_job_status needs to be a boolean")
 
@@ -132,7 +132,7 @@ class TestWebApi(unittest.TestCase):
         self.options_params["return_history"] = "tEST"
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
-                                               self.id_info_params, self.options_params)
+                                               self.id_info_params, self.options_params,False)
         self.assertEqual(ve.exception.args[0],
                          u"return_history needs to be a boolean")
 
@@ -140,7 +140,7 @@ class TestWebApi(unittest.TestCase):
         self.options_params["return_images"] = "tEST"
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(self.partner_params, self.image_params,
-                                               self.id_info_params, self.options_params)
+                                               self.id_info_params, self.options_params,False)
         self.assertEqual(ve.exception.args[0],
                          u"return_images needs to be a boolean")
 
@@ -234,7 +234,7 @@ class TestWebApi(unittest.TestCase):
                 mocked_post.return_value.json.return_value = {'code': '2204', 'error': 'unauthorized'}
 
                 response = self.web_api.submit_job(self.partner_params, self.image_params,
-                                                   self.id_info_params, self.options_params)
+                                                   self.id_info_params, self.options_params, False)
         self.assertEqual(ve.exception.args[0],
                          u"Failed to post entity to https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test/upload, status=400, response={'code': '2204', 'error': 'unauthorized'}")
 
@@ -252,7 +252,7 @@ class TestWebApi(unittest.TestCase):
             mocked_put.return_value.ok = True
 
             response = self.web_api.submit_job(self.partner_params, self.image_params,
-                                               self.id_info_params, self.options_params)
+                                               self.id_info_params, self.options_params, False)
 
             self.assertEqual(response.status_code, 200)
             self.assertIsNotNone(response.json())

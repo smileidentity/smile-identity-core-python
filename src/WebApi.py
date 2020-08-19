@@ -30,14 +30,14 @@ class WebApi:
             self.url = sid_server
 
     def submit_job(self, partner_params, images_params,
-                   id_info_params, options_params):
+                   id_info_params, options_params, use_validation_api=True):
 
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params["job_type"]
 
         if not id_info_params:
             if job_type == 5:
-                Utilities.validate_id_info_params(id_info_params)
+                Utilities.validate_id_params(self.url, id_info_params, partner_params, use_validation_api)
             id_info_params = {
                 "first_name": None,
                 "middle_name": None,
@@ -51,7 +51,7 @@ class WebApi:
             }
 
         if job_type == 5:
-            return self.__call_id_api(partner_params, id_info_params)
+            return self.__call_id_api(partner_params, id_info_params,use_validation_api)
 
         if not options_params:
             options_params = {
@@ -62,7 +62,7 @@ class WebApi:
 
         self.__validate_options(options_params)
         self.validate_images(images_params)
-        Utilities.validate_id_params(id_info_params)
+        Utilities.validate_id_params(self.url, id_info_params, partner_params,use_validation_api)
         self.__validate_return_data(options_params)
 
         sec_key_object = self.__get_sec_key()
@@ -89,8 +89,8 @@ class WebApi:
 
             if options_params["return_job_status"]:
                 self.utilities = Utilities(self.partner_id, self.api_key, self.sid_server)
-                job_status = self.__poll_job_status(0, partner_params, options_params, sec_key_object["sec_key"],
-                                                    sec_key_object["timestamp"])
+                job_status = self.poll_job_status(0, partner_params, options_params, sec_key_object["sec_key"],
+                                                  sec_key_object["timestamp"])
                 job_status_response = job_status.json()
                 job_status_response["success"] = True
                 job_status_response["smile_job_id"] = smile_job_id
@@ -101,9 +101,9 @@ class WebApi:
                     "smile_job_id": smile_job_id
                 }
 
-    def __call_id_api(self, partner_params, id_info_params):
+    def __call_id_api(self, partner_params, id_info_params,use_validation_api):
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
-        return id_api.submit_job(partner_params, id_info_params)
+        return id_api.submit_job(partner_params, id_info_params,use_validation_api)
 
     @staticmethod
     def validate_images(images_params):
@@ -215,7 +215,12 @@ class WebApi:
                     zip_file.write(os.path.join(image["image"]), os.path.basename(image["image"]))
         return zip_buffer.getvalue()
 
-    def __poll_job_status(self, counter, partner_params, options_params, sec_key, timestamp):
+    def poll_job_status(self, counter, partner_params, options_params, sec_key=None, timestamp=None):
+        if sec_key is None:
+            sec_key_object = self.__get_sec_key()
+            sec_key = sec_key_object["sec_key"]
+            timestamp = sec_key_object["timestamp"]
+
         counter = counter + 1
         if counter < 4:
             time.sleep(2)
@@ -225,7 +230,7 @@ class WebApi:
         job_status = self.utilities.get_job_status(partner_params, options_params, sec_key, timestamp)
         job_status_response = job_status.json()
         if not job_status_response["job_complete"] and counter < 20:
-            self.__poll_job_status(counter, partner_params, options_params, sec_key, timestamp)
+            self.poll_job_status(counter, partner_params, options_params, sec_key, timestamp)
 
         return job_status
 

@@ -66,7 +66,7 @@ class TestIdApi(unittest.TestCase):
         self.__reset_params()
         self.partner_params["job_type"] = 1
         with self.assertRaises(ValueError) as ve:
-            response = self.id_api.submit_job(self.partner_params, self.id_info_params)
+            response = self.id_api.submit_job(self.partner_params, self.id_info_params, False)
         self.assertEqual(ve.exception.args[0], u"Please ensure that you are setting your job_type to 5 to query ID Api")
 
     def test_id_info_params(self):
@@ -74,19 +74,19 @@ class TestIdApi(unittest.TestCase):
         self.id_info_params["country"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
-        self.assertEqual(ve.exception.args[0], u"country cannot be empty")
+        self.assertEqual(ve.exception.args[0], u"key country cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_type"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
-        self.assertEqual(ve.exception.args[0], u"id_type cannot be empty")
+        self.assertEqual(ve.exception.args[0], u"key id_type cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_number"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
-        self.assertEqual(ve.exception.args[0], u"id_number cannot be empty")
+        self.assertEqual(ve.exception.args[0], u"key id_number cannot be empty")
 
     def get_id_response(self):
         timestamp = int(time.time())
@@ -125,14 +125,93 @@ class TestIdApi(unittest.TestCase):
                 "signature": sec_timestamp["sec_key"]
                 }
 
+    @staticmethod
+    def _get_smile_services_response():
+        return {
+            "id_types": {
+                "NG": {
+                    "NIN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "CAC": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "company",
+                        "job_id"
+                    ],
+                    "TIN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "VOTER_ID": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "BVN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id"
+                    ],
+                    "PHONE_NUMBER": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                        "first_name",
+                        "last_name"
+                    ],
+                    "DRIVERS_LICENSE": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                        "first_name",
+                        "last_name",
+                        "dob"
+                    ],
+                    "PASSPORT": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                        "first_name",
+                        "last_name",
+                        "dob"
+                    ]
+                },
+            }
+        }
+
     def test_error_return_data(self):
         self.__reset_params()
         with self.assertRaises(Exception) as ve:
-            with patch('requests.post') as mocked_post:
+            with patch('requests.post') as mocked_post, patch('requests.get') as mocked_get:
                 mocked_post.return_value.status_code = 400
                 mocked_post.return_value.ok = True
                 mocked_post.return_value.text.return_value = {'code': '2204', 'error': 'unauthorized'}
                 mocked_post.return_value.json.return_value = {'code': '2204', 'error': 'unauthorized'}
+
+                mocked_get.return_value.status_code = 200
+                mocked_get.return_value.ok = True
+                mocked_get.return_value.text.return_value = TestIdApi._get_smile_services_response()
+                mocked_get.return_value.json.return_value = TestIdApi._get_smile_services_response()
 
                 response = self.id_api.submit_job(self.partner_params, self.id_info_params)
         self.assertEqual(ve.exception.args[0],
@@ -148,7 +227,7 @@ class TestIdApi(unittest.TestCase):
             mocked_post.return_value.text.return_value = self.get_id_response()
             mocked_post.return_value.json.return_value = self.get_id_response()
 
-            response = self.id_api.submit_job(self.partner_params, self.id_info_params)
+            response = self.id_api.submit_job(self.partner_params, self.id_info_params, False)
 
             self.assertEqual(response.status_code, 200)
             self.assertIsNotNone(response.json())
