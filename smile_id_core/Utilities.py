@@ -3,7 +3,7 @@ import json
 import requests
 
 from smile_id_core.Signature import Signature
-from smile_id_core.SmileIdError import SmileIdError
+from smile_id_core.ServerError import ServerError
 
 __all__ = ['Utilities']
 
@@ -47,7 +47,7 @@ class Utilities:
                                             self.__configure_job_query(user_id, job_id, option_params, sec_key,
                                                                        timestamp))
         if job_status.status_code != 200:
-            raise SmileIdError("Failed to post entity to {}, response={}:{} - {}", self.url + "/job_status",
+            raise ServerError("Failed to post entity to {}, response={}:{} - {}", self.url + "/job_status",
                                job_status.status_code,
                                job_status.reason, job_status.json())
         else:
@@ -57,7 +57,7 @@ class Utilities:
             signature = Signature(self.partner_id, self.api_key)
             valid = signature.confirm_sec_key(timestamp, server_signature)
             if not valid:
-                raise SmileIdError("Unable to confirm validity of the job_status response")
+                raise ServerError("Unable to confirm validity of the job_status response")
             return job_status
 
     def __configure_job_query(self, user_id, job_id, options, sec_key, timestamp):
@@ -111,9 +111,9 @@ class Utilities:
         if not use_validation_api:
             return
 
-        response = Utilities.smile_services(sid_server)
+        response = Utilities.get_smile_id_services(sid_server)
         if response.status_code != 200:
-            raise SmileIdError("Failed to get to {}, status={}, response={}".format(url + "/services",
+            raise ServerError("Failed to get to {}, status={}, response={}".format(url + "/services",
                                                                                     response.status_code,
                                                                                     response.json()))
         response_json = response.json()
@@ -133,7 +133,7 @@ class Utilities:
                     raise ValueError("key " + key + " cannot be empty")
 
     @staticmethod
-    def smile_services(sid_server):
+    def get_smile_id_services(sid_server):
         if sid_server in [0, 1]:
             sid_server_map = {
                 0: "https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
@@ -144,7 +144,7 @@ class Utilities:
             url = sid_server
         response = Utilities.execute_get(url + "/services")
         if response.status_code != 200:
-            raise SmileIdError("Failed to get to {}, status={}, response={}".format(url + "/services",
+            raise ServerError("Failed to get to {}, status={}, response={}".format(url + "/services",
                                                                                     response.status_code,
                                                                                     response.json()))
         return response

@@ -15,6 +15,7 @@ The **Utilities Class** allows you as the Partner to have access to our general 
 - get_job_status
 - validate_id_params
 - validate_partner_params
+- get_smile_id_services
 
 ## Documentation
 
@@ -47,7 +48,7 @@ from  smile_id_core import WebApi
 Your call to the library will be similar to the below code snippet:
 ```python
 from requests import RequestException
-from smile_id_core import WebApi, SmileIdError
+from smile_id_core import WebApi, ServerError
 
 try:
     connection = WebApi("125", "default_callback.com", "<the decoded-version of-your-api-key>", 0)
@@ -78,12 +79,12 @@ try:
 except ValueError:
     # some of your params entered for a job are not valid or missing
     print("handle ValueError")
-except SmileIdError:
+except ServerError:
     # Server returned an error
-    print("handle SmileIdError")
+    print("handle ServerError")
 except FileNotFoundError:
     # Sent a file which could not be found
-    print("handle SmileIdError")
+    print("handle FileNotFoundError")
 
 
 ```
@@ -300,7 +301,7 @@ Sometimes, you may want to get a particular job status at a later time. You may 
 You will already have your Web Api or Utilities class initialised as follows:
 
 ```python
-from smile_id_core import WebApi,Utilities,SmileIdError
+from smile_id_core import WebApi,Utilities,ServerError
 try:
     connection = WebApi("< String partner_id >", "< String default_callback_url >",
                         "< String decoded_version_of_api_key >", "< Integer 0 | | 1 >")
@@ -329,9 +330,9 @@ try:
 except ValueError:
     # some of your params entered for a job are not valid or missing
     print("handle ValueError")
-except SmileIdError:
+except ServerError:
     # Server returned an error
-    print("handle SmileIdError")
+    print("handle ServerError")
 ```
 
 
@@ -342,7 +343,7 @@ An API that lets you performs basic KYC Services including verifying an ID numbe
 Import the necessary dependant classes for ID Api:
 
 ```python
-from  smile_id_core import IdApi,SmileIdError
+from  smile_id_core import IdApi,ServerError
 ```
 
 ##### submit_job method
@@ -371,9 +372,9 @@ try:
 except ValueError:
     # some of your params entered for a job are not valid or missing
     print("handle ValueError")
-except SmileIdError:
+except ServerError:
     # Server returned an error
-    print("handle SmileIdError")
+    print("handle ServerErrorServerError")
   
 ```
 use_validation_api is optional and defaults to true this will call the smile server and gets all required
@@ -424,18 +425,12 @@ from  smile_id_core import Signature
 Then call the Signature class as follows:
 
 ```python
-from  smile_id_core import Signature,SmileIdError
+from  smile_id_core import Signature,ServerError
 
-try:
-    connection = Signature("partner_id", "api_key")
-    signatureJsonStr = connection.generate_sec_key(timestamp)  # where timestamp is optional
-    # In order to utilise the signature you can then use a json parser and extract the signature
-except ValueError:
-    # some of your params entered for a job are not valid or missing
-    print("handle ValueError")
-except SmileIdError:
-    # Server returned an error
-    print("handle SmileIdError")
+
+connection = Signature("partner_id", "api_key")
+signatureJsonStr = connection.generate_sec_key(timestamp)  # where timestamp is optional
+# In order to utilise the signature you can then use a json parser and extract the signature
 
 ```
 
@@ -453,7 +448,7 @@ The response will be a stringified json object:
 You may want to receive more information about a job. This is built into Web Api if you choose to set return_job_status as true in the options class. However, you also have the option to build the functionality yourself by using the Utilities class. Please note that if you are querying a job immediately after submitting it, you will need to poll it for the duration of the job.
 
 ```python
-from  smile_id_core import  Utilities,SmileIdError
+from  smile_id_core import  Utilities,ServerError
 
 try:
     connection = Utilities("<partner_id>", "<the decoded-version of-your-api-key>", "<sid_server>")
@@ -462,9 +457,9 @@ try:
 except ValueError:
     # some of your params entered for a job are not valid or missing
     print("handle ValueError")
-except SmileIdError:
+except ServerError:
     # Server returned an error
-    print("handle SmileIdError")
+    print("handle ServerError")
 
 ```
 
@@ -486,16 +481,16 @@ validation to check for country, id type and id number but by default this is  T
 against the smile services endpoint and if any key is missing will throw an exception
 
 ```python
-from  smile_id_core import Utilities,SmileIdError
+from  smile_id_core import Utilities,ServerError
 
 try:
-    Utilities.smile_services("sid_server<0 for test or 1 for live or a string url>")
+    Utilities.get_smile_id_services("sid_server<0 for test or 1 for live or a string url>")
 except ValueError:
     # some of your params entered for a job are not valid or missing
     print("handle ValueError")
-except SmileIdError:
+except ServerError:
     # Server returned an error
-    print("handle SmileIdError")
+    print("handle ServerError")
 
 ```
 This will return the smile services endpoint as a json object and  can then be used  for validation as per requirement

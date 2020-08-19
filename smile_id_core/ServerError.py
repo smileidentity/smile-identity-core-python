@@ -1,6 +1,6 @@
-__all__ = ['SmileIdError']
+__all__ = ['ServerError']
 
 
-class SmileIdError(Exception):
+class ServerError(Exception):
     def __init__(self, message):
         self.message = message

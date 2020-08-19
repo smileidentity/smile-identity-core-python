@@ -7,7 +7,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="smile_id_core",
-    version='0.0.9',
+    version='0.0.11',
     description="The official Smile Identity package exposes four classes namely; the WebApi class, the IDApi class, the Signature class and the Utilities class.",
     packages=find_packages(exclude=["*.tests", "*.tests.*"]),
     long_description=long_description,
