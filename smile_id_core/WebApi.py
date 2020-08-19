@@ -8,7 +8,7 @@ import requests
 from smile_id_core.IdApi import IdApi
 from smile_id_core.Signature import Signature
 from smile_id_core.Utilities import Utilities
-from smile_id_core.ServerError import ServerError
+from smile_id_core.SmileIdError import SmileIdError
 import zipfile
 
 __all__ = ['WebApi']
@@ -75,7 +75,7 @@ class WebApi:
                                           self.__prepare_prep_upload_payload(partner_params, sec_key_object["sec_key"],
                                                                              sec_key_object["timestamp"]))
         if prep_upload.status_code != 200:
-            raise ServerError("Failed to post entity to {}, status={}, response={}".format(self.url + "/upload",
+            raise SmileIdError("Failed to post entity to {}, status={}, response={}".format(self.url + "/upload",
                                                                                             prep_upload.status_code,
                                                                                             prep_upload.json()))
         else:
@@ -87,7 +87,7 @@ class WebApi:
             zip_stream = WebApi.create_zip(info_json, images_params)
             upload_response = WebApi.upload(upload_url, zip_stream)
             if prep_upload.status_code != 200:
-                raise ServerError("Failed to post entity to {}, status={}, response={}".format(upload_url,
+                raise SmileIdError("Failed to post entity to {}, status={}, response={}".format(upload_url,
                                                                                                 prep_upload.status_code,
                                                                                                 prep_upload.json()))
 

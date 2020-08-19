@@ -5,7 +5,7 @@ from uuid import uuid4
 
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
-from smile_id_core import Signature, IdApi, ServerError
+from smile_id_core import Signature, IdApi, SmileIdError
 
 
 class TestIdApi(unittest.TestCase):
@@ -199,7 +199,7 @@ class TestIdApi(unittest.TestCase):
 
     def test_error_return_data(self):
         self.__reset_params()
-        with self.assertRaises(ServerError) as ve:
+        with self.assertRaises(SmileIdError) as ve:
             with patch('requests.post') as mocked_post, patch('requests.get') as mocked_get:
                 mocked_post.return_value.status_code = 400
                 mocked_post.return_value.ok = True
