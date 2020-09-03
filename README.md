@@ -29,7 +29,7 @@ View the package on [Pypi](https://pypi.org/project/smile-id-core/).
 
 Add the group, name and version to your application's build file, it will look similar based on your build tool:
 
-```python
+```
 pip install smile-id-core
 ```
 
@@ -40,42 +40,46 @@ You now may use the classes as follows:
 Import the necessary dependant classes for Web Api:
 
 ```python
-from  smile_id_core import WebApi
+from smile_id_core import WebApi
 ```
 
 ##### submit_job method
 
 Your call to the library will be similar to the below code snippet:
 ```python
-from requests import RequestException
 from smile_id_core import WebApi, ServerError
 
+connection = WebApi(
+    partner_id="125", 
+    call_back_url="default_callback.com", 
+    api_key="<the decoded-version of-your-api-key>", 
+    sid_server=0
+)
+partner_params = {
+    "user_id": str("uuid4"),
+    "job_id": str("uuid4"),
+    "job_type": 1,
+}
+id_info_params = {
+    "first_name": "FirstName",
+    "middle_name": "LastName",
+    "last_name": "MiddleName",
+    "country": "NG",
+    "id_type": "PASSPORT",
+    "id_number": "A00000000",
+    "dob": "1989-09-20",
+    "phone_number": "",
+    "entered": True,
+}
+image_params = [{"image_type_id": "2", "image": "base6image"}]
+options_params = {
+    "return_job_status": True,
+    "return_history": True,
+    "return_images": True,
+}
+
 try:
-    connection = WebApi("125", "default_callback.com", "<the decoded-version of-your-api-key>", 0)
-    partner_params = {
-        "user_id": str("uuid4"),
-        "job_id": str("uuid4"),
-        "job_type": 1,
-    }
-    id_info_params = {
-        "first_name": "FirstName",
-        "middle_name": "LastName",
-        "last_name": "MiddleName",
-        "country": "NG",
-        "id_type": "PASSPORT",
-        "id_number": "A00000000",
-        "dob": "1989-09-20",
-        "phone_number": "",
-        "entered": True,
-    }
-    image_params = []
-    image_params.append({"image_type_id": "2", "image": "base6image"})
-    options_params = {
-        "return_job_status": True,
-        "return_history": True,
-        "return_images": True,
-    }
-    response = connection.submit_job(partner_params, image_params, id_info_params, options_params)
+    response = connection.submit_job(partner_params, image_params, id_info_params, options_params, use_validation_api=True)
 except ValueError:
     # some of your params entered for a job are not valid or missing
     print("handle ValueError")
@@ -89,23 +93,22 @@ except FileNotFoundError:
 
 ```
 
-use_validation_api is optional and defaults to true this will call the smile server and gets all required
-input information for a job type and id type and checks if you  have provided required information else it will throw an exception
-```
-
-In the case of a Job Type 5 you can simply omit the the image_params and options_params keys. Remember that the response is immediate, so there is no need to query the job_status. There is also no enrollment so no images are required. The response for a job type 5 can be found in the response section below.
+In the case of a Job Type 5 (_Validate an ID_) you can simply omit the the image_params and options_params keys. 
+Remember that the response is immediate, so there is no need to query the job_status. There is also no enrollment so no images are required. 
+The response for a job type 5 can be found in the response section below.
 
 ```
-$ response = connection.submit_job(partner_params, None, id_info, None)
+response = connection.submit_job(partner_params, None, id_info, None)
+```
 
-use_validation_api is optional and defaults to true this will call the smile server and gets all required
-input information for a job type and id type and checks if you  have provided required information else it will throw an exception
+`use_validation_api` is optional and defaults to true. This will call the smile server and gets all required
+input information for a job type and id type and checks if you  have provided required information, else it will throw an exception.
 
 **Response:**
 
 Should you choose to *set return_job_status to false*, the response will be a JSON String containing:
 ```
-{success: true, smile_job_id: smile_job_id}
+{"success": true, "smile_job_id": smile_job_id}
 ```
 
 However, if you have *set return_job_status to true (with image_links and history)* then you will receive JSON Object response like below:
@@ -264,7 +267,7 @@ You can also *view your response asynchronously at the callback* that you have s
 
 ```
 
-If you have queried a job type 5, your response be a JSON String that will contain the following:
+If you have queried a job type 5 (_Validate an ID_), your response be a JSON String that will contain the following:
 ```json
 {
    "JSONVersion":"1.0.0",
@@ -343,7 +346,7 @@ An API that lets you performs basic KYC Services including verifying an ID numbe
 Import the necessary dependant classes for ID Api:
 
 ```python
-from  smile_id_core import IdApi,ServerError
+from smile_id_core import IdApi, ServerError
 ```
 
 ##### submit_job method
@@ -374,7 +377,7 @@ except ValueError:
     print("handle ValueError")
 except ServerError:
     # Server returned an error
-    print("handle ServerErrorServerError")
+    print("handle ServerError")
   
 ```
 use_validation_api is optional and defaults to true this will call the smile server and gets all required
@@ -415,26 +418,19 @@ Your response will return a JSON String containing the below:
 
 #### Signature Class
 
-To calculate your signature first import the necessary class:
-```python
-from  smile_id_core import Signature
-```
+##### `generate_sec_key` method
 
-##### generate_sec_key method
-
-Then call the Signature class as follows:
+Use the Signature class as follows:
 
 ```python
-from  smile_id_core import Signature,ServerError
+from smile_id_core import Signature
 
 
-connection = Signature("partner_id", "api_key")
-signatureJsonStr = connection.generate_sec_key(timestamp)  # where timestamp is optional
-# In order to utilise the signature you can then use a json parser and extract the signature
-
+signature = Signature("partner_id", "api_key")
+signature_dict = signature.generate_sec_key(timestamp)  # where timestamp is optional
 ```
 
-The response will be a stringified json object:
+The response will be a dict:
 ```python
 {
     "sec_key": "<the generated sec key>",
@@ -448,7 +444,7 @@ The response will be a stringified json object:
 You may want to receive more information about a job. This is built into Web Api if you choose to set return_job_status as true in the options class. However, you also have the option to build the functionality yourself by using the Utilities class. Please note that if you are querying a job immediately after submitting it, you will need to poll it for the duration of the job.
 
 ```python
-from  smile_id_core import  Utilities,ServerError
+from smile_id_core import Utilities, ServerError
 
 try:
     connection = Utilities("<partner_id>", "<the decoded-version of-your-api-key>", "<sid_server>")
@@ -466,7 +462,7 @@ except ServerError:
 This returns the job status as stringified json data.
 
 ```python
-from  smile_id_core import  Utilities
+from smile_id_core import Utilities
 
 try:
     Utilities.validate_id_params("sid_server<0 for test or 1 for live or a string url>", "id_info_params", "partner_params", "use_validation_api=True")
@@ -481,7 +477,7 @@ validation to check for country, id type and id number but by default this is  T
 against the smile services endpoint and if any key is missing will throw an exception
 
 ```python
-from  smile_id_core import Utilities,ServerError
+from smile_id_core import Utilities,ServerError
 
 try:
     Utilities.get_smile_id_services("sid_server<0 for test or 1 for live or a string url>")
@@ -499,7 +495,7 @@ This will return the smile services endpoint as a json object and  can then be u
 
 Reference: https://virtualenv.pypa.io/en/latest/installation.html
 1) First setup virtual env.
-2 ) After checking out the repo, run `pip install -r requirements` to install all required packageds.
+2 ) After checking out the repo, run `pip install -r requirements` to install all required packages.
 
 ## Deployment
 
