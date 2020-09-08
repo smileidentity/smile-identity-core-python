@@ -1,4 +1,4 @@
-__all__ = ['ServerError']
+__all__ = ["ServerError"]
 
 
 class ServerError(Exception):
