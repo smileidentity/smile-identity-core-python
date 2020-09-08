@@ -494,8 +494,9 @@ This will return the smile services endpoint as a json object and  can then be u
 ## Development
 
 Reference: https://virtualenv.pypa.io/en/latest/installation.html
-1) First setup virtual env.
-2 ) After checking out the repo, run `pip install -r requirements` to install all required packages.
+
+1. Set up virtual env.
+2. After checking out the repo, run `pip install -r requirements` to install all required packages.
 
 ## Deployment
 
@@ -503,7 +504,16 @@ This is the https://packaging.python.org/tutorials/packaging-projects/ that you 
 
 #### Testing
 
-Tests are based on unittest as documented  here https://docs.python.org/3/library/unittest.html and to  run tests run python -m unittest in the root folder of the project
+Tests are based on unittest as documented  here: https://docs.python.org/3/library/unittest.html.
+ 
+To run tests run `python -m unittest` in the root folder of the project
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/smileidentity/smile-identity-core-python
+
+Please format the code with [black](https://github.com/psf/black) prior to submitting pull requests, by running:
+```
+black .
+```
+from the project's root. 

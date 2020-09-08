@@ -4,7 +4,7 @@ import hashlib
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
 
-__all__ = ['Signature']
+__all__ = ["Signature"]
 
 
 class Signature:
@@ -21,17 +21,14 @@ class Signature:
         if timestamp is None:
             timestamp = int(time.time())
         hashed = self.__get_hash(timestamp)
-        encrypted = base64.b64encode(self.cipher.encrypt(hashed.encode('utf-8')))
+        encrypted = base64.b64encode(self.cipher.encrypt(hashed.encode("utf-8")))
 
-        signature = "{}|{}".format(encrypted.decode(encoding='UTF-8'), hashed)
-        return {
-            "sec_key": signature,
-            "timestamp": timestamp
-        }
+        signature = "{}|{}".format(encrypted.decode(encoding="UTF-8"), hashed)
+        return {"sec_key": signature, "timestamp": timestamp}
 
     def __get_hash(self, timestamp):
-        to_hash = '{}:{}'.format(int(self.partner_id), timestamp)
-        new_hash = str(to_hash).encode('utf-8')
+        to_hash = "{}:{}".format(int(self.partner_id), timestamp)
+        new_hash = str(to_hash).encode("utf-8")
         return hashlib.sha256(new_hash).hexdigest()
 
     def confirm_sec_key(self, timestamp, sec_key):

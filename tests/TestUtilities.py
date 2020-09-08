@@ -10,7 +10,6 @@ from smile_id_core import Signature, Utilities
 
 
 class TestUtilities(unittest.TestCase):
-
     def setUp(self):
         self.key = RSA.generate(2048)
         self.public_key = self.key.publickey().export_key()
@@ -48,7 +47,10 @@ class TestUtilities(unittest.TestCase):
     def test_instance(self):
         self.assertEqual(self.utilities.partner_id, "001")
         self.assertEqual(self.utilities.api_key, self.public_key)
-        self.assertEqual(self.utilities.url, 'https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test')
+        self.assertEqual(
+            self.utilities.url,
+            "https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
+        )
 
     def _get_job_status_response(self):
         timestamp = int(time.time())
@@ -67,7 +69,7 @@ class TestUtilities(unittest.TestCase):
                 "PartnerParams": {
                     "job_id": "52d0de86-be3b-4219-9e96-8195b0018944",
                     "user_id": "e54e0e98-8b8c-4215-89f5-7f9ea42bf650",
-                    "job_type": 4
+                    "job_type": 4,
                 },
                 "ConfidenceValue": "100",
                 "IsMachineResult": "true",
@@ -89,8 +91,8 @@ class TestUtilities(unittest.TestCase):
                         "user_id": "1511bf02-801a-4b57-ac8e-ef17e26bfeb4",
                         "job_type": "1",
                         "optional_info": "Partner can put whatever they want as long as it is a string",
-                        "more_optional_info": "There can be as much or as little or no optional info"
-                    }
+                        "more_optional_info": "There can be as much or as little or no optional info",
+                    },
                 },
                 {
                     "ResultCode": "0814",
@@ -103,7 +105,7 @@ class TestUtilities(unittest.TestCase):
                         "job_type": "1",
                         "optional_info": "Partner can put whatever they want as long as it is a string",
                         "more_optional_info": "There can be as much or as little or no optional info",
-                    }
+                    },
                 },
                 {
                     "DOB": "1990-01-01",
@@ -122,10 +124,10 @@ class TestUtilities(unittest.TestCase):
                         "job_type": "1",
                         "optional_info": "Partner can put whatever they want as long as it is a string",
                         "more_optional_info": "There can be as much or as little or no optional info",
-                        "ExpirationDate": "Not Available"
-                    }
-                }
-            ]
+                        "ExpirationDate": "Not Available",
+                    },
+                },
+            ],
         }
 
     @staticmethod
@@ -133,42 +135,24 @@ class TestUtilities(unittest.TestCase):
         return {
             "id_types": {
                 "NG": {
-                    "NIN": [
-                        "country",
-                        "id_type",
-                        "id_number",
-                        "user_id",
-                        "job_id"
-                    ],
+                    "NIN": ["country", "id_type", "id_number", "user_id", "job_id"],
                     "CAC": [
                         "country",
                         "id_type",
                         "id_number",
                         "user_id",
                         "company",
-                        "job_id"
+                        "job_id",
                     ],
-                    "TIN": [
-                        "country",
-                        "id_type",
-                        "id_number",
-                        "user_id",
-                        "job_id"
-                    ],
+                    "TIN": ["country", "id_type", "id_number", "user_id", "job_id"],
                     "VOTER_ID": [
                         "country",
                         "id_type",
                         "id_number",
                         "user_id",
-                        "job_id"
+                        "job_id",
                     ],
-                    "BVN": [
-                        "country",
-                        "id_type",
-                        "id_number",
-                        "user_id",
-                        "job_id"
-                    ],
+                    "BVN": ["country", "id_type", "id_number", "user_id", "job_id"],
                     "PHONE_NUMBER": [
                         "country",
                         "id_type",
@@ -176,7 +160,7 @@ class TestUtilities(unittest.TestCase):
                         "user_id",
                         "job_id",
                         "first_name",
-                        "last_name"
+                        "last_name",
                     ],
                     "DRIVERS_LICENSE": [
                         "country",
@@ -186,7 +170,7 @@ class TestUtilities(unittest.TestCase):
                         "job_id",
                         "first_name",
                         "last_name",
-                        "dob"
+                        "dob",
                     ],
                     "PASSPORT": [
                         "country",
@@ -196,8 +180,8 @@ class TestUtilities(unittest.TestCase):
                         "job_id",
                         "first_name",
                         "last_name",
-                        "dob"
-                    ]
+                        "dob",
+                    ],
                 },
             }
         }
@@ -206,7 +190,9 @@ class TestUtilities(unittest.TestCase):
         self.__reset_params()
         with self.assertRaises(ValueError) as ve:
             response = Utilities.validate_partner_params(None)
-        self.assertEqual(ve.exception.args[0], u"Please ensure that you send through partner params")
+        self.assertEqual(
+            ve.exception.args[0], u"Please ensure that you send through partner params"
+        )
 
     def test_missing_partner_params(self):
         self.__reset_params()
@@ -214,63 +200,88 @@ class TestUtilities(unittest.TestCase):
         with self.assertRaises(ValueError) as ve:
             response = Utilities.validate_partner_params(self.partner_params)
         value_exception = ve.exception
-        self.assertEqual(value_exception.args[0], u"Partner Parameter Arguments may not be null or empty")
+        self.assertEqual(
+            value_exception.args[0],
+            u"Partner Parameter Arguments may not be null or empty",
+        )
 
         self.__reset_params()
         self.partner_params["job_id"] = None
         with self.assertRaises(ValueError) as ve:
             response = Utilities.validate_partner_params(self.partner_params)
-        self.assertEqual(ve.exception.args[0], u"Partner Parameter Arguments may not be null or empty")
+        self.assertEqual(
+            ve.exception.args[0],
+            u"Partner Parameter Arguments may not be null or empty",
+        )
 
         self.__reset_params()
         self.partner_params["job_type"] = None
         with self.assertRaises(ValueError) as ve:
             response = Utilities.validate_partner_params(self.partner_params)
-        self.assertEqual(ve.exception.args[0], u"Partner Parameter Arguments may not be null or empty")
+        self.assertEqual(
+            ve.exception.args[0],
+            u"Partner Parameter Arguments may not be null or empty",
+        )
 
     def test_id_info_params(self):
         self.__reset_params()
-        with patch('requests.get') as mocked_get:
+        with patch("requests.get") as mocked_get:
             mocked_get.return_value.status_code = 200
             mocked_get.return_value.ok = True
-            mocked_get.return_value.text.return_value = TestUtilities._get_smile_services_response()
-            mocked_get.return_value.json.return_value = TestUtilities._get_smile_services_response()
+            mocked_get.return_value.text.return_value = (
+                TestUtilities._get_smile_services_response()
+            )
+            mocked_get.return_value.json.return_value = (
+                TestUtilities._get_smile_services_response()
+            )
 
             self.id_info_params["country"] = None
             with self.assertRaises(ValueError) as ve:
-                Utilities.validate_id_params(self.utilities.url, self.id_info_params, self.partner_params)
+                Utilities.validate_id_params(
+                    self.utilities.url, self.id_info_params, self.partner_params
+                )
             self.assertEqual(ve.exception.args[0], u"country cannot be empty")
 
             self.__reset_params()
             self.id_info_params["country"] = "ZW"
             with self.assertRaises(ValueError) as ve:
-                Utilities.validate_id_params(self.utilities.url, self.id_info_params, self.partner_params)
+                Utilities.validate_id_params(
+                    self.utilities.url, self.id_info_params, self.partner_params
+                )
             self.assertEqual(ve.exception.args[0], u"country ZW is invalid")
 
             self.__reset_params()
             self.id_info_params["id_type"] = None
             with self.assertRaises(ValueError) as ve:
-                Utilities.validate_id_params(self.utilities.url, self.id_info_params, self.partner_params)
+                Utilities.validate_id_params(
+                    self.utilities.url, self.id_info_params, self.partner_params
+                )
             self.assertEqual(ve.exception.args[0], u"id_type cannot be empty")
 
             self.__reset_params()
             self.id_info_params["id_number"] = None
             with self.assertRaises(ValueError) as ve:
-                Utilities.validate_id_params(self.utilities.url, self.id_info_params, self.partner_params)
+                Utilities.validate_id_params(
+                    self.utilities.url, self.id_info_params, self.partner_params
+                )
             self.assertEqual(ve.exception.args[0], u"key id_number cannot be empty")
 
     def test_response(self):
         self.__reset_params()
         timestamp = int(time.time())
         sec_timestamp = self.signatureObj.generate_sec_key(timestamp=timestamp)
-        with patch('requests.post') as mocked_post:
+        with patch("requests.post") as mocked_post:
             mocked_post.return_value.status_code = 200
             mocked_post.return_value.ok = True
             mocked_post.return_value.text.return_value = self._get_job_status_response()
             mocked_post.return_value.json.return_value = self._get_job_status_response()
 
-            job_status = self.utilities.get_job_status(self.partner_params, self.options_params,
-                                                       sec_timestamp["sec_key"], timestamp)
+            job_status = self.utilities.get_job_status(
+                self.partner_params,
+                self.options_params,
+                sec_timestamp["sec_key"],
+                timestamp,
+            )
             job_status_response = job_status.json()
 
             self.assertEqual(job_status.status_code, 200)

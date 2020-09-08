@@ -8,7 +8,6 @@ from smile_id_core import Signature
 
 
 class TestSignature(unittest.TestCase):
-
     def setUp(self):
         self.key = RSA.generate(2048)
         self.public_key = self.key.publickey().export_key()
@@ -25,7 +24,9 @@ class TestSignature(unittest.TestCase):
         sec_timestamp = self.signatureObj.generate_sec_key(timestamp=timestamp)
         self.assertEqual(sec_timestamp["timestamp"], timestamp)
 
-        hashed = hashlib.sha256('{}:{}'.format(int(self.partner_id), timestamp).encode('utf-8')).hexdigest()
+        hashed = hashlib.sha256(
+            "{}:{}".format(int(self.partner_id), timestamp).encode("utf-8")
+        ).hexdigest()
         encrypted, hashed2 = sec_timestamp["sec_key"].split("|")
         self.assertEqual(hashed, hashed2)
 

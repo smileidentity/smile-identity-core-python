@@ -11,7 +11,7 @@ from smile_id_core.Utilities import Utilities
 from smile_id_core.ServerError import ServerError
 import zipfile
 
-__all__ = ['WebApi']
+__all__ = ["WebApi"]
 
 
 class WebApi:
@@ -33,15 +33,23 @@ class WebApi:
         else:
             self.url = sid_server
 
-    def submit_job(self, partner_params, images_params,
-                   id_info_params, options_params, use_validation_api=True):
+    def submit_job(
+        self,
+        partner_params,
+        images_params,
+        id_info_params,
+        options_params,
+        use_validation_api=True,
+    ):
 
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params["job_type"]
 
         if not id_info_params:
             if job_type == 5:
-                Utilities.validate_id_params(self.url, id_info_params, partner_params, use_validation_api)
+                Utilities.validate_id_params(
+                    self.url, id_info_params, partner_params, use_validation_api
+                )
             id_info_params = {
                 "first_name": None,
                 "middle_name": None,
@@ -55,7 +63,9 @@ class WebApi:
             }
 
         if job_type == 5:
-            return self.__call_id_api(partner_params, id_info_params, use_validation_api)
+            return self.__call_id_api(
+                partner_params, id_info_params, use_validation_api
+            )
 
         if not options_params:
             options_params = {
@@ -66,44 +76,63 @@ class WebApi:
 
         self.__validate_options(options_params)
         self.validate_images(images_params)
-        Utilities.validate_id_params(self.url, id_info_params, partner_params, use_validation_api)
+        Utilities.validate_id_params(
+            self.url, id_info_params, partner_params, use_validation_api
+        )
         self.__validate_return_data(options_params)
 
         sec_key_object = self.__get_sec_key()
 
-        prep_upload = WebApi.execute_http(self.url + "/upload",
-                                          self.__prepare_prep_upload_payload(partner_params, sec_key_object["sec_key"],
-                                                                             sec_key_object["timestamp"]))
+        prep_upload = WebApi.execute_http(
+            self.url + "/upload",
+            self.__prepare_prep_upload_payload(
+                partner_params, sec_key_object["sec_key"], sec_key_object["timestamp"]
+            ),
+        )
         if prep_upload.status_code != 200:
-            raise ServerError("Failed to post entity to {}, status={}, response={}".format(self.url + "/upload",
-                                                                                            prep_upload.status_code,
-                                                                                            prep_upload.json()))
+            raise ServerError(
+                "Failed to post entity to {}, status={}, response={}".format(
+                    self.url + "/upload", prep_upload.status_code, prep_upload.json()
+                )
+            )
         else:
             prep_upload_json_resp = prep_upload.json()
             upload_url = prep_upload_json_resp["upload_url"]
             smile_job_id = prep_upload_json_resp["smile_job_id"]
-            info_json = self.__prepare_info_json(upload_url, partner_params, images_params, id_info_params,
-                                                 sec_key_object["sec_key"], sec_key_object["timestamp"])
+            info_json = self.__prepare_info_json(
+                upload_url,
+                partner_params,
+                images_params,
+                id_info_params,
+                sec_key_object["sec_key"],
+                sec_key_object["timestamp"],
+            )
             zip_stream = WebApi.create_zip(info_json, images_params)
             upload_response = WebApi.upload(upload_url, zip_stream)
             if prep_upload.status_code != 200:
-                raise ServerError("Failed to post entity to {}, status={}, response={}".format(upload_url,
-                                                                                                prep_upload.status_code,
-                                                                                                prep_upload.json()))
+                raise ServerError(
+                    "Failed to post entity to {}, status={}, response={}".format(
+                        upload_url, prep_upload.status_code, prep_upload.json()
+                    )
+                )
 
             if options_params["return_job_status"]:
-                self.utilities = Utilities(self.partner_id, self.api_key, self.sid_server)
-                job_status = self.poll_job_status(0, partner_params, options_params, sec_key_object["sec_key"],
-                                                  sec_key_object["timestamp"])
+                self.utilities = Utilities(
+                    self.partner_id, self.api_key, self.sid_server
+                )
+                job_status = self.poll_job_status(
+                    0,
+                    partner_params,
+                    options_params,
+                    sec_key_object["sec_key"],
+                    sec_key_object["timestamp"],
+                )
                 job_status_response = job_status.json()
                 job_status_response["success"] = True
                 job_status_response["smile_job_id"] = smile_job_id
                 return job_status
             else:
-                return {
-                    "success": True,
-                    "smile_job_id": smile_job_id
-                }
+                return {"success": True, "smile_job_id": smile_job_id}
 
     def __call_id_api(self, partner_params, id_info_params, use_validation_api):
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
@@ -115,20 +144,25 @@ class WebApi:
             raise ValueError("Please ensure that you send through image details")
 
         if not isinstance(images_params, list):
-            raise ValueError("Please ensure that you send through image details as a list")
+            raise ValueError(
+                "Please ensure that you send through image details as a list"
+            )
 
         if len(images_params) < 1:
             raise ValueError("Please ensure that you send through image details")
 
         for image in images_params:
-            if image["image"].lower().endswith(('.png', '.jpg')):
+            if image["image"].lower().endswith((".png", ".jpg")):
                 if not os.path.exists(image["image"]):
-                    raise FileNotFoundError("No such file or directory %s" % (image["image"]))
+                    raise FileNotFoundError(
+                        "No such file or directory %s" % (image["image"])
+                    )
 
     def __validate_options(self, options_params):
         if not self.call_back_url and not options_params:
             raise ValueError(
-                "Please choose to either get your response via the callback or job status query")
+                "Please choose to either get your response via the callback or job status query"
+            )
 
         if options_params:
             for key in options_params:
@@ -138,7 +172,8 @@ class WebApi:
     def __validate_return_data(self, options):
         if not self.call_back_url and not options["return_job_status"]:
             raise ValueError(
-                "Please choose to either get your response via the callback or job status query")
+                "Please choose to either get your response via the callback or job status query"
+            )
 
     def __get_sec_key(self):
         sec_key_gen = Signature(self.partner_id, self.api_key)
@@ -155,7 +190,15 @@ class WebApi:
             "callback_url": self.call_back_url,
         }
 
-    def __prepare_info_json(self, upload_url, partner_params, image_params, id_info_params, sec_key, timestamp):
+    def __prepare_info_json(
+        self,
+        upload_url,
+        partner_params,
+        image_params,
+        id_info_params,
+        sec_key,
+        timestamp,
+    ):
         return {
             "package_information": {
                 "apiVersion": {
@@ -163,7 +206,7 @@ class WebApi:
                     "majorVersion": 2,
                     "minorVersion": 0,
                 },
-                "language": "python"
+                "language": "python",
             },
             "misc_information": {
                 "sec_key": sec_key,
@@ -183,8 +226,8 @@ class WebApi:
                     "email": "",
                     "phone": "",
                     "countryCode": "+",
-                    "countryName": ""
-                }
+                    "countryName": "",
+                },
             },
             "id_info": id_info_params,
             "images": WebApi.prepare_image_payload(image_params),
@@ -195,18 +238,22 @@ class WebApi:
     def prepare_image_payload(image_params):
         payload = []
         for image in image_params:
-            if image["image"].lower().endswith(('.png', '.jpg', '.jpeg')):
-                payload.append({
-                    "image_type_id": image["image_type_id"],
-                    "image": "",
-                    "file_name": os.path.basename(image["image"]),
-                })
+            if image["image"].lower().endswith((".png", ".jpg", ".jpeg")):
+                payload.append(
+                    {
+                        "image_type_id": image["image_type_id"],
+                        "image": "",
+                        "file_name": os.path.basename(image["image"]),
+                    }
+                )
             else:
-                payload.append({
-                    "image_type_id": image["image_type_id"],
-                    "image": image["image"],
-                    "file_name": "",
-                })
+                payload.append(
+                    {
+                        "image_type_id": image["image_type_id"],
+                        "image": image["image"],
+                        "file_name": "",
+                    }
+                )
         return payload
 
     @staticmethod
@@ -215,11 +262,15 @@ class WebApi:
         with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
             zip_file.writestr("info.json", data=json.dumps(info_json))
             for image in image_params:
-                if image["image"].lower().endswith(('.png', '.jpg')):
-                    zip_file.write(os.path.join(image["image"]), os.path.basename(image["image"]))
+                if image["image"].lower().endswith((".png", ".jpg")):
+                    zip_file.write(
+                        os.path.join(image["image"]), os.path.basename(image["image"])
+                    )
         return zip_buffer.getvalue()
 
-    def poll_job_status(self, counter, partner_params, options_params, sec_key=None, timestamp=None):
+    def poll_job_status(
+        self, counter, partner_params, options_params, sec_key=None, timestamp=None
+    ):
         if sec_key is None:
             sec_key_object = self.__get_sec_key()
             sec_key = sec_key_object["sec_key"]
@@ -231,10 +282,14 @@ class WebApi:
         else:
             time.sleep(4)
 
-        job_status = self.utilities.get_job_status(partner_params, options_params, sec_key, timestamp)
+        job_status = self.utilities.get_job_status(
+            partner_params, options_params, sec_key, timestamp
+        )
         job_status_response = job_status.json()
         if not job_status_response["job_complete"] and counter < 20:
-            self.poll_job_status(counter, partner_params, options_params, sec_key, timestamp)
+            self.poll_job_status(
+                counter, partner_params, options_params, sec_key, timestamp
+            )
 
         return job_status
 
@@ -247,16 +302,14 @@ class WebApi:
             headers={
                 "Accept": "application/json",
                 "Accept-Language": "en_US",
-                "Content-type": "application/json"
-            })
+                "Content-type": "application/json",
+            },
+        )
         return resp
 
     @staticmethod
     def upload(url, file):
         resp = requests.put(
-            url=url,
-            data=file,
-            headers={
-                "Content-type": "application/zip"
-            })
+            url=url, data=file, headers={"Content-type": "application/zip"}
+        )
         return resp
