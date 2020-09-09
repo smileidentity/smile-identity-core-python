@@ -504,9 +504,9 @@ This is the https://packaging.python.org/tutorials/packaging-projects/ that you 
 
 #### Testing
 
-Tests are based on unittest as documented  here: https://docs.python.org/3/library/unittest.html.
+Tests are based on `pytest`.
  
-To run tests run `python -m unittest` in the root folder of the project
+To run tests run `pytest` in the root folder of the project
 
 ## Contributing
 
