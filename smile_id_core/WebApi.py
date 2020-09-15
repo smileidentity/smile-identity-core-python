@@ -1,15 +1,13 @@
-import io
 import json
-import os
 import time
 
 import requests
 
+from smile_id_core.image_upload import generate_zip_file, validate_images
 from smile_id_core.IdApi import IdApi
 from smile_id_core.Signature import Signature
 from smile_id_core.Utilities import Utilities
 from smile_id_core.ServerError import ServerError
-import zipfile
 
 __all__ = ["WebApi"]
 
@@ -75,19 +73,19 @@ class WebApi:
             }
 
         self.__validate_options(options_params)
-        self.validate_images(images_params)
+        validate_images(images_params)
         Utilities.validate_id_params(
             self.url, id_info_params, partner_params, use_validation_api
         )
         self.__validate_return_data(options_params)
 
         sec_key_object = self.__get_sec_key()
+        sec_key = sec_key_object["sec_key"]
+        timestamp = sec_key_object["timestamp"]
 
         prep_upload = WebApi.execute_http(
             self.url + "/upload",
-            self.__prepare_prep_upload_payload(
-                partner_params, sec_key_object["sec_key"], sec_key_object["timestamp"]
-            ),
+            self.__prepare_prep_upload_payload(partner_params, sec_key, timestamp),
         )
         if prep_upload.status_code != 200:
             raise ServerError(
@@ -99,17 +97,18 @@ class WebApi:
             prep_upload_json_resp = prep_upload.json()
             upload_url = prep_upload_json_resp["upload_url"]
             smile_job_id = prep_upload_json_resp["smile_job_id"]
-            info_json = self.__prepare_info_json(
-                upload_url,
-                partner_params,
-                images_params,
-                id_info_params,
-                sec_key_object["sec_key"],
-                sec_key_object["timestamp"],
+            zip_stream = generate_zip_file(
+                partner_id=self.partner_id,
+                sec_key=sec_key,
+                timestamp=timestamp,
+                callback_url=self.call_back_url,
+                image_params=images_params,
+                partner_params=partner_params,
+                id_info_params=id_info_params,
+                upload_url=upload_url,
             )
-            zip_stream = WebApi.create_zip(info_json, images_params)
             upload_response = WebApi.upload(upload_url, zip_stream)
-            if prep_upload.status_code != 200:
+            if upload_response.status_code != 200:
                 raise ServerError(
                     "Failed to post entity to {}, status={}, response={}".format(
                         upload_url, prep_upload.status_code, prep_upload.json()
@@ -137,26 +136,6 @@ class WebApi:
     def __call_id_api(self, partner_params, id_info_params, use_validation_api):
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
         return id_api.submit_job(partner_params, id_info_params, use_validation_api)
-
-    @staticmethod
-    def validate_images(images_params):
-        if not images_params:
-            raise ValueError("Please ensure that you send through image details")
-
-        if not isinstance(images_params, list):
-            raise ValueError(
-                "Please ensure that you send through image details as a list"
-            )
-
-        if len(images_params) < 1:
-            raise ValueError("Please ensure that you send through image details")
-
-        for image in images_params:
-            if image["image"].lower().endswith((".png", ".jpg")):
-                if not os.path.exists(image["image"]):
-                    raise FileNotFoundError(
-                        "No such file or directory %s" % (image["image"])
-                    )
 
     def __validate_options(self, options_params):
         if not self.call_back_url and not options_params:
@@ -189,84 +168,6 @@ class WebApi:
             "model_parameters": {},
             "callback_url": self.call_back_url,
         }
-
-    def __prepare_info_json(
-        self,
-        upload_url,
-        partner_params,
-        image_params,
-        id_info_params,
-        sec_key,
-        timestamp,
-    ):
-        return {
-            "package_information": {
-                "apiVersion": {
-                    "buildNumber": 0,
-                    "majorVersion": 2,
-                    "minorVersion": 0,
-                },
-                "language": "python",
-            },
-            "misc_information": {
-                "sec_key": sec_key,
-                "retry": "false",
-                "partner_params": partner_params,
-                "timestamp": timestamp,
-                "file_name": "selfie.zip",
-                "smile_client_id": self.partner_id,
-                "callback_url": self.call_back_url,
-                "userData": {
-                    "isVerifiedProcess": False,
-                    "name": "",
-                    "fbUserID": "",
-                    "firstName": "Bill",
-                    "lastName": "",
-                    "gender": "",
-                    "email": "",
-                    "phone": "",
-                    "countryCode": "+",
-                    "countryName": "",
-                },
-            },
-            "id_info": id_info_params,
-            "images": WebApi.prepare_image_payload(image_params),
-            "server_information": upload_url,
-        }
-
-    @staticmethod
-    def prepare_image_payload(image_params):
-        payload = []
-        for image in image_params:
-            if image["image"].lower().endswith((".png", ".jpg", ".jpeg")):
-                payload.append(
-                    {
-                        "image_type_id": image["image_type_id"],
-                        "image": "",
-                        "file_name": os.path.basename(image["image"]),
-                    }
-                )
-            else:
-                payload.append(
-                    {
-                        "image_type_id": image["image_type_id"],
-                        "image": image["image"],
-                        "file_name": "",
-                    }
-                )
-        return payload
-
-    @staticmethod
-    def create_zip(info_json, image_params):
-        zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
-            zip_file.writestr("info.json", data=json.dumps(info_json))
-            for image in image_params:
-                if image["image"].lower().endswith((".png", ".jpg")):
-                    zip_file.write(
-                        os.path.join(image["image"]), os.path.basename(image["image"])
-                    )
-        return zip_buffer.getvalue()
 
     def poll_job_status(
         self, counter, partner_params, options_params, sec_key=None, timestamp=None

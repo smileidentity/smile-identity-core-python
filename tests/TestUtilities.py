@@ -240,7 +240,7 @@ class TestUtilities(unittest.TestCase):
                 Utilities.validate_id_params(
                     self.utilities.url, self.id_info_params, self.partner_params
                 )
-            self.assertEqual(ve.exception.args[0], u"country cannot be empty")
+            self.assertEqual(ve.exception.args[0], u"key country cannot be empty")
 
             self.__reset_params()
             self.id_info_params["country"] = "ZW"
@@ -256,7 +256,7 @@ class TestUtilities(unittest.TestCase):
                 Utilities.validate_id_params(
                     self.utilities.url, self.id_info_params, self.partner_params
                 )
-            self.assertEqual(ve.exception.args[0], u"id_type cannot be empty")
+            self.assertEqual(ve.exception.args[0], u"key id_type cannot be empty")
 
             self.__reset_params()
             self.id_info_params["id_number"] = None
