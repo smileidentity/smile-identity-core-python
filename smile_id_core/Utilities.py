@@ -56,11 +56,11 @@ class Utilities:
         )
         if job_status.status_code != 200:
             raise ServerError(
-                "Failed to post entity to {}, response={}:{} - {}",
-                self.url + "/job_status",
-                job_status.status_code,
-                job_status.reason,
-                job_status.json(),
+                "Failed to post entity to {}, response={}:{} - {}".format(
+                    self.url + "/job_status",
+                    job_status.status_code,
+                    job_status.reason,
+                    job_status.json())
             )
         else:
             job_status_json_resp = job_status.json()
@@ -95,9 +95,9 @@ class Utilities:
             raise ValueError("Please ensure that you send through partner params")
 
         if (
-            not partner_params["user_id"]
-            or not partner_params["job_id"]
-            or not partner_params["job_type"]
+                not partner_params["user_id"]
+                or not partner_params["job_id"]
+                or not partner_params["job_type"]
         ):
             raise ValueError("Partner Parameter Arguments may not be null or empty")
 
@@ -115,7 +115,7 @@ class Utilities:
 
     @staticmethod
     def validate_id_params(
-        sid_server, id_info_params, partner_params, use_validation_api=True
+            sid_server, id_info_params, partner_params, use_validation_api=True
     ):
         if not id_info_params["entered"]:
             return
@@ -135,7 +135,7 @@ class Utilities:
         if response.status_code != 200:
             raise ServerError(
                 "Failed to get to {}, status={}, response={}".format(
-                    url + "/services", response.status_code, response.json()
+                    "/services", response.status_code, response.json()
                 )
             )
         response_json = response.json()
