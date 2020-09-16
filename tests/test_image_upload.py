@@ -10,7 +10,7 @@ from smile_id_core.image_upload import (
     prepare_info_json,
     generate_zip_file,
     prepare_image_payload,
-    validate_images
+    validate_images,
 )
 
 
@@ -107,5 +107,3 @@ def test_validate_images__error_file_not_found():
 
     with pytest.raises(FileNotFoundError):
         validate_images(image_params)
-
-

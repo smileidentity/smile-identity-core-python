@@ -60,7 +60,8 @@ class Utilities:
                     self.url + "/job_status",
                     job_status.status_code,
                     job_status.reason,
-                    job_status.json())
+                    job_status.json(),
+                )
             )
         else:
             job_status_json_resp = job_status.json()
@@ -95,9 +96,9 @@ class Utilities:
             raise ValueError("Please ensure that you send through partner params")
 
         if (
-                not partner_params["user_id"]
-                or not partner_params["job_id"]
-                or not partner_params["job_type"]
+            not partner_params["user_id"]
+            or not partner_params["job_id"]
+            or not partner_params["job_type"]
         ):
             raise ValueError("Partner Parameter Arguments may not be null or empty")
 
@@ -115,7 +116,7 @@ class Utilities:
 
     @staticmethod
     def validate_id_params(
-            sid_server, id_info_params, partner_params, use_validation_api=True
+        sid_server, id_info_params, partner_params, use_validation_api=True
     ):
         if not id_info_params["entered"]:
             return
