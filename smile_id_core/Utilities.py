@@ -56,11 +56,12 @@ class Utilities:
         )
         if job_status.status_code != 200:
             raise ServerError(
-                "Failed to post entity to {}, response={}:{} - {}",
-                self.url + "/job_status",
-                job_status.status_code,
-                job_status.reason,
-                job_status.json(),
+                "Failed to post entity to {}, response={}:{} - {}".format(
+                    self.url + "/job_status",
+                    job_status.status_code,
+                    job_status.reason,
+                    job_status.json(),
+                )
             )
         else:
             job_status_json_resp = job_status.json()
@@ -135,7 +136,7 @@ class Utilities:
         if response.status_code != 200:
             raise ServerError(
                 "Failed to get to {}, status={}, response={}".format(
-                    url + "/services", response.status_code, response.json()
+                    "/services", response.status_code, response.json()
                 )
             )
         response_json = response.json()

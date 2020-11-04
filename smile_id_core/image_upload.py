@@ -113,9 +113,7 @@ def validate_images(images_params):
         raise ValueError("Please ensure that you send through image details")
 
     if not isinstance(images_params, list):
-        raise ValueError(
-            "Please ensure that you send through image details as a list"
-        )
+        raise ValueError("Please ensure that you send through image details as a list")
 
     for image in images_params:
         if image["image"].lower().endswith(IMAGE_FILE_EXTENSIONS):
