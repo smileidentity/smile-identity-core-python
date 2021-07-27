@@ -3,6 +3,7 @@ import base64
 import hashlib
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_v1_5
+import hmac
 
 __all__ = ["Signature"]
 
@@ -30,6 +31,16 @@ class Signature:
         to_hash = "{}:{}".format(int(self.partner_id), timestamp)
         new_hash = str(to_hash).encode("utf-8")
         return hashlib.sha256(new_hash).hexdigest()
+
+    def generate_signature(self, timestamp=None):
+        if timestamp is None:
+            timestamp = int(time.time())
+        to_hash = ":".join([timestamp, self.partner_id])
+        new_hash = str(to_hash).encode("utf-8")
+        calculated_signature = base64.urlsafe_b64decode(
+            hmac.new(self.api_key, msg=new_hash, digestmod=hashlib.sha256).digest()
+        )
+        return {"signature": calculated_signature, "timestamp": timestamp}
 
     def confirm_sec_key(self, timestamp, sec_key):
         encrypted, hashed = sec_key.split("|")
