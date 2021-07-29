@@ -191,7 +191,7 @@ class TestUtilities(unittest.TestCase):
         with self.assertRaises(ValueError) as ve:
             response = Utilities.validate_partner_params(None)
         self.assertEqual(
-            ve.exception.args[0], u"Please ensure that you send through partner params"
+            ve.exception.args[0], "Please ensure that you send through partner params"
         )
 
     def test_missing_partner_params(self):
@@ -202,7 +202,7 @@ class TestUtilities(unittest.TestCase):
         value_exception = ve.exception
         self.assertEqual(
             value_exception.args[0],
-            u"Partner Parameter Arguments may not be null or empty",
+            "Partner Parameter Arguments may not be null or empty",
         )
 
         self.__reset_params()
@@ -211,7 +211,7 @@ class TestUtilities(unittest.TestCase):
             response = Utilities.validate_partner_params(self.partner_params)
         self.assertEqual(
             ve.exception.args[0],
-            u"Partner Parameter Arguments may not be null or empty",
+            "Partner Parameter Arguments may not be null or empty",
         )
 
         self.__reset_params()
@@ -220,7 +220,7 @@ class TestUtilities(unittest.TestCase):
             response = Utilities.validate_partner_params(self.partner_params)
         self.assertEqual(
             ve.exception.args[0],
-            u"Partner Parameter Arguments may not be null or empty",
+            "Partner Parameter Arguments may not be null or empty",
         )
 
     def test_id_info_params(self):
@@ -240,7 +240,7 @@ class TestUtilities(unittest.TestCase):
                 Utilities.validate_id_params(
                     self.utilities.url, self.id_info_params, self.partner_params
                 )
-            self.assertEqual(ve.exception.args[0], u"key country cannot be empty")
+            self.assertEqual(ve.exception.args[0], "key country cannot be empty")
 
             self.__reset_params()
             self.id_info_params["country"] = "ZW"
@@ -248,7 +248,7 @@ class TestUtilities(unittest.TestCase):
                 Utilities.validate_id_params(
                     self.utilities.url, self.id_info_params, self.partner_params
                 )
-            self.assertEqual(ve.exception.args[0], u"country ZW is invalid")
+            self.assertEqual(ve.exception.args[0], "country ZW is invalid")
 
             self.__reset_params()
             self.id_info_params["id_type"] = None
@@ -256,7 +256,7 @@ class TestUtilities(unittest.TestCase):
                 Utilities.validate_id_params(
                     self.utilities.url, self.id_info_params, self.partner_params
                 )
-            self.assertEqual(ve.exception.args[0], u"key id_type cannot be empty")
+            self.assertEqual(ve.exception.args[0], "key id_type cannot be empty")
 
             self.__reset_params()
             self.id_info_params["id_number"] = None
@@ -264,7 +264,7 @@ class TestUtilities(unittest.TestCase):
                 Utilities.validate_id_params(
                     self.utilities.url, self.id_info_params, self.partner_params
                 )
-            self.assertEqual(ve.exception.args[0], u"key id_number cannot be empty")
+            self.assertEqual(ve.exception.args[0], "key id_number cannot be empty")
 
     def test_response(self):
         self.__reset_params()

@@ -55,7 +55,7 @@ class TestIdApi(unittest.TestCase):
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(None, self.id_info_params)
         self.assertEqual(
-            ve.exception.args[0], u"Please ensure that you send through partner params"
+            ve.exception.args[0], "Please ensure that you send through partner params"
         )
 
     def test_no_id_info_params(self):
@@ -63,7 +63,7 @@ class TestIdApi(unittest.TestCase):
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, None)
         self.assertEqual(
-            ve.exception.args[0], u"Please ensure that you send through ID Information"
+            ve.exception.args[0], "Please ensure that you send through ID Information"
         )
 
     def test_invalid_job_type(self):
@@ -75,7 +75,7 @@ class TestIdApi(unittest.TestCase):
             )
         self.assertEqual(
             ve.exception.args[0],
-            u"Please ensure that you are setting your job_type to 5 to query ID Api",
+            "Please ensure that you are setting your job_type to 5 to query ID Api",
         )
 
     def test_id_info_params(self):
@@ -83,19 +83,19 @@ class TestIdApi(unittest.TestCase):
         self.id_info_params["country"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
-        self.assertEqual(ve.exception.args[0], u"key country cannot be empty")
+        self.assertEqual(ve.exception.args[0], "key country cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_type"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
-        self.assertEqual(ve.exception.args[0], u"key id_type cannot be empty")
+        self.assertEqual(ve.exception.args[0], "key id_type cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_number"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
-        self.assertEqual(ve.exception.args[0], u"key id_number cannot be empty")
+        self.assertEqual(ve.exception.args[0], "key id_number cannot be empty")
 
     def get_id_response(self):
         timestamp = int(time.time())
@@ -219,7 +219,7 @@ class TestIdApi(unittest.TestCase):
                 )
         self.assertEqual(
             ve.exception.args[0],
-            u"Failed to post entity to https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test/id_verification, status=400, response={'code': '2204', 'error': 'unauthorized'}",
+            "Failed to post entity to https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test/id_verification, status=400, response={'code': '2204', 'error': 'unauthorized'}",
         )
 
     def test_validate_return_data(self):

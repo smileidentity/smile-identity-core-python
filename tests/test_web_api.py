@@ -51,7 +51,7 @@ class TestWebApi(unittest.TestCase):
         self.assertEqual(self.web_api.call_back_url, "https://a_callback.com")
         self.assertEqual(
             self.web_api.url,
-            "https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
+            "https://testapi.smileidentity.com/v1",
         )
 
     def test_no_image_params(self):
@@ -61,7 +61,7 @@ class TestWebApi(unittest.TestCase):
                 self.partner_params, None, self.id_info_params, self.options_params
             )
         self.assertEqual(
-            ve.exception.args[0], u"Please ensure that you send through image details"
+            ve.exception.args[0], "Please ensure that you send through image details"
         )
 
     def test_no_partner_params(self):
@@ -71,7 +71,7 @@ class TestWebApi(unittest.TestCase):
                 None, self.image_params, self.id_info_params, self.options_params
             )
         self.assertEqual(
-            ve.exception.args[0], u"Please ensure that you send through partner params"
+            ve.exception.args[0], "Please ensure that you send through partner params"
         )
 
     def test_missing_partner_params(self):
@@ -87,7 +87,7 @@ class TestWebApi(unittest.TestCase):
         value_exception = ve.exception
         self.assertEqual(
             value_exception.args[0],
-            u"Partner Parameter Arguments may not be null or empty",
+            "Partner Parameter Arguments may not be null or empty",
         )
 
         self.__reset_params()
@@ -101,7 +101,7 @@ class TestWebApi(unittest.TestCase):
             )
         self.assertEqual(
             ve.exception.args[0],
-            u"Partner Parameter Arguments may not be null or empty",
+            "Partner Parameter Arguments may not be null or empty",
         )
 
         self.__reset_params()
@@ -115,7 +115,7 @@ class TestWebApi(unittest.TestCase):
             )
         self.assertEqual(
             ve.exception.args[0],
-            u"Partner Parameter Arguments may not be null or empty",
+            "Partner Parameter Arguments may not be null or empty",
         )
 
     def test_id_info_params(self):
@@ -128,7 +128,7 @@ class TestWebApi(unittest.TestCase):
                 self.id_info_params,
                 self.options_params,
             )
-        self.assertEqual(ve.exception.args[0], u"key country cannot be empty")
+        self.assertEqual(ve.exception.args[0], "key country cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_type"] = None
@@ -139,7 +139,7 @@ class TestWebApi(unittest.TestCase):
                 self.id_info_params,
                 self.options_params,
             )
-        self.assertEqual(ve.exception.args[0], u"key id_type cannot be empty")
+        self.assertEqual(ve.exception.args[0], "key id_type cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_number"] = None
@@ -150,7 +150,7 @@ class TestWebApi(unittest.TestCase):
                 self.id_info_params,
                 self.options_params,
             )
-        self.assertEqual(ve.exception.args[0], u"key id_number cannot be empty")
+        self.assertEqual(ve.exception.args[0], "key id_number cannot be empty")
 
     def test_non_valid_image(self):
         self.__reset_params()
@@ -163,7 +163,7 @@ class TestWebApi(unittest.TestCase):
                 self.options_params,
             )
         self.assertEqual(
-            ve.exception.args[0], u"No such file or directory path/to/image.jpg"
+            ve.exception.args[0], "No such file or directory path/to/image.jpg"
         )
 
     def test_boolean_options_params_non_jt5(self):
@@ -178,7 +178,7 @@ class TestWebApi(unittest.TestCase):
                 False,
             )
         self.assertEqual(
-            ve.exception.args[0], u"return_job_status needs to be a boolean"
+            ve.exception.args[0], "return_job_status needs to be a boolean"
         )
 
         self.__reset_params()
@@ -191,7 +191,7 @@ class TestWebApi(unittest.TestCase):
                 self.options_params,
                 False,
             )
-        self.assertEqual(ve.exception.args[0], u"return_history needs to be a boolean")
+        self.assertEqual(ve.exception.args[0], "return_history needs to be a boolean")
 
         self.__reset_params()
         self.options_params["return_images"] = "tEST"
@@ -203,7 +203,7 @@ class TestWebApi(unittest.TestCase):
                 self.options_params,
                 False,
             )
-        self.assertEqual(ve.exception.args[0], u"return_images needs to be a boolean")
+        self.assertEqual(ve.exception.args[0], "return_images needs to be a boolean")
 
     def _get_job_status_response(self):
         timestamp = int(time.time())
@@ -309,7 +309,7 @@ class TestWebApi(unittest.TestCase):
                 )
         self.assertEqual(
             ve.exception.args[0],
-            u"Failed to post entity to https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test/upload, status=400, response={'code': '2204', 'error': 'unauthorized'}",
+            "Failed to post entity to https://testapi.smileidentity.com/v1/upload, status=400, response={'code': '2204', 'error': 'unauthorized'}",
         )
 
     def test_validate_return_data(self):
