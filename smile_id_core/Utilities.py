@@ -17,8 +17,8 @@ class Utilities:
         self.sid_server = sid_server
         if sid_server in [0, 1]:
             sid_server_map = {
-                0: "https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
-                1: "https://la7am6gdm8.execute-api.us-west-2.amazonaws.com/prod",
+                0: "https://testapi.smileidentity.com/v1",
+                1: "https://api.smileidentity.com/v1"
             }
             self.url = sid_server_map[sid_server]
         else:
@@ -159,8 +159,8 @@ class Utilities:
     def get_smile_id_services(sid_server):
         if sid_server in [0, 1]:
             sid_server_map = {
-                0: "https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
-                1: "https://la7am6gdm8.execute-api.us-west-2.amazonaws.com/prod",
+                0: "https://testapi.smileidentity.com/v1",
+                1: "https://api.smileidentity.com/v1",
             }
             url = sid_server_map[sid_server]
         else:

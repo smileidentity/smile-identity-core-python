@@ -49,7 +49,7 @@ class TestUtilities(unittest.TestCase):
         self.assertEqual(self.utilities.api_key, self.public_key)
         self.assertEqual(
             self.utilities.url,
-            "https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
+            "https://testapi.smileidentity.com/v1",
         )
 
     def _get_job_status_response(self):

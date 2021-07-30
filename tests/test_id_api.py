@@ -47,7 +47,7 @@ class TestIdApi(unittest.TestCase):
         self.assertEqual(self.id_api.api_key, self.public_key)
         self.assertEqual(
             self.id_api.url,
-            "https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
+            "https://testapi.smileidentity.com/v1",
         )
 
     def test_no_partner_params(self):
@@ -219,7 +219,7 @@ class TestIdApi(unittest.TestCase):
                 )
         self.assertEqual(
             ve.exception.args[0],
-            "Failed to post entity to https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test/id_verification, status=400, response={'code': '2204', 'error': 'unauthorized'}",
+            "Failed to post entity to https://testapi.smileidentity.com/v1/id_verification, status=400, response={'code': '2204', 'error': 'unauthorized'}",
         )
 
     def test_validate_return_data(self):
