@@ -1,12 +1,13 @@
 import json
 import time
+from typing import Dict
 
 import requests
 
 from smile_id_core.image_upload import generate_zip_file, validate_images
 from smile_id_core.IdApi import IdApi
 from smile_id_core.Signature import Signature
-from smile_id_core.Utilities import Utilities
+from smile_id_core.Utilities import Utilities, get_signature, validate_sec_params
 from smile_id_core.ServerError import ServerError
 
 __all__ = ["WebApi"]
@@ -79,13 +80,11 @@ class WebApi:
         )
         self.__validate_return_data(options_params)
 
-        sec_key_object = self.__get_sec_key()
-        sec_key = sec_key_object["sec_key"]
-        timestamp = sec_key_object["timestamp"]
+        sec_params = self._get_security_key_params(options_params)
 
         prep_upload = WebApi.execute_http(
             self.url + "/upload",
-            self.__prepare_prep_upload_payload(partner_params, sec_key, timestamp),
+            self.__prepare_prep_upload_payload(partner_params, sec_params),
         )
         if prep_upload.status_code != 200:
             raise ServerError(
@@ -99,13 +98,12 @@ class WebApi:
             smile_job_id = prep_upload_json_resp["smile_job_id"]
             zip_stream = generate_zip_file(
                 partner_id=self.partner_id,
-                sec_key=sec_key,
-                timestamp=timestamp,
                 callback_url=self.call_back_url,
                 image_params=images_params,
                 partner_params=partner_params,
                 id_info_params=id_info_params,
                 upload_url=upload_url,
+                sec_params=sec_params
             )
             upload_response = WebApi.upload(upload_url, zip_stream)
             if upload_response.status_code != 200:
@@ -123,8 +121,7 @@ class WebApi:
                     0,
                     partner_params,
                     options_params,
-                    sec_key_object["sec_key"],
-                    sec_key_object["timestamp"],
+                    sec_params
                 )
                 job_status_response = job_status.json()
                 job_status_response["success"] = True
@@ -132,6 +129,9 @@ class WebApi:
                 return job_status
             else:
                 return {"success": True, "smile_job_id": smile_job_id}
+
+    def _get_security_key_params(self, options_params):
+        return get_signature(self.partner_id, self.api_key, options_params.get('signature'))
 
     def __call_id_api(self, partner_params, id_info_params, use_validation_api):
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
@@ -158,25 +158,25 @@ class WebApi:
         sec_key_gen = Signature(self.partner_id, self.api_key)
         return sec_key_gen.generate_sec_key()
 
-    def __prepare_prep_upload_payload(self, partner_params, sec_key, timestamp):
+    def __prepare_prep_upload_payload(self, partner_params: Dict, sec_params: Dict):
+        validate_sec_params(sec_params)
+
         return {
             "file_name": "selfie.zip",
-            "timestamp": timestamp,
-            "sec_key": sec_key,
             "smile_client_id": self.partner_id,
             "partner_params": partner_params,
             "model_parameters": {},
             "callback_url": self.call_back_url,
+            **sec_params
         }
 
     def poll_job_status(
-        self, counter, partner_params, options_params, sec_key=None, timestamp=None
+            self, counter, partner_params, options_params, sec_params: Dict
     ):
-        if sec_key is None:
-            sec_key_object = self.__get_sec_key()
-            sec_key = sec_key_object["sec_key"]
-            timestamp = sec_key_object["timestamp"]
+        if sec_params is None:
+            sec_params = self._get_security_key_params(options_params)
 
+        validate_sec_params(sec_params)
         counter = counter + 1
         if counter < 4:
             time.sleep(2)
@@ -184,12 +184,12 @@ class WebApi:
             time.sleep(4)
 
         job_status = self.utilities.get_job_status(
-            partner_params, options_params, sec_key, timestamp
+            partner_params, options_params, sec_params
         )
         job_status_response = job_status.json()
         if not job_status_response["job_complete"] and counter < 20:
             self.poll_job_status(
-                counter, partner_params, options_params, sec_key, timestamp
+                counter, partner_params, options_params, sec_params
             )
 
         return job_status

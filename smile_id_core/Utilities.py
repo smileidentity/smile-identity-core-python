@@ -1,11 +1,12 @@
 import json
+from typing import Dict
 
 import requests
 
 from smile_id_core.Signature import Signature
 from smile_id_core.ServerError import ServerError
 
-__all__ = ["Utilities"]
+__all__ = ["Utilities", "get_signature", "validate_sec_params"]
 
 
 class Utilities:
@@ -24,12 +25,11 @@ class Utilities:
         else:
             self.url = sid_server
 
-    def get_job_status(self, partner_params, option_params, sec_key, timestamp):
-        if sec_key is None:
-            sec_key_object = self.__get_sec_key()
-            sec_key = sec_key_object["sec_key"]
-            timestamp = sec_key_object["timestamp"]
+    def get_job_status(self, partner_params, option_params, sec_params):
+        if sec_params is None:
+            sec_params = get_signature(self.partner_id, self.api_key, option_params.get('signature'))
 
+        validate_sec_params(sec_params)
         Utilities.validate_partner_params(partner_params)
         if not option_params or option_params is None:
             options = {
@@ -43,15 +43,14 @@ class Utilities:
             partner_params.get("user_id"),
             partner_params.get("job_id"),
             options,
-            sec_key,
-            timestamp,
+            sec_params
         )
 
-    def __query_job_status(self, user_id, job_id, option_params, sec_key, timestamp):
+    def __query_job_status(self, user_id, job_id, option_params, sec_params):
         job_status = Utilities.execute_post(
             self.url + "/job_status",
             self.__configure_job_query(
-                user_id, job_id, option_params, sec_key, timestamp
+                user_id, job_id, option_params, sec_params
             ),
         )
         if job_status.status_code != 200:
@@ -68,27 +67,25 @@ class Utilities:
             timestamp = job_status_json_resp["timestamp"]
             server_signature = job_status_json_resp["signature"]
             signature = Signature(self.partner_id, self.api_key)
-            valid = signature.confirm_sec_key(timestamp, server_signature)
+            if option_params.get("signature"):
+                valid = signature.confirm_signature(timestamp, server_signature)
+            else:
+                valid = signature.confirm_sec_key(timestamp, server_signature)
             if not valid:
                 raise ServerError(
                     "Unable to confirm validity of the job_status response"
                 )
             return job_status
 
-    def __configure_job_query(self, user_id, job_id, options, sec_key, timestamp):
+    def __configure_job_query(self, user_id, job_id, options, sec_params):
         return {
-            "sec_key": sec_key,
-            "timestamp": timestamp,
+            **sec_params,
             "partner_id": self.partner_id,
             "job_id": job_id,
             "user_id": user_id,
             "image_links": options["return_images"],
             "history": options["return_history"],
         }
-
-    def __get_sec_key(self):
-        sec_key_gen = Signature(self.partner_id, self.api_key)
-        return sec_key_gen.generate_sec_key()
 
     @staticmethod
     def validate_partner_params(partner_params):
@@ -198,3 +195,23 @@ class Utilities:
             },
         )
         return resp
+
+
+def validate_sec_params(sec_key_dict: Dict):
+    if not sec_key_dict.get("sec_key") and not sec_key_dict.get("signature"):
+        raise Exception("Missing key, must provide a 'sec_key' or 'signature' field")
+    if not sec_key_dict.get("timestamp"):
+        raise Exception("Missing 'timestamp' field")
+
+
+def get_signature(partner_id, api_key, is_signature):
+    sec_key_gen = Signature(partner_id, api_key)
+    sec_key_object = sec_key_gen.generate_signature() if is_signature else sec_key_gen.generate_sec_key()
+    sec_key = sec_key_object.get("sec_key")
+    signature = sec_key_object.get("signature")
+    payload = {"timestamp": sec_key_object["timestamp"]}
+    if sec_key:
+        payload.update({"sec_key": sec_key})
+    else:
+        payload.update({"signature": signature})
+    return payload

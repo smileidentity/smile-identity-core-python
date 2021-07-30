@@ -1,8 +1,12 @@
+import base64
 import hashlib
+import hmac
 import time
 import unittest
-from Crypto.PublicKey import RSA
+from datetime import datetime
+
 from Crypto.Cipher import PKCS1_v1_5
+from Crypto.PublicKey import RSA
 
 from smile_id_core import Signature
 
@@ -29,6 +33,19 @@ class TestSignature(unittest.TestCase):
         ).hexdigest()
         encrypted, hashed2 = sec_timestamp["sec_key"].split("|")
         self.assertEqual(hashed, hashed2)
+
+    def test_generate_signature(self):
+        timestamp = datetime.now().isoformat()
+        signature = self.signatureObj.generate_signature(timestamp=timestamp)
+        self.assertEqual(signature["timestamp"], timestamp)
+
+        hmac_new = hmac.new(self.public_key, digestmod=hashlib.sha256)
+        hmac_new.update(timestamp.encode('utf-8'))
+        hmac_new.update(str(self.partner_id).encode('utf-8'))
+        hmac_new.update("sid_request".encode('utf-8'))
+        calculated_signature = base64.b64encode(hmac_new.digest()).decode('utf-8')
+
+        self.assertEqual(signature['signature'], calculated_signature)
 
     # TODO: Confirm sec key tests
     def test_confirm_sec_key(self):

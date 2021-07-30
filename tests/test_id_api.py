@@ -1,5 +1,6 @@
 import time
 import unittest
+from datetime import datetime
 from unittest.mock import patch
 from uuid import uuid4
 
@@ -97,9 +98,11 @@ class TestIdApi(unittest.TestCase):
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
         self.assertEqual(ve.exception.args[0], "key id_number cannot be empty")
 
-    def get_id_response(self):
-        timestamp = int(time.time())
-        sec_timestamp = self.signatureObj.generate_sec_key(timestamp=timestamp)
+    def get_id_response(self, signature=False):
+        if signature:
+            sec_timestamp = self.signatureObj.generate_signature(timestamp=datetime.now().isoformat())
+        else:
+            sec_timestamp = self.signatureObj.generate_sec_key(timestamp=int(time.time()))
         return {
             "JSONVersion": "1.0.0",
             "SmileJobID": "0000000324",
@@ -128,8 +131,8 @@ class TestIdApi(unittest.TestCase):
             "Address": "Not Available",
             "FullData": {},
             "Source": "ID API",
-            "timestamp": timestamp,
-            "signature": sec_timestamp["sec_key"],
+            "timestamp": sec_timestamp.get("timestamp"),
+            "signature": sec_timestamp.get("signature") if signature else sec_timestamp.get("sec_key")
         }
 
     @staticmethod

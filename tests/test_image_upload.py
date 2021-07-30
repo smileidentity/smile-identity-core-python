@@ -42,8 +42,7 @@ def test_prepare_info_json():
         partner_params="partner_params",
         image_params=image_params,
         id_info_params="id_info_params",
-        sec_key="sec_key",
-        timestamp="timestamp",
+        sec_params={"sec_key": "sec_key", "timestamp": "timestamp", }
     )
     assert info_json["id_info"] == "id_info_params"
     assert info_json["images"] == prepare_image_payload(image_params)
@@ -78,8 +77,7 @@ def test_generate_zip_file(temp_image_file):
         partner_params="partner_params",
         image_params=image_params,
         id_info_params="id_info_params",
-        sec_key="sec_key",
-        timestamp="timestamp",
+        sec_params={"sec_key": "sec_key", "timestamp": "timestamp"}
     )
 
     zf = zipfile.ZipFile(io.BytesIO(zip_stream))

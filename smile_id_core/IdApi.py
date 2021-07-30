@@ -1,6 +1,5 @@
 import json
-from smile_id_core.Signature import Signature
-from smile_id_core.Utilities import Utilities
+from smile_id_core.Utilities import Utilities, get_signature, validate_sec_params
 from smile_id_core.ServerError import ServerError
 import requests
 
@@ -25,7 +24,10 @@ class IdApi:
         else:
             self.url = sid_server
 
-    def submit_job(self, partner_params, id_params, use_validation_api=True):
+    def submit_job(self, partner_params, id_params, use_validation_api=True, options_params=None):
+        if not options_params:
+            options_params = {}
+
         Utilities.validate_partner_params(partner_params)
 
         if not id_params:
@@ -40,12 +42,11 @@ class IdApi:
                 "Please ensure that you are setting your job_type to 5 to query ID Api"
             )
 
-        sec_key_object = self.__get_sec_key()
+        sec_key_object = get_signature(self.partner_id, self.api_key, options_params.get('signature'))
         payload = self.__configure_json(
             partner_params,
             id_params,
-            sec_key_object["sec_key"],
-            sec_key_object["timestamp"],
+            sec_key_object
         )
         response = self.__execute_http(payload)
         if response.status_code != 200:
@@ -56,14 +57,10 @@ class IdApi:
             )
         return response
 
-    def __get_sec_key(self):
-        sec_key_gen = Signature(self.partner_id, self.api_key)
-        return sec_key_gen.generate_sec_key()
-
-    def __configure_json(self, partner_params, id_params, sec_key, timestamp):
+    def __configure_json(self, partner_params, id_params, sec_key):
+        validate_sec_params(sec_key)
         payload = {
-            "sec_key": sec_key,
-            "timestamp": timestamp,
+            **sec_key,
             "partner_id": self.partner_id,
             "partner_params": partner_params,
         }

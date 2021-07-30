@@ -1,5 +1,6 @@
 import time
 import unittest
+from datetime import datetime
 from unittest.mock import patch
 from uuid import uuid4
 
@@ -52,12 +53,14 @@ class TestUtilities(unittest.TestCase):
             "https://testapi.smileidentity.com/v1",
         )
 
-    def _get_job_status_response(self):
-        timestamp = int(time.time())
-        sec_timestamp = self.signatureObj.generate_sec_key(timestamp=timestamp)
+    def _get_job_status_response(self, signature=False):
+        if signature:
+            sec_timestamp = self.signatureObj.generate_sec_key(timestamp=datetime.now().isoformat())
+        else:
+            sec_timestamp = self.signatureObj.generate_sec_key(timestamp=int(time.time()))
         return {
-            "timestamp": timestamp,
-            "signature": sec_timestamp["sec_key"],
+            "timestamp": sec_timestamp["timestamp"],
+            "signature": sec_timestamp["signature"] if signature else sec_timestamp["sec_key"],
             "job_complete": True,
             "job_success": True,
             "result": {
@@ -279,8 +282,7 @@ class TestUtilities(unittest.TestCase):
             job_status = self.utilities.get_job_status(
                 self.partner_params,
                 self.options_params,
-                sec_timestamp["sec_key"],
-                timestamp,
+                sec_timestamp
             )
             job_status_response = job_status.json()
 
