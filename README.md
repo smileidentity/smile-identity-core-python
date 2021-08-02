@@ -29,7 +29,7 @@ View the package on [Pypi](https://pypi.org/project/smile-id-core/).
 
 Add the group, name and version to your application's build file, it will look similar based on your build tool:
 
-```
+```shell
 pip install smile-id-core
 ```
 
@@ -97,7 +97,7 @@ In the case of a Job Type 5 (_Validate an ID_) you can simply omit the the image
 Remember that the response is immediate, so there is no need to query the job_status. There is also no enrollment so no images are required. 
 The response for a job type 5 can be found in the response section below.
 
-```
+```python
 response = connection.submit_job(partner_params, None, id_info, None)
 ```
 
@@ -107,12 +107,12 @@ input information for a job type and id type and checks if you  have provided re
 **Response:**
 
 Should you choose to *set return_job_status to false*, the response will be a JSON String containing:
-```
+```json
 {"success": true, "smile_job_id": smile_job_id}
 ```
 
 However, if you have *set return_job_status to true (with image_links and history)* then you will receive JSON Object response like below:
-```
+```json
 {
     "job_success": true,
     "result": {
@@ -191,7 +191,7 @@ However, if you have *set return_job_status to true (with image_links and histor
 ```
 
 You can also *view your response asynchronously at the callback* that you have set, it will look as follows:
-```
+```json
 {
     "job_success": true,
     "result": {
