@@ -39,11 +39,14 @@ class Signature:
         if _timestamp is None:
             _timestamp = datetime.now().isoformat()
         hmac_new = hmac.new(self.api_key, digestmod=hashlib.sha256)
-        hmac_new.update(_timestamp.encode('utf-8'))
-        hmac_new.update(str(self.partner_id).encode('utf-8'))
-        hmac_new.update("sid_request".encode('utf-8'))
+        hmac_new.update(_timestamp.encode("utf-8"))
+        hmac_new.update(str(self.partner_id).encode("utf-8"))
+        hmac_new.update("sid_request".encode("utf-8"))
         calculated_signature = base64.b64encode(hmac_new.digest())
-        return {"signature": calculated_signature.decode("utf-8"), "timestamp": _timestamp}
+        return {
+            "signature": calculated_signature.decode("utf-8"),
+            "timestamp": _timestamp,
+        }
 
     def confirm_signature(self, timestamp, msg_signature):
         return self.generate_signature(timestamp)["signature"] == msg_signature

@@ -21,7 +21,7 @@ def generate_zip_file(
     partner_params,
     image_params,
     id_info_params,
-    sec_params
+    sec_params,
 ):
     info_json = prepare_info_json(
         partner_id,
@@ -30,7 +30,7 @@ def generate_zip_file(
         partner_params,
         image_params,
         id_info_params,
-        sec_params
+        sec_params,
     )
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
@@ -52,7 +52,7 @@ def prepare_info_json(
     partner_params,
     image_params,
     id_info_params,
-    sec_params
+    sec_params,
 ):
     validate_sec_params(sec_params)
     return {

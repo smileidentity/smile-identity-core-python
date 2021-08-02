@@ -55,12 +55,18 @@ class TestUtilities(unittest.TestCase):
 
     def _get_job_status_response(self, signature=False):
         if signature:
-            sec_timestamp = self.signatureObj.generate_sec_key(timestamp=datetime.now().isoformat())
+            sec_timestamp = self.signatureObj.generate_sec_key(
+                timestamp=datetime.now().isoformat()
+            )
         else:
-            sec_timestamp = self.signatureObj.generate_sec_key(timestamp=int(time.time()))
+            sec_timestamp = self.signatureObj.generate_sec_key(
+                timestamp=int(time.time())
+            )
         return {
             "timestamp": sec_timestamp["timestamp"],
-            "signature": sec_timestamp["signature"] if signature else sec_timestamp["sec_key"],
+            "signature": sec_timestamp["signature"]
+            if signature
+            else sec_timestamp["sec_key"],
             "job_complete": True,
             "job_success": True,
             "result": {
@@ -280,9 +286,7 @@ class TestUtilities(unittest.TestCase):
             mocked_post.return_value.json.return_value = self._get_job_status_response()
 
             job_status = self.utilities.get_job_status(
-                self.partner_params,
-                self.options_params,
-                sec_timestamp
+                self.partner_params, self.options_params, sec_timestamp
             )
             job_status_response = job_status.json()
 

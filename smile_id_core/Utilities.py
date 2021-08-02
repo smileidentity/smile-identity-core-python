@@ -19,7 +19,7 @@ class Utilities:
         if sid_server in [0, 1]:
             sid_server_map = {
                 0: "https://testapi.smileidentity.com/v1",
-                1: "https://api.smileidentity.com/v1"
+                1: "https://api.smileidentity.com/v1",
             }
             self.url = sid_server_map[sid_server]
         else:
@@ -27,7 +27,9 @@ class Utilities:
 
     def get_job_status(self, partner_params, option_params, sec_params):
         if sec_params is None:
-            sec_params = get_signature(self.partner_id, self.api_key, option_params.get('signature'))
+            sec_params = get_signature(
+                self.partner_id, self.api_key, option_params.get("signature")
+            )
 
         validate_sec_params(sec_params)
         Utilities.validate_partner_params(partner_params)
@@ -43,15 +45,13 @@ class Utilities:
             partner_params.get("user_id"),
             partner_params.get("job_id"),
             options,
-            sec_params
+            sec_params,
         )
 
     def __query_job_status(self, user_id, job_id, option_params, sec_params):
         job_status = Utilities.execute_post(
             self.url + "/job_status",
-            self.__configure_job_query(
-                user_id, job_id, option_params, sec_params
-            ),
+            self.__configure_job_query(user_id, job_id, option_params, sec_params),
         )
         if job_status.status_code != 200:
             raise ServerError(
@@ -206,7 +206,11 @@ def validate_sec_params(sec_key_dict: Dict):
 
 def get_signature(partner_id, api_key, is_signature):
     sec_key_gen = Signature(partner_id, api_key)
-    sec_key_object = sec_key_gen.generate_signature() if is_signature else sec_key_gen.generate_sec_key()
+    sec_key_object = (
+        sec_key_gen.generate_signature()
+        if is_signature
+        else sec_key_gen.generate_sec_key()
+    )
     sec_key = sec_key_object.get("sec_key")
     signature = sec_key_object.get("signature")
     payload = {"timestamp": sec_key_object["timestamp"]}

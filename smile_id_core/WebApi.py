@@ -103,7 +103,7 @@ class WebApi:
                 partner_params=partner_params,
                 id_info_params=id_info_params,
                 upload_url=upload_url,
-                sec_params=sec_params
+                sec_params=sec_params,
             )
             upload_response = WebApi.upload(upload_url, zip_stream)
             if upload_response.status_code != 200:
@@ -118,10 +118,7 @@ class WebApi:
                     self.partner_id, self.api_key, self.sid_server
                 )
                 job_status = self.poll_job_status(
-                    0,
-                    partner_params,
-                    options_params,
-                    sec_params
+                    0, partner_params, options_params, sec_params
                 )
                 job_status_response = job_status.json()
                 job_status_response["success"] = True
@@ -131,7 +128,9 @@ class WebApi:
                 return {"success": True, "smile_job_id": smile_job_id}
 
     def _get_security_key_params(self, options_params):
-        return get_signature(self.partner_id, self.api_key, options_params.get('signature'))
+        return get_signature(
+            self.partner_id, self.api_key, options_params.get("signature")
+        )
 
     def __call_id_api(self, partner_params, id_info_params, use_validation_api):
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
@@ -167,11 +166,11 @@ class WebApi:
             "partner_params": partner_params,
             "model_parameters": {},
             "callback_url": self.call_back_url,
-            **sec_params
+            **sec_params,
         }
 
     def poll_job_status(
-            self, counter, partner_params, options_params, sec_params: Dict
+        self, counter, partner_params, options_params, sec_params: Dict
     ):
         if sec_params is None:
             sec_params = self._get_security_key_params(options_params)
@@ -188,9 +187,7 @@ class WebApi:
         )
         job_status_response = job_status.json()
         if not job_status_response["job_complete"] and counter < 20:
-            self.poll_job_status(
-                counter, partner_params, options_params, sec_params
-            )
+            self.poll_job_status(counter, partner_params, options_params, sec_params)
 
         return job_status
 

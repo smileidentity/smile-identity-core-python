@@ -24,7 +24,9 @@ class IdApi:
         else:
             self.url = sid_server
 
-    def submit_job(self, partner_params, id_params, use_validation_api=True, options_params=None):
+    def submit_job(
+        self, partner_params, id_params, use_validation_api=True, options_params=None
+    ):
         if not options_params:
             options_params = {}
 
@@ -42,12 +44,10 @@ class IdApi:
                 "Please ensure that you are setting your job_type to 5 to query ID Api"
             )
 
-        sec_key_object = get_signature(self.partner_id, self.api_key, options_params.get('signature'))
-        payload = self.__configure_json(
-            partner_params,
-            id_params,
-            sec_key_object
+        sec_key_object = get_signature(
+            self.partner_id, self.api_key, options_params.get("signature")
         )
+        payload = self.__configure_json(partner_params, id_params, sec_key_object)
         response = self.__execute_http(payload)
         if response.status_code != 200:
             raise ServerError(

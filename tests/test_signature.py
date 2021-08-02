@@ -40,12 +40,12 @@ class TestSignature(unittest.TestCase):
         self.assertEqual(signature["timestamp"], timestamp)
 
         hmac_new = hmac.new(self.public_key, digestmod=hashlib.sha256)
-        hmac_new.update(timestamp.encode('utf-8'))
-        hmac_new.update(str(self.partner_id).encode('utf-8'))
-        hmac_new.update("sid_request".encode('utf-8'))
-        calculated_signature = base64.b64encode(hmac_new.digest()).decode('utf-8')
+        hmac_new.update(timestamp.encode("utf-8"))
+        hmac_new.update(str(self.partner_id).encode("utf-8"))
+        hmac_new.update("sid_request".encode("utf-8"))
+        calculated_signature = base64.b64encode(hmac_new.digest()).decode("utf-8")
 
-        self.assertEqual(signature['signature'], calculated_signature)
+        self.assertEqual(signature["signature"], calculated_signature)
 
     # TODO: Confirm sec key tests
     def test_confirm_sec_key(self):
