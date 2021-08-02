@@ -1,4 +1,6 @@
 import json
+from typing import Dict
+
 from smile_id_core.Utilities import Utilities, get_signature, validate_sec_params
 from smile_id_core.ServerError import ServerError
 import requests
@@ -7,10 +9,7 @@ __all__ = ["IdApi"]
 
 
 class IdApi:
-    timestamp = 0
-    sec_key = ""
-
-    def __init__(self, partner_id, api_key, sid_server):
+    def __init__(self, partner_id: str, api_key: str, sid_server: str or int):
         if not partner_id or not api_key:
             raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
@@ -25,7 +24,11 @@ class IdApi:
             self.url = sid_server
 
     def submit_job(
-        self, partner_params, id_params, use_validation_api=True, options_params=None
+        self,
+        partner_params: Dict,
+        id_params: Dict,
+        use_validation_api=True,
+        options_params: Dict = None,
     ):
         if not options_params:
             options_params = {}

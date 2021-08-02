@@ -1,3 +1,4 @@
+import base64
 import time
 import unittest
 from unittest.mock import patch
@@ -13,10 +14,11 @@ class TestWebApi(unittest.TestCase):
     def setUp(self):
         self.key = RSA.generate(2048)
         self.public_key = self.key.publickey().export_key()
+        self.api_key = base64.b64encode(self.public_key).decode("UTF-8")
         self.partner_id = "001"
         self.__reset_params()
-        self.web_api = WebApi("001", "https://a_callback.com", self.public_key, 0)
-        self.signatureObj = Signature(self.partner_id, self.public_key)
+        self.web_api = WebApi("001", "https://a_callback.com", self.api_key, 0)
+        self.signatureObj = Signature(self.partner_id, self.api_key)
         self.cipher = PKCS1_v1_5.new(self.key.exportKey())
 
     def __reset_params(self):
@@ -47,7 +49,7 @@ class TestWebApi(unittest.TestCase):
     def test_instance(self):
         self.__reset_params()
         self.assertEqual(self.web_api.partner_id, "001")
-        self.assertEqual(self.web_api.api_key, self.public_key)
+        self.assertEqual(self.web_api.api_key, self.api_key)
         self.assertEqual(self.web_api.call_back_url, "https://a_callback.com")
         self.assertEqual(
             self.web_api.url,

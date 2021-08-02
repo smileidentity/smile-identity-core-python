@@ -42,7 +42,7 @@ class WebApi:
     ):
 
         Utilities.validate_partner_params(partner_params)
-        job_type = partner_params["job_type"]
+        job_type = partner_params.get("job_type")
 
         if not id_info_params:
             if job_type == 5:
@@ -61,17 +61,17 @@ class WebApi:
                 "entered": False,
             }
 
-        if job_type == 5:
-            return self.__call_id_api(
-                partner_params, id_info_params, use_validation_api
-            )
-
         if not options_params:
             options_params = {
                 "return_job_status": True,
                 "return_history": False,
                 "return_images": False,
             }
+
+        if job_type == 5:
+            return self.__call_id_api(
+                partner_params, id_info_params, use_validation_api, options_params
+            )
 
         self.__validate_options(options_params)
         validate_images(images_params)
@@ -132,9 +132,17 @@ class WebApi:
             self.partner_id, self.api_key, options_params.get("signature")
         )
 
-    def __call_id_api(self, partner_params, id_info_params, use_validation_api):
+    def __call_id_api(
+        self,
+        partner_params: Dict,
+        id_info_params: Dict,
+        use_validation_api: bool,
+        options_params: Dict,
+    ):
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
-        return id_api.submit_job(partner_params, id_info_params, use_validation_api)
+        return id_api.submit_job(
+            partner_params, id_info_params, use_validation_api, options_params
+        )
 
     def __validate_options(self, options_params):
         if not self.call_back_url and not options_params:

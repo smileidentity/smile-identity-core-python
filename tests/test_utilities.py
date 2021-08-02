@@ -1,3 +1,4 @@
+import base64
 import time
 import unittest
 from datetime import datetime
@@ -14,8 +15,9 @@ class TestUtilities(unittest.TestCase):
     def setUp(self):
         self.key = RSA.generate(2048)
         self.public_key = self.key.publickey().export_key()
+        self.api_key = base64.b64encode(self.public_key).decode("UTF-8")
         self.partner_id = "001"
-        self.signatureObj = Signature(self.partner_id, self.public_key)
+        self.signatureObj = Signature(self.partner_id, self.api_key)
         self.cipher = PKCS1_v1_5.new(self.key.exportKey())
         self.__reset_params()
         self.utilities = Utilities(self.partner_id, self.public_key, 0)

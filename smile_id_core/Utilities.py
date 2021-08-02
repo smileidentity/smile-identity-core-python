@@ -93,29 +93,26 @@ class Utilities:
             raise ValueError("Please ensure that you send through partner params")
 
         if (
-            not partner_params["user_id"]
-            or not partner_params["job_id"]
-            or not partner_params["job_type"]
+            not partner_params.get("user_id")
+            or not partner_params.get("job_id")
+            or not partner_params.get("job_type")
         ):
             raise ValueError("Partner Parameter Arguments may not be null or empty")
 
-        if not isinstance(partner_params["user_id"], str):
+        if not isinstance(partner_params.get("user_id"), str):
             raise ValueError("Please ensure user_id is a string")
 
-        if not isinstance(partner_params["job_id"], str):
+        if not isinstance(partner_params.get("job_id"), str):
             raise ValueError("Please ensure job_id is a string")
 
-        if not isinstance(partner_params["job_id"], str):
-            raise ValueError("Please ensure job_id is a string")
-
-        if not isinstance(partner_params["job_type"], int):
+        if not isinstance(partner_params.get("job_type"), int):
             raise ValueError("Please ensure job_id is a number")
 
     @staticmethod
     def validate_id_params(
         sid_server, id_info_params, partner_params, use_validation_api=True
     ):
-        if not id_info_params["entered"]:
+        if not id_info_params.get("entered"):
             return
 
         for field in ["country", "id_type", "id_number"]:
