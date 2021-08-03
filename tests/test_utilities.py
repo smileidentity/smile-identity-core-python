@@ -1,17 +1,17 @@
 import base64
 import time
-import unittest
-from datetime import datetime
-from unittest.mock import patch
+
 from uuid import uuid4
 
+import responses
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
 from smile_id_core import Signature, Utilities
+from tests.stub_mixin import TestCaseWithStubs
 
 
-class TestUtilities(unittest.TestCase):
+class TestUtilities(TestCaseWithStubs):
     def setUp(self):
         self.key = RSA.generate(2048)
         self.public_key = self.key.publickey().export_key()
@@ -54,92 +54,6 @@ class TestUtilities(unittest.TestCase):
             self.utilities.url,
             "https://testapi.smileidentity.com/v1",
         )
-
-    def _get_job_status_response(self, signature=False):
-        if signature:
-            sec_timestamp = self.signatureObj.generate_sec_key(
-                timestamp=datetime.now().isoformat()
-            )
-        else:
-            sec_timestamp = self.signatureObj.generate_sec_key(
-                timestamp=int(time.time())
-            )
-        return {
-            "timestamp": sec_timestamp["timestamp"],
-            "signature": sec_timestamp["signature"]
-            if signature
-            else sec_timestamp["sec_key"],
-            "job_complete": True,
-            "job_success": True,
-            "result": {
-                "ResultText": "Enroll User",
-                "ResultType": "SAIA",
-                "SmileJobID": "0000001897",
-                "JSONVersion": "1.0.0",
-                "IsFinalResult": "true",
-                "PartnerParams": {
-                    "job_id": "52d0de86-be3b-4219-9e96-8195b0018944",
-                    "user_id": "e54e0e98-8b8c-4215-89f5-7f9ea42bf650",
-                    "job_type": 4,
-                },
-                "ConfidenceValue": "100",
-                "IsMachineResult": "true",
-            },
-            "image_links": {
-                "selfie_image": "https://smile-fr-results.s3.us-west-2.amazonaws.com/test/000000/023/023-0000001897-LoRSpxJUzmYgYS2R00XpaHJYLOiNXN/SID_Preview_FULL.jpg"
-            },
-            "code": "2302",
-            "history": [
-                {
-                    "ResultCode": "1210",
-                    "ResultText": "Enroll User",
-                    "ResultType": "DIVA",
-                    "SmileJobID": "0000000857",
-                    "JSONVersion": "1.0.0",
-                    "IsFinalResult": "true",
-                    "PartnerParams": {
-                        "job_id": "52d0de86-be3b-4219-9e96-8195b0018944",
-                        "user_id": "1511bf02-801a-4b57-ac8e-ef17e26bfeb4",
-                        "job_type": "1",
-                        "optional_info": "Partner can put whatever they want as long as it is a string",
-                        "more_optional_info": "There can be as much or as little or no optional info",
-                    },
-                },
-                {
-                    "ResultCode": "0814",
-                    "ResultText": "Provisional Enroll - Under Review",
-                    "SmileJobID": "0000000857",
-                    "ConfidenceValue": "97.000000",
-                    "PartnerParams": {
-                        "job_id": "52d0de86-be3b-4219-9e96-8195b0018944",
-                        "user_id": "1511bf02-801a-4b57-ac8e-ef17e26bfeb4",
-                        "job_type": "1",
-                        "optional_info": "Partner can put whatever they want as long as it is a string",
-                        "more_optional_info": "There can be as much or as little or no optional info",
-                    },
-                },
-                {
-                    "DOB": "1990-01-01",
-                    "IDType": "BVN",
-                    "Country": "Nigeria",
-                    "FullName": "Peter Parker",
-                    "ExpirationDate": "Not Available",
-                    "IDNumber": "A01234567",
-                    "ResultCode": "1012",
-                    "ResultText": "ID Validated",
-                    "ResultType": "ID Verification",
-                    "SmileJobID": "0000000857",
-                    "PartnerParams": {
-                        "job_id": "52d0de86-be3b-4219-9e96-8195b0018944",
-                        "user_id": "1511bf02-801a-4b57-ac8e-ef17e26bfeb4",
-                        "job_type": "1",
-                        "optional_info": "Partner can put whatever they want as long as it is a string",
-                        "more_optional_info": "There can be as much or as little or no optional info",
-                        "ExpirationDate": "Not Available",
-                    },
-                },
-            ],
-        }
 
     @staticmethod
     def _get_smile_services_response():
@@ -234,63 +148,122 @@ class TestUtilities(unittest.TestCase):
             "Partner Parameter Arguments may not be null or empty",
         )
 
-    def test_id_info_params(self):
+    @responses.activate
+    def test_validate_id_params_should_raise_when_provided_with_invalid_input(self):
         self.__reset_params()
-        with patch("requests.get") as mocked_get:
-            mocked_get.return_value.status_code = 200
-            mocked_get.return_value.ok = True
-            mocked_get.return_value.text.return_value = (
-                TestUtilities._get_smile_services_response()
+
+        self._stub_service("https://testapi.smileidentity.com/v1")
+        self.id_info_params["country"] = None
+        with self.assertRaises(ValueError) as ve:
+            Utilities.validate_id_params(
+                self.utilities.url, self.id_info_params, self.partner_params
             )
-            mocked_get.return_value.json.return_value = (
-                TestUtilities._get_smile_services_response()
-            )
+        self.assertEqual(ve.exception.args[0], "key country cannot be empty")
 
-            self.id_info_params["country"] = None
-            with self.assertRaises(ValueError) as ve:
-                Utilities.validate_id_params(
-                    self.utilities.url, self.id_info_params, self.partner_params
-                )
-            self.assertEqual(ve.exception.args[0], "key country cannot be empty")
-
-            self.__reset_params()
-            self.id_info_params["country"] = "ZW"
-            with self.assertRaises(ValueError) as ve:
-                Utilities.validate_id_params(
-                    self.utilities.url, self.id_info_params, self.partner_params
-                )
-            self.assertEqual(ve.exception.args[0], "country ZW is invalid")
-
-            self.__reset_params()
-            self.id_info_params["id_type"] = None
-            with self.assertRaises(ValueError) as ve:
-                Utilities.validate_id_params(
-                    self.utilities.url, self.id_info_params, self.partner_params
-                )
-            self.assertEqual(ve.exception.args[0], "key id_type cannot be empty")
-
-            self.__reset_params()
-            self.id_info_params["id_number"] = None
-            with self.assertRaises(ValueError) as ve:
-                Utilities.validate_id_params(
-                    self.utilities.url, self.id_info_params, self.partner_params
-                )
-            self.assertEqual(ve.exception.args[0], "key id_number cannot be empty")
-
-    def test_response(self):
         self.__reset_params()
-        timestamp = int(time.time())
-        sec_timestamp = self.signatureObj.generate_sec_key(timestamp=timestamp)
-        with patch("requests.post") as mocked_post:
-            mocked_post.return_value.status_code = 200
-            mocked_post.return_value.ok = True
-            mocked_post.return_value.text.return_value = self._get_job_status_response()
-            mocked_post.return_value.json.return_value = self._get_job_status_response()
-
-            job_status = self.utilities.get_job_status(
-                self.partner_params, self.options_params, sec_timestamp
+        self.id_info_params["id_type"] = None
+        with self.assertRaises(ValueError) as ve:
+            Utilities.validate_id_params(
+                self.utilities.url, self.id_info_params, self.partner_params
             )
-            job_status_response = job_status.json()
+        self.assertEqual(ve.exception.args[0], "key id_type cannot be empty")
 
-            self.assertEqual(job_status.status_code, 200)
-            self.assertIsNotNone(job_status.json())
+        self.__reset_params()
+        self.id_info_params["id_number"] = None
+        with self.assertRaises(ValueError) as ve:
+            Utilities.validate_id_params(
+                self.utilities.url, self.id_info_params, self.partner_params
+            )
+        self.assertEqual(ve.exception.args[0], "key id_number cannot be empty")
+
+        self.__reset_params()
+        self.id_info_params["country"] = "ZW"
+        with self.assertRaises(ValueError) as ve:
+            Utilities.validate_id_params(
+                self.utilities.url, self.id_info_params, self.partner_params
+            )
+        self.assertEqual(ve.exception.args[0], "country ZW is invalid")
+
+        self.__reset_params()
+        self.id_info_params["id_type"] = "Not_Supported"
+        with self.assertRaises(ValueError) as ve:
+            Utilities.validate_id_params(
+                self.utilities.url, self.id_info_params, self.partner_params
+            )
+        self.assertEqual(ve.exception.args[0], "id_type Not_Supported is invalid")
+
+        self.__reset_params()
+        self.partner_params["user_id"] = None
+        with self.assertRaises(ValueError) as ve:
+            Utilities.validate_id_params(
+                self.utilities.url, self.id_info_params, self.partner_params
+            )
+        self.assertEqual(ve.exception.args[0], "key user_id cannot be empty")
+
+        self.__reset_params()
+        self.id_info_params["first_name"] = None
+        with self.assertRaises(ValueError) as ve:
+            Utilities.validate_id_params(
+                self.utilities.url, self.id_info_params, self.partner_params
+            )
+        self.assertEqual(ve.exception.args[0], "key first_name cannot be empty")
+
+        self.__reset_params()
+        self.partner_params.pop("user_id")
+        with self.assertRaises(ValueError) as ve:
+            Utilities.validate_id_params(
+                self.utilities.url, self.id_info_params, self.partner_params
+            )
+        self.assertEqual(ve.exception.args[0], "key user_id is required")
+
+    @responses.activate
+    def test_get_job_status(self):
+        self.__reset_params()
+        sec_timestamp = self.signatureObj.generate_sec_key(timestamp=int(time.time()))
+        self.stub_get_job_status(sec_timestamp, True)
+
+        job_status = self.utilities.get_job_status(
+            self.partner_params, self.options_params, sec_timestamp
+        )
+        body = {
+            "sec_key": sec_timestamp["sec_key"],
+            "timestamp": sec_timestamp["timestamp"],
+            "partner_id": "001",
+            "job_id": self.partner_params["job_id"],
+            "user_id": self.partner_params["user_id"],
+            "image_links": True,
+            "history": True,
+        }
+
+        self.assertEqual(job_status.status_code, 200)
+        self.assertIsNotNone(job_status.json())
+        self.assert_request_called_with(
+            "https://testapi.smileidentity.com/v1/job_status", responses.POST, body
+        )
+
+    @responses.activate
+    def test_get_smile_id_services(self):
+        self.__reset_params()
+
+        self._stub_service("https://testapi.smileidentity.com/v1")
+        self.utilities.get_smile_id_services(0)
+
+        self._stub_service("https://api.smileidentity.com/v1")
+        self.utilities.get_smile_id_services(1)
+
+        self._stub_service("https://random-server.smileidentity.com/v1")
+        job_status = self.utilities.get_smile_id_services(
+            "https://random-server.smileidentity.com/v1"
+        )
+
+        self.assertEqual(job_status.status_code, 200)
+
+    def _stub_service(self, url, json=None):
+        if not json:
+            json = TestUtilities._get_smile_services_response()
+
+        responses.add(
+            responses.GET,
+            f"{url}/services",
+            json=json,
+        )

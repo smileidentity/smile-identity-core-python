@@ -1,11 +1,11 @@
 # SmileIdentityCore
 
-The official Smile Identity library exposes four classes namely; the WebApi class, the IDApi class, the Signature class and the Utilities class.
+The official Smile Identity library exposes four classes namely; the WebApi class, the IDApi class, the Signature class, and the Utilities class.
 
 The **WebApi Class** allows you as the Partner to validate a user’s identity against the relevant Identity Authorities/Third Party databases that Smile Identity has access to using ID information provided by your customer/user (including photo for compare). It has the following public method:
 - submit_job
 
-The **IDApi Class** lets you performs basic KYC Services including verifying an ID number as well as retrieve a user's Personal Information. It has the following public methods:
+The **IDApi Class** lets you perform basic KYC Services including verifying an ID number as well as retrieve a user's Personal Information. It has the following public methods:
 - submit_job
 
 The **Signature Class** allows you as the Partner to generate a sec key to interact with our servers. It has the following public methods:

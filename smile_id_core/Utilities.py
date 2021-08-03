@@ -6,7 +6,12 @@ import requests
 from smile_id_core.Signature import Signature
 from smile_id_core.ServerError import ServerError
 
-__all__ = ["Utilities", "get_signature", "validate_sec_params"]
+__all__ = ["Utilities", "get_signature", "validate_sec_params", "sid_server_map"]
+
+sid_server_map = {
+    0: "https://testapi.smileidentity.com/v1",
+    1: "https://api.smileidentity.com/v1",
+}
 
 
 class Utilities:
@@ -17,10 +22,6 @@ class Utilities:
         self.api_key = api_key
         self.sid_server = sid_server
         if sid_server in [0, 1]:
-            sid_server_map = {
-                0: "https://testapi.smileidentity.com/v1",
-                1: "https://api.smileidentity.com/v1",
-            }
             self.url = sid_server_map[sid_server]
         else:
             self.url = sid_server
@@ -152,10 +153,6 @@ class Utilities:
     @staticmethod
     def get_smile_id_services(sid_server):
         if sid_server in [0, 1]:
-            sid_server_map = {
-                0: "https://testapi.smileidentity.com/v1",
-                1: "https://api.smileidentity.com/v1",
-            }
             url = sid_server_map[sid_server]
         else:
             url = sid_server

@@ -1,7 +1,12 @@
 import json
 from typing import Dict
 
-from smile_id_core.Utilities import Utilities, get_signature, validate_sec_params
+from smile_id_core.Utilities import (
+    Utilities,
+    get_signature,
+    validate_sec_params,
+    sid_server_map,
+)
 from smile_id_core.ServerError import ServerError
 import requests
 
@@ -15,10 +20,6 @@ class IdApi:
         self.partner_id = partner_id
         self.api_key = api_key
         if sid_server in [0, 1]:
-            sid_server_map = {
-                0: "https://testapi.smileidentity.com/v1",
-                1: "https://api.smileidentity.com/v1",
-            }
             self.url = sid_server_map[sid_server]
         else:
             self.url = sid_server

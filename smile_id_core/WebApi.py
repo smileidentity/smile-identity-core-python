@@ -7,7 +7,12 @@ import requests
 from smile_id_core.image_upload import generate_zip_file, validate_images
 from smile_id_core.IdApi import IdApi
 from smile_id_core.Signature import Signature
-from smile_id_core.Utilities import Utilities, get_signature, validate_sec_params
+from smile_id_core.Utilities import (
+    Utilities,
+    get_signature,
+    validate_sec_params,
+    sid_server_map,
+)
 from smile_id_core.ServerError import ServerError
 
 __all__ = ["WebApi"]
@@ -24,10 +29,6 @@ class WebApi:
         self.utilities = None
 
         if sid_server in [0, 1]:
-            sid_server_map = {
-                0: "https://testapi.smileidentity.com/v1",
-                1: "https://api.smileidentity.com/v1",
-            }
             self.url = sid_server_map[sid_server]
         else:
             self.url = sid_server
@@ -109,7 +110,7 @@ class WebApi:
             if upload_response.status_code != 200:
                 raise ServerError(
                     "Failed to post entity to {}, status={}, response={}".format(
-                        upload_url, prep_upload.status_code, prep_upload.json()
+                        upload_url, upload_response.status_code, upload_response.json()
                     )
                 )
 
@@ -120,9 +121,6 @@ class WebApi:
                 job_status = self.poll_job_status(
                     0, partner_params, options_params, sec_params
                 )
-                job_status_response = job_status.json()
-                job_status_response["success"] = True
-                job_status_response["smile_job_id"] = smile_job_id
                 return job_status
             else:
                 return {"success": True, "smile_job_id": smile_job_id}
@@ -195,7 +193,9 @@ class WebApi:
         )
         job_status_response = job_status.json()
         if not job_status_response["job_complete"] and counter < 20:
-            self.poll_job_status(counter, partner_params, options_params, sec_params)
+            return self.poll_job_status(
+                counter, partner_params, options_params, sec_params
+            )
 
         return job_status
 
