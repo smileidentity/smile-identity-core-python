@@ -72,10 +72,12 @@ id_info_params = {
     "entered": True,
 }
 image_params = [{"image_type_id": "2", "image": "base6image"}]
+
 options_params = {
     "return_job_status": True,
     "return_history": True,
     "return_images": True,
+    "signature": True
 }
 
 try:
@@ -327,6 +329,7 @@ options_params = {
     "return_job_status": True,
     "return_history": True,
     "return_images": True,
+    "signature": True # optional param to use the new signature calculation for API Key V2
 }
 try:
     response = connection.get_job_status(partner_params, options_params)
@@ -353,11 +356,14 @@ from smile_id_core import IdApi, ServerError
 
 Your call to the library will be similar to the below code snippet:
 ```python
+from smile_id_core import IdApi, ServerError
+
 partner_params = {
     "user_id": str(uuid4()),
     "job_id": str(uuid4()),
     "job_type": 5,
 }
+
 id_info_params = {
     "first_name": "FirstName",
     "middle_name": "LastName",
@@ -369,9 +375,13 @@ id_info_params = {
     "phone_number": "",
     "entered": True,
 }
+
+option_params = {
+    "signature": True # optional param to use the new signature calculation for API Key V2
+}
 try:
     connection = IdApi("< String partner_id >", "< String decoded_version_of_api_key >", "< Integer 0 | | 1 >")
-    response = connection.submit_job(partner_params, id_info_params)
+    response = connection.submit_job(partner_params, id_info_params,option_params)
 except ValueError:
     # some of your params entered for a job are not valid or missing
     print("handle ValueError")
@@ -421,7 +431,7 @@ Your response will return a JSON String containing the below:
 ##### `generate_sec_key` method
 
 Use the Signature class as follows:
-
+For API Key V1
 ```python
 from smile_id_core import Signature
 
@@ -431,9 +441,25 @@ signature_dict = signature.generate_sec_key(timestamp)  # where timestamp is opt
 ```
 
 The response will be a dict:
-```python
+```json
 {
     "sec_key": "<the generated sec key>",
+    "timestamp": "<timestamp that you passed in or that was generated>"
+}
+```
+For API Key V2
+```python
+from smile_id_core import Signature
+
+
+signature = Signature("partner_id", "api_key")
+signature_dict = signature.generate_signature(timestamp)  # where timestamp is optional
+```
+
+The response will be a dict:
+```json
+{
+    "signature": "<the generated sec key>",
     "timestamp": "<timestamp that you passed in or that was generated>"
 }
 ```
@@ -448,7 +474,7 @@ from smile_id_core import Utilities, ServerError
 
 try:
     connection = Utilities("<partner_id>", "<the decoded-version of-your-api-key>", "<sid_server>")
-    job_status = connection.get_job_status("<partner_params>", "<option_params>", "<sec_key>", "<timestamp>")
+    job_status = connection.get_job_status("<partner_params>", "<option_params>", "<sec_key_params>")
     print(job_status)
 except ValueError:
     # some of your params entered for a job are not valid or missing
