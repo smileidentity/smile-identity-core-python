@@ -17,6 +17,9 @@ The **Utilities Class** allows you as the Partner to have access to our general 
 - validate_partner_params
 - get_smile_id_services
 
+### Security
+We accept 2 forms of security to communicate with our servers. The sec_key is the legacy means of communicating with our servers. This uses the v1 api key. The signature field is our new improved means of signing requests. To calculate a signature you need to generate a v2 api key. Generating a v2 api key does not invalidate existing v1 keys so you can safely upgrade. The library will default to calculating the legacy sec_key so your existing code will continue to behave as expected. To use the new signature form of security pass the boolean signature: true in the options object to any of our classes except Signature, where you would instead call the generate_signature function instead of the generate_sec_key function.
+
 ## Documentation
 
 This library requires specific input parameters, for more detail on these parameters please refer to our [documentation for Web API](https://docs.smileidentity.com/products/core-libraries/python).
@@ -431,7 +434,7 @@ Your response will return a JSON String containing the below:
 ##### `generate_sec_key` method
 
 Use the Signature class as follows:
-For API Key V1
+For API Key V1 (Legacy)
 ```python
 from smile_id_core import Signature
 
