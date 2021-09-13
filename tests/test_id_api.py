@@ -1,5 +1,7 @@
+import base64
 import time
 import unittest
+from datetime import datetime
 from unittest.mock import patch
 from uuid import uuid4
 
@@ -12,10 +14,11 @@ class TestIdApi(unittest.TestCase):
     def setUp(self):
         self.key = RSA.generate(2048)
         self.public_key = self.key.publickey().export_key()
+        self.api_key = base64.b64encode(self.public_key).decode("UTF-8")
         self.partner_id = "001"
-        self.id_api = IdApi("001", self.public_key, 0)
+        self.id_api = IdApi("001", self.api_key, 0)
         self.__reset_params()
-        self.signatureObj = Signature(self.partner_id, self.public_key)
+        self.signatureObj = Signature(self.partner_id, self.api_key)
         self.cipher = PKCS1_v1_5.new(self.key.exportKey())
 
     def __reset_params(self):
@@ -44,10 +47,10 @@ class TestIdApi(unittest.TestCase):
     def test_instance(self):
         self.__reset_params()
         self.assertEqual(self.id_api.partner_id, "001")
-        self.assertEqual(self.id_api.api_key, self.public_key)
+        self.assertEqual(self.id_api.api_key, self.api_key)
         self.assertEqual(
             self.id_api.url,
-            "https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test",
+            "https://testapi.smileidentity.com/v1",
         )
 
     def test_no_partner_params(self):
@@ -55,7 +58,7 @@ class TestIdApi(unittest.TestCase):
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(None, self.id_info_params)
         self.assertEqual(
-            ve.exception.args[0], u"Please ensure that you send through partner params"
+            ve.exception.args[0], "Please ensure that you send through partner params"
         )
 
     def test_no_id_info_params(self):
@@ -63,7 +66,7 @@ class TestIdApi(unittest.TestCase):
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, None)
         self.assertEqual(
-            ve.exception.args[0], u"Please ensure that you send through ID Information"
+            ve.exception.args[0], "Please ensure that you send through ID Information"
         )
 
     def test_invalid_job_type(self):
@@ -75,7 +78,7 @@ class TestIdApi(unittest.TestCase):
             )
         self.assertEqual(
             ve.exception.args[0],
-            u"Please ensure that you are setting your job_type to 5 to query ID Api",
+            "Please ensure that you are setting your job_type to 5 to query ID Api",
         )
 
     def test_id_info_params(self):
@@ -83,23 +86,29 @@ class TestIdApi(unittest.TestCase):
         self.id_info_params["country"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
-        self.assertEqual(ve.exception.args[0], u"key country cannot be empty")
+        self.assertEqual(ve.exception.args[0], "key country cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_type"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
-        self.assertEqual(ve.exception.args[0], u"key id_type cannot be empty")
+        self.assertEqual(ve.exception.args[0], "key id_type cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_number"] = None
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, self.id_info_params)
-        self.assertEqual(ve.exception.args[0], u"key id_number cannot be empty")
+        self.assertEqual(ve.exception.args[0], "key id_number cannot be empty")
 
-    def get_id_response(self):
-        timestamp = int(time.time())
-        sec_timestamp = self.signatureObj.generate_sec_key(timestamp=timestamp)
+    def get_id_response(self, signature=False):
+        if signature:
+            sec_timestamp = self.signatureObj.generate_signature(
+                timestamp=datetime.now().isoformat()
+            )
+        else:
+            sec_timestamp = self.signatureObj.generate_sec_key(
+                timestamp=int(time.time())
+            )
         return {
             "JSONVersion": "1.0.0",
             "SmileJobID": "0000000324",
@@ -128,8 +137,10 @@ class TestIdApi(unittest.TestCase):
             "Address": "Not Available",
             "FullData": {},
             "Source": "ID API",
-            "timestamp": timestamp,
-            "signature": sec_timestamp["sec_key"],
+            "timestamp": sec_timestamp.get("timestamp"),
+            "signature": sec_timestamp.get("signature")
+            if signature
+            else sec_timestamp.get("sec_key"),
         }
 
     @staticmethod
@@ -219,7 +230,7 @@ class TestIdApi(unittest.TestCase):
                 )
         self.assertEqual(
             ve.exception.args[0],
-            u"Failed to post entity to https://3eydmgh10d.execute-api.us-west-2.amazonaws.com/test/id_verification, status=400, response={'code': '2204', 'error': 'unauthorized'}",
+            "Failed to post entity to https://testapi.smileidentity.com/v1/id_verification, status=400, response={'code': '2204', 'error': 'unauthorized'}",
         )
 
     def test_validate_return_data(self):
