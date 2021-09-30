@@ -1,5 +1,6 @@
 import json
 import time
+from datetime import datetime
 from typing import Dict
 
 import requests
@@ -124,6 +125,26 @@ class WebApi:
                 return job_status
             else:
                 return {"success": True, "smile_job_id": smile_job_id}
+
+    def get_web_token(
+        self, user_id: str, job_id: str, product: str, timestamp=None, callback_url=None
+    ):
+
+        sec_params = Signature(self.partner_id, self.api_key).generate_signature(
+            timestamp or datetime.now().isoformat()
+        )
+
+        return WebApi.execute_http(
+            f"{self.url}/token",
+            {
+                **sec_params,
+                "user_id": user_id,
+                "job_id": job_id,
+                "product": product,
+                "callback_url": callback_url or self.call_back_url,
+                "partner_id": self.partner_id,
+            },
+        )
 
     def _get_security_key_params(self, options_params):
         return get_signature(

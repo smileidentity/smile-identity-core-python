@@ -287,9 +287,36 @@ class TestWebApi(TestCaseWithStubs):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), job_status_response)
 
+    @responses.activate
+    def test_get_web_token(self):
+        responses.add(
+            responses.POST,
+            "https://testapi.smileidentity.com/v1/token",
+            status=400,
+            json={"error": "Invalid product.", "code": "2217"},
+        )
+        sec = self._get_sec_key(True)
+        user_id = "user_id"
+        job_id = "job_id"
+        product = "product_type"
+        self.web_api.get_web_token(user_id, job_id, product, timestamp=sec["timestamp"])
+        body = {
+            **sec,
+            "user_id": user_id,
+            "job_id": job_id,
+            "product": product,
+            "callback_url": "https://a_callback.com",
+            "partner_id": "001",
+        }
+        self.assert_request_called_with(
+            "https://testapi.smileidentity.com/v1/token", responses.POST, body
+        )
+
     def _get_sec_key(self, signature):
         if signature:
-            sec_key = self.signatureObj.generate_signature(timestamp=datetime.now())
+            sec_key = self.signatureObj.generate_signature(
+                timestamp=datetime.now().isoformat()
+            )
         else:
             sec_key = self.signatureObj.generate_sec_key(timestamp=int(time.time()))
         return sec_key
