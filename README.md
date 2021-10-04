@@ -573,6 +573,14 @@ Tests are based on `pytest`.
  
 To run tests run `pytest` in the root folder of the project
 
+#### Deployment
+
+To release a new version:
+
+- Update the version number in setup.py
+- Run `python setup.py sdist` to build package.
+- Run `twine upload dist/*` to publish package.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/smileidentity/smile-identity-core-python
