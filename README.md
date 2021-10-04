@@ -4,6 +4,7 @@ The official Smile Identity library exposes four classes namely; the WebApi clas
 
 The **WebApi Class** allows you as the Partner to validate a user’s identity against the relevant Identity Authorities/Third Party databases that Smile Identity has access to using ID information provided by your customer/user (including photo for compare). It has the following public method:
 - submit_job
+- get_web_token
 
 The **IDApi Class** lets you perform basic KYC Services including verifying an ID number as well as retrieve a user's Personal Information. It has the following public methods:
 - submit_job
@@ -344,6 +345,41 @@ except ServerError:
     print("handle ServerError")
 ```
 
+##### get_web_token method
+You may want to use our hosted web integration, and create a session. The `get_web_token` function enables this.
+
+You have your Web Api class initialised as follows:
+```python
+from smile_id_core import WebApi
+
+connection = WebApi(partner_id, default_callback, api_key, sid_server);
+```
+
+Next, you'll need to create your request object. This should take the following
+structure:
+
+```json
+{
+	"user_id": 'user-1', // String: required
+	"job_id": 'job-1', // String: required
+	"product": 'authentication', // String: required one of 'authentication', 'identity_verification', 'smartselfie', 'ekyc_smartselfie', 'enhanced_kyc', 'document_verification'
+	"callback_url": "https://smileidentity.com/callback" 	// String: required, optional if callback url was set during instantiation of the class
+}
+```
+
+Thereafter, call `get_web_token` with the correct parameters:
+```python
+  response = connection.get_web_token(requestParams)
+```
+
+**Response**
+
+Your response will return a promise that contains a JSON Object below:
+```json
+{
+	"token": "<token_string>"
+}
+```
 
 #### ID Api Class
 
