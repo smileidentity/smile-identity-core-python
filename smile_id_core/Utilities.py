@@ -107,7 +107,7 @@ class Utilities:
             raise ValueError("Please ensure job_id is a string")
 
         if not isinstance(partner_params.get("job_type"), int):
-            raise ValueError("Please ensure job_id is a number")
+            raise ValueError("Please ensure job_type is a number")
 
     @staticmethod
     def validate_id_params(
