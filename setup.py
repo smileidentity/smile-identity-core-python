@@ -7,7 +7,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 setup(
     name="smile_id_core",
-    version="1.0.2",
+    version="1.0.3",
     description="The official Smile Identity package exposes four classes namely; the WebApi class, the IDApi class, the Signature class and the Utilities class.",
     packages=find_packages(exclude=["*.tests", "*.tests.*"]),
     long_description=long_description,
@@ -23,7 +23,7 @@ setup(
     author="Smile Identity",
     author_email="support@smileidentity.com",
     install_requires=[
-        "requests~=2.24.0",
+        "requests>=2.24.0",
         "pycryptodome~=3.9.8",
     ],
 )
