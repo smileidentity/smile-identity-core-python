@@ -113,10 +113,15 @@ class Utilities:
     def validate_id_params(
         sid_server, id_info_params, partner_params, use_validation_api=True
     ):
+        job_type = partner_params.get("job_type")
         if not id_info_params.get("entered"):
             return
 
-        for field in ["country", "id_type", "id_number"]:
+        required_fields = ["country", "id_type"]
+        if job_type != 6:
+            required_fields += ["id_number"]
+
+        for field in required_fields:
             if field in id_info_params:
                 if id_info_params[field]:
                     continue
@@ -135,8 +140,16 @@ class Utilities:
                 )
             )
         response_json = response.json()
-        if response_json["id_types"]:
-            if not id_info_params["country"] in response_json["id_types"]:
+        if job_type == 6:
+            doc_verification = response_json["hosted_web"]["doc_verification"]
+            if not id_info_params["country"] in doc_verification:
+                raise ValueError("country " + id_info_params["country"] + " is invalid")
+            selected_country = doc_verification[id_info_params["country"]]["id_types"]
+            if not id_info_params["id_type"] in selected_country:
+                raise ValueError("id_type " + id_info_params["id_type"] + " is invalid")
+        else:
+            id_types_by_country = response_json["id_types"]
+            if not id_info_params["country"] in id_types_by_country:
                 raise ValueError("country " + id_info_params["country"] + " is invalid")
             selected_country = response_json["id_types"][id_info_params["country"]]
             if not id_info_params["id_type"] in selected_country:

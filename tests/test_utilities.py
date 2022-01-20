@@ -3,6 +3,7 @@ import time
 
 from uuid import uuid4
 
+import pytest
 import responses
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
@@ -27,6 +28,11 @@ class TestUtilities(TestCaseWithStubs):
             "user_id": str(uuid4()),
             "job_id": str(uuid4()),
             "job_type": 1,
+        }
+        self.partner_params_jt6 = {
+            "user_id": str(uuid4()),
+            "job_id": str(uuid4()),
+            "job_type": 6,
         }
         self.id_info_params = {
             "first_name": "FirstName",
@@ -108,7 +114,21 @@ class TestUtilities(TestCaseWithStubs):
                         "dob",
                     ],
                 },
+            },
+            "hosted_web": {
+                "doc_verification": {
+                    "NG": {
+                        "name": "Nigeria",
+                        "id_types": {
+                            "VOTER_ID": {"label": "Voter's ID"},
+                            "NIN": {"label": "National ID"},
+                            "PASSPORT": {"label": "Passport"},
+                            "DRIVERS_LICENSE": {"label": "Driver's License"},
+                        },
+                    }
+                },
             }
+
         }
 
     def test_no_partner_params(self):
@@ -215,6 +235,54 @@ class TestUtilities(TestCaseWithStubs):
                 self.utilities.url, self.id_info_params, self.partner_params
             )
         self.assertEqual(ve.exception.args[0], "key user_id is required")
+
+        # jt6 id pa
+
+    @responses.activate
+    def test_validate_id_params_should_raise_when_provided_with_invalid_input_for_jt6(self):
+        self.__reset_params()
+
+        self._stub_service("https://testapi.smileidentity.com/v1")
+        self.id_info_params["country"] = None
+        with self.assertRaises(ValueError) as ve:
+            Utilities.validate_id_params(
+                self.utilities.url, self.id_info_params, self.partner_params_jt6
+            )
+        self.assertEqual(ve.exception.args[0], "key country cannot be empty")
+
+        self.__reset_params()
+        self.id_info_params["id_type"] = None
+        with self.assertRaises(ValueError) as ve:
+            Utilities.validate_id_params(
+                self.utilities.url, self.id_info_params, self.partner_params_jt6
+            )
+        self.assertEqual(ve.exception.args[0], "key id_type cannot be empty")
+
+        self.__reset_params()
+        self.id_info_params["id_number"] = None
+        try:
+            Utilities.validate_id_params(
+                self.utilities.url, self.id_info_params, self.partner_params_jt6
+            )
+        except:
+            pytest.fail("Unexpected MyError ..")
+
+        self.__reset_params()
+        self.id_info_params["country"] = "ZW"
+        with self.assertRaises(ValueError) as ve:
+            Utilities.validate_id_params(
+                self.utilities.url, self.id_info_params, self.partner_params_jt6
+            )
+        self.assertEqual(ve.exception.args[0], "country ZW is invalid")
+
+        self.__reset_params()
+        self.id_info_params["id_type"] = "Not_Supported"
+        with self.assertRaises(ValueError) as ve:
+            Utilities.validate_id_params(
+                self.utilities.url, self.id_info_params, self.partner_params_jt6
+            )
+        self.assertEqual(ve.exception.args[0], "id_type Not_Supported is invalid")
+
 
     @responses.activate
     def test_get_job_status(self):
