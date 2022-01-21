@@ -114,7 +114,7 @@ class Utilities:
         sid_server, id_info_params, partner_params, use_validation_api=True
     ):
         job_type = partner_params.get("job_type")
-        if not id_info_params.get("entered"):
+        if job_type != 6 and not id_info_params.get("entered"):
             return
 
         required_fields = ["country", "id_type"]
