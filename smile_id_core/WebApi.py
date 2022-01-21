@@ -83,10 +83,10 @@ class WebApi:
         self.__validate_return_data(options_params)
 
         sec_params = self._get_security_key_params(options_params)
-
+        use_enrolled_image = options_params.get("use_enrolled_image", False)
         prep_upload = WebApi.execute_http(
             self.url + "/upload",
-            self.__prepare_prep_upload_payload(partner_params, sec_params),
+            self.__prepare_prep_upload_payload(partner_params, sec_params, use_enrolled_image),
         )
         if prep_upload.status_code != 200:
             raise ServerError(
@@ -184,7 +184,7 @@ class WebApi:
         sec_key_gen = Signature(self.partner_id, self.api_key)
         return sec_key_gen.generate_sec_key()
 
-    def __prepare_prep_upload_payload(self, partner_params: Dict, sec_params: Dict):
+    def __prepare_prep_upload_payload(self, partner_params: Dict, sec_params: Dict, use_enrolled_image):
         validate_sec_params(sec_params)
 
         return {
@@ -193,6 +193,7 @@ class WebApi:
             "partner_params": partner_params,
             "model_parameters": {},
             "callback_url": self.call_back_url,
+            "use_enrolled_image": use_enrolled_image,
             **sec_params,
         }
 
