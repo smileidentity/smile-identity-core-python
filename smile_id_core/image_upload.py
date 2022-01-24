@@ -110,7 +110,7 @@ def prepare_image_entry_dict(image, image_type_id, **_):
     }
 
 
-def validate_images(images_params):
+def validate_images(images_params, job_type=None):
     if not images_params:
         raise ValueError("Please ensure that you send through image details")
 
@@ -125,3 +125,19 @@ def validate_images(images_params):
                 raise FileNotFoundError(
                     "No such file or directory %s" % (image["image"])
                 )
+
+    if job_type != 6:
+        return
+
+    image_size = len(images_params)
+    if image_size % 2 != 0:
+        raise ValueError("image details should be a pair of id document and selfie")
+
+    found = False
+    for image in images_params:
+        image_type_id = image["image_type_id"]
+        if image_type_id == 1 or image_type_id == 3:
+            found = True
+
+    if not found:
+        raise ValueError("You are attempting to complete a job type 6 without providing an id card image")
