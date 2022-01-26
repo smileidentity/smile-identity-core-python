@@ -111,7 +111,7 @@ class Utilities:
 
     @staticmethod
     def validate_id_params(
-        sid_server, id_info_params, partner_params, use_validation_api=True
+        sid_server, id_info_params, partner_params, use_validation_api=False
     ):
         job_type = partner_params.get("job_type")
         if job_type != 6 and not id_info_params.get("entered"):
