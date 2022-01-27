@@ -200,7 +200,7 @@ class TestUtilities(TestCaseWithStubs):
         self.id_info_params["country"] = "ZW"
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params
+                self.utilities.url, self.id_info_params, self.partner_params, use_validation_api=True
             )
         self.assertEqual(ve.exception.args[0], "country ZW is invalid")
 
@@ -208,7 +208,7 @@ class TestUtilities(TestCaseWithStubs):
         self.id_info_params["id_type"] = "Not_Supported"
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params
+                self.utilities.url, self.id_info_params, self.partner_params, use_validation_api=True
             )
         self.assertEqual(ve.exception.args[0], "id_type Not_Supported is invalid")
 
@@ -216,7 +216,7 @@ class TestUtilities(TestCaseWithStubs):
         self.partner_params["user_id"] = None
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params
+                self.utilities.url, self.id_info_params, self.partner_params, use_validation_api=True
             )
         self.assertEqual(ve.exception.args[0], "key user_id cannot be empty")
 
@@ -224,7 +224,7 @@ class TestUtilities(TestCaseWithStubs):
         self.id_info_params["first_name"] = None
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params
+                self.utilities.url, self.id_info_params, self.partner_params, use_validation_api=True
             )
         self.assertEqual(ve.exception.args[0], "key first_name cannot be empty")
 
@@ -232,7 +232,7 @@ class TestUtilities(TestCaseWithStubs):
         self.partner_params.pop("user_id")
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params
+                self.utilities.url, self.id_info_params, self.partner_params, use_validation_api=True
             )
         self.assertEqual(ve.exception.args[0], "key user_id is required")
 
@@ -271,7 +271,7 @@ class TestUtilities(TestCaseWithStubs):
         self.id_info_params["country"] = "ZW"
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params_jt6
+                self.utilities.url, self.id_info_params, self.partner_params_jt6, use_validation_api=True
             )
         self.assertEqual(ve.exception.args[0], "country ZW is invalid")
 
@@ -279,7 +279,7 @@ class TestUtilities(TestCaseWithStubs):
         self.id_info_params["id_type"] = "Not_Supported"
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params_jt6
+                self.utilities.url, self.id_info_params, self.partner_params_jt6, use_validation_api=True
             )
         self.assertEqual(ve.exception.args[0], "id_type Not_Supported is invalid")
 

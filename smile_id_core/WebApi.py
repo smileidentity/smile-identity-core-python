@@ -76,7 +76,7 @@ class WebApi:
             )
 
         self.__validate_options(options_params)
-        validate_images(images_params)
+        validate_images(images_params, job_type)
         Utilities.validate_id_params(
             self.url, id_info_params, partner_params, use_validation_api
         )
@@ -86,7 +86,9 @@ class WebApi:
         use_enrolled_image = options_params.get("use_enrolled_image", False)
         prep_upload = WebApi.execute_http(
             self.url + "/upload",
-            self.__prepare_prep_upload_payload(partner_params, sec_params, use_enrolled_image),
+            self.__prepare_prep_upload_payload(
+                partner_params, sec_params, use_enrolled_image
+            ),
         )
         if prep_upload.status_code != 200:
             raise ServerError(
@@ -184,7 +186,9 @@ class WebApi:
         sec_key_gen = Signature(self.partner_id, self.api_key)
         return sec_key_gen.generate_sec_key()
 
-    def __prepare_prep_upload_payload(self, partner_params: Dict, sec_params: Dict, use_enrolled_image):
+    def __prepare_prep_upload_payload(
+        self, partner_params: Dict, sec_params: Dict, use_enrolled_image
+    ):
         validate_sec_params(sec_params)
 
         return {

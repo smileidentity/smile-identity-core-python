@@ -138,6 +138,9 @@ def validate_images(images_params, job_type=None):
         image_type_id = image["image_type_id"]
         if image_type_id == 1 or image_type_id == 3:
             found = True
+            break
 
     if not found:
-        raise ValueError("You are attempting to complete a job type 6 without providing an id card image")
+        raise ValueError(
+            "You are attempting to complete a job type 6 without providing an id card image"
+        )

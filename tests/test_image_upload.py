@@ -108,3 +108,15 @@ def test_validate_images__error_file_not_found():
 
     with pytest.raises(FileNotFoundError):
         validate_images(image_params)
+
+
+def test_validate_images_jt6_id_not_provided():
+    image_params = [
+        {
+            "image": "wwsss===",
+            "image_type_id": 5,
+        }
+    ]
+
+    with pytest.raises(ValueError):
+        validate_images(image_params, 6)
