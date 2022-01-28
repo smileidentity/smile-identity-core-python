@@ -91,7 +91,7 @@ def test_validate_images__ok_file_exists(temp_image_file):
     image_params = [
         {
             "image": temp_image_file,
-            "image_type_id": 5,
+            "image_type_id": 0,
         }
     ]
 

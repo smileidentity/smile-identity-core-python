@@ -76,7 +76,11 @@ class WebApi:
             )
 
         self.__validate_options(options_params)
-        validate_images(images_params, job_type)
+        validate_images(
+            images_params,
+            use_enrolled_image=options_params.get("use_enrolled_image", False),
+            job_type=job_type,
+        )
         Utilities.validate_id_params(
             self.url, id_info_params, partner_params, use_validation_api
         )
