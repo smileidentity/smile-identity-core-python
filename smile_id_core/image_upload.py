@@ -117,6 +117,8 @@ def validate_images(images_params, use_enrolled_image=False, job_type=None):
     if not isinstance(images_params, list):
         raise ValueError("Please ensure that you send through image details as a list")
 
+    has_id_image = False
+    has_selfie = False
     for image in images_params:
         if isinstance(image["image"], str) and image["image"].lower().endswith(
             IMAGE_FILE_EXTENSIONS
@@ -126,17 +128,16 @@ def validate_images(images_params, use_enrolled_image=False, job_type=None):
                     "No such file or directory %s" % (image["image"])
                 )
 
-    if len(images_params) == 0 or not (
-        has_selfie_image(images_params) or (job_type == 6 and use_enrolled_image)
-    ):
-        raise ValueError("You need to send through at least one selfie image")
-
-
-def has_selfie_image(images_params):
-    found = False
-    for image in images_params:
         image_type_id = int(image["image_type_id"])
+        if image_type_id == 1 or image_type_id == 3:
+            has_id_image = True
         if image_type_id == 0 or image_type_id == 2:
-            found = True
-            break
-    return found
+            has_selfie = True
+
+    if job_type == 6 and not has_id_image:
+        raise ValueError(
+            "You are attempting to complete a job type 6 without providing an id card image."
+        )
+
+    if not (has_selfie or (job_type == 6 and use_enrolled_image)):
+        raise ValueError("You need to send through at least one selfie image.")
