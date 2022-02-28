@@ -91,7 +91,7 @@ def test_validate_images__ok_file_exists(temp_image_file):
     image_params = [
         {
             "image": temp_image_file,
-            "image_type_id": 5,
+            "image_type_id": 0,
         }
     ]
 
@@ -106,5 +106,56 @@ def test_validate_images__error_file_not_found():
         }
     ]
 
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(FileNotFoundError) as exc_info:
         validate_images(image_params)
+    assert str(exc_info.value) == 'No such file or directory nonexistent/file.jpg'
+
+
+def test_validate_images_jt6_id_not_provided():
+    image_params = [
+        {
+            "image": "wwsss===",
+            "image_type_id": 0,
+        }
+    ]
+
+    with pytest.raises(ValueError) as exc_info:
+        validate_images(image_params, job_type=6)
+    assert str(exc_info.value) == 'You are attempting to complete a job type 6 without providing an id card image.'
+
+
+def test_validate_images_requires_at_least_one_selfie_for_jt_other_than_jt6():
+    image_params = [
+        {
+            "image": "wwsss===",
+            "image_type_id": 1,
+        }
+    ]
+
+    with pytest.raises(ValueError) as exc_info:
+        validate_images(image_params, job_type=1, use_enrolled_image=False)
+    assert str(exc_info.value) == 'You need to send through at least one selfie image.'
+
+
+def test_validate_images_requires_at_least_one_selfie_for_jt6_when_use_enrolled_image_is_false():
+    image_params = [
+        {
+            "image": "wwsss===",
+            "image_type_id": 1,
+        }
+    ]
+
+    with pytest.raises(ValueError) as exc_info:
+        validate_images(image_params, job_type=6, use_enrolled_image=False)
+    assert str(exc_info.value) == 'You need to send through at least one selfie image.'
+
+
+def test_validate_images_should_not_requires_at_least_one_selfie_for_jt6_when_use_enrolled_image_is_true():
+    image_params = [
+        {
+            "image": "wwsss===",
+            "image_type_id": 1,
+        }
+    ]
+
+    assert validate_images(image_params, job_type=6, use_enrolled_image=True) is None

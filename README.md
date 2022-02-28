@@ -81,7 +81,8 @@ options_params = {
     "return_job_status": True,
     "return_history": True,
     "return_images": True,
-    "signature": True
+    "signature": True,
+    "use_enrolled_image": True # Perform document verification (job_type 6) for a registered user i.e. use the user’s registered selfie
 }
 
 try:
