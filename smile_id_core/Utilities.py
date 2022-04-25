@@ -84,8 +84,8 @@ class Utilities:
             "partner_id": self.partner_id,
             "job_id": job_id,
             "user_id": user_id,
-            "image_links": options["return_images"],
-            "history": options["return_history"],
+            "image_links": options.get("return_images"),
+            "history": options.get("return_history"),
         }
 
     @staticmethod
