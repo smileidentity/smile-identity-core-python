@@ -11,7 +11,7 @@ class ApiVersion:
     MINOR_VERSION = 0
 
 
-IMAGE_FILE_EXTENSIONS = (".png", ".jpg")
+IMAGE_FILE_EXTENSIONS = (".png", ".jpg", ".jpeg")
 
 
 def generate_zip_file(
@@ -75,7 +75,7 @@ def prepare_info_json(
                 "isVerifiedProcess": False,
                 "name": "",
                 "fbUserID": "",
-                "firstName": "Bill",
+                "firstName": "",
                 "lastName": "",
                 "gender": "",
                 "email": "",

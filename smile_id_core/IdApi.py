@@ -19,8 +19,8 @@ class IdApi:
             raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
         self.api_key = api_key
-        if sid_server in [0, 1]:
-            self.url = sid_server_map[sid_server]
+        if sid_server in [0, 1, "0", "1"]:
+            self.url = sid_server_map[int(sid_server)]
         else:
             self.url = sid_server
 
