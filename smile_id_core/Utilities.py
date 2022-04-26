@@ -33,9 +33,9 @@ class Utilities:
             )
 
         validate_sec_params(sec_params)
-        # validate_partner_param throws an error if job_id is empty/not provided,
+        # validate_partner_param throws an error if job_type is empty/not provided,
         # but it's not required by get_job_status
-        Utilities.validate_partner_params({**partner_params, "job_id": partner_params.get("job_id", "job_id")})
+        Utilities.validate_partner_params({**partner_params, "job_type": partner_params.get("job_type", "job_type")})
         if not option_params or option_params is None:
             options = {
                 "return_job_status": True,
