@@ -26,14 +26,16 @@ class Utilities:
         else:
             self.url = sid_server
 
-    def get_job_status(self, partner_params, option_params, sec_params):
+    def get_job_status(self, partner_params, option_params, sec_params=None):
         if sec_params is None:
             sec_params = get_signature(
                 self.partner_id, self.api_key, option_params.get("signature")
             )
 
         validate_sec_params(sec_params)
-        Utilities.validate_partner_params(partner_params)
+        # validate_partner_param throws an error if job_type is empty/not provided,
+        # but it's not required by get_job_status
+        Utilities.validate_partner_params({**partner_params, "job_type": partner_params.get("job_type", "job_type")})
         if not option_params or option_params is None:
             options = {
                 "return_job_status": True,
