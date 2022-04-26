@@ -34,7 +34,7 @@ class Utilities:
 
         validate_sec_params(sec_params)
         # validate_partner_param throws an error if job_id is empty/not provided,
-        # but it's not required by get_kob_status
+        # but it's not required by get_job_status
         Utilities.validate_partner_params({**partner_params, "job_id": partner_params.get("job_id", "job_id")})
         if not option_params or option_params is None:
             options = {
