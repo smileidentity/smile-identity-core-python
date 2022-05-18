@@ -29,7 +29,7 @@ class Utilities:
     def get_job_status(self, partner_params, option_params, sec_params=None):
         if sec_params is None:
             sec_params = get_signature(
-                self.partner_id, self.api_key, option_params.get("signature")
+                self.partner_id, self.api_key
             )
 
         validate_sec_params(sec_params)
@@ -70,10 +70,7 @@ class Utilities:
             timestamp = job_status_json_resp["timestamp"]
             server_signature = job_status_json_resp["signature"]
             signature = Signature(self.partner_id, self.api_key)
-            if option_params.get("signature"):
-                valid = signature.confirm_signature(timestamp, server_signature)
-            else:
-                valid = signature.confirm_sec_key(timestamp, server_signature)
+            valid = signature.confirm_signature(timestamp, server_signature)
             if not valid:
                 raise ServerError(
                     "Unable to confirm validity of the job_status response"
@@ -88,6 +85,8 @@ class Utilities:
             "user_id": user_id,
             "image_links": options.get("return_images"),
             "history": options.get("return_history"),
+            "source_sdk": "PYTHON",
+            "source_sdk_version": "2.0.0",
         }
 
     @staticmethod
@@ -207,24 +206,18 @@ class Utilities:
 
 
 def validate_sec_params(sec_key_dict: Dict):
-    if not sec_key_dict.get("sec_key") and not sec_key_dict.get("signature"):
-        raise Exception("Missing key, must provide a 'sec_key' or 'signature' field")
+    if not sec_key_dict.get("signature"):
+        raise Exception("Missing key, must provide a 'signature' field")
     if not sec_key_dict.get("timestamp"):
         raise Exception("Missing 'timestamp' field")
 
 
-def get_signature(partner_id, api_key, is_signature):
+def get_signature(partner_id, api_key):
     sec_key_gen = Signature(partner_id, api_key)
     sec_key_object = (
         sec_key_gen.generate_signature()
-        if is_signature
-        else sec_key_gen.generate_sec_key()
     )
-    sec_key = sec_key_object.get("sec_key")
     signature = sec_key_object.get("signature")
     payload = {"timestamp": sec_key_object["timestamp"]}
-    if sec_key:
-        payload.update({"sec_key": sec_key})
-    else:
-        payload.update({"signature": signature})
+    payload.update({"signature": signature})
     return payload

@@ -49,7 +49,7 @@ class IdApi:
             )
 
         sec_key_object = get_signature(
-            self.partner_id, self.api_key, options_params.get("signature")
+            self.partner_id, self.api_key
         )
         payload = self.__configure_json(partner_params, id_params, sec_key_object)
         response = self.__execute_http(payload)
@@ -67,6 +67,8 @@ class IdApi:
             **sec_key,
             "partner_id": self.partner_id,
             "partner_params": partner_params,
+            "source_sdk": "PYTHON",
+            "source_sdk_version": "2.0.0",
         }
         payload.update(id_params)
         return payload

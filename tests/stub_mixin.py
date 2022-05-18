@@ -29,7 +29,7 @@ class TestCaseWithStubs(
 
     def _get_job_status_response(self, sec_key, job_complete=True):
         return {
-            "signature": sec_key.get("signature") or sec_key.get("sec_key"),
+            "signature": sec_key.get("signature"),
             "timestamp": sec_key.get("timestamp"),
             "job_complete": job_complete,
             "job_success": True,
@@ -105,7 +105,7 @@ class TestCaseWithStubs(
 
     def _get_pre_upload_response(self, sec_key: Dict):
         return {
-            "signature": sec_key.get("signature") or sec_key.get("sec_key"),
+            "signature": sec_key.get("signature"),
             "timestamp": sec_key.get("timestamp"),
             "upload_url": "https://some_url.com",
             "smile_job_id": "0000000857",

@@ -273,4 +273,8 @@ pyvenv.cfg
 pip-selfcheck.json
 .idea/
 
+# Other
+.project
+.pydevproject
+
 # End of https://www.toptal.com/developers/gitignore/api/venv,python,pycharm,macos

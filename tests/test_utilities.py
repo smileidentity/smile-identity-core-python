@@ -287,14 +287,14 @@ class TestUtilities(TestCaseWithStubs):
     @responses.activate
     def test_get_job_status(self):
         self.__reset_params()
-        sec_timestamp = self.signatureObj.generate_sec_key(timestamp=int(time.time()))
+        sec_timestamp = self.signatureObj.generate_signature(timestamp=int(time.time()))
         self.stub_get_job_status(sec_timestamp, True)
 
         job_status = self.utilities.get_job_status(
             self.partner_params, self.options_params, sec_timestamp
         )
         body = {
-            "sec_key": sec_timestamp["sec_key"],
+            "signature": sec_timestamp["signature"],
             "timestamp": sec_timestamp["timestamp"],
             "partner_id": "001",
             "job_id": self.partner_params["job_id"],
