@@ -155,9 +155,7 @@ class WebApi:
         )
 
     def _get_security_key_params(self, options_params):
-        return get_signature(
-            self.partner_id, self.api_key
-        )
+        return get_signature(self.partner_id, self.api_key)
 
     def __call_id_api(
         self,

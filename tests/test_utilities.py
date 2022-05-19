@@ -127,8 +127,7 @@ class TestUtilities(TestCaseWithStubs):
                         },
                     }
                 },
-            }
-
+            },
         }
 
     def test_no_partner_params(self):
@@ -200,7 +199,10 @@ class TestUtilities(TestCaseWithStubs):
         self.id_info_params["country"] = "ZW"
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params, use_validation_api=True
+                self.utilities.url,
+                self.id_info_params,
+                self.partner_params,
+                use_validation_api=True,
             )
         self.assertEqual(ve.exception.args[0], "country ZW is invalid")
 
@@ -208,7 +210,10 @@ class TestUtilities(TestCaseWithStubs):
         self.id_info_params["id_type"] = "Not_Supported"
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params, use_validation_api=True
+                self.utilities.url,
+                self.id_info_params,
+                self.partner_params,
+                use_validation_api=True,
             )
         self.assertEqual(ve.exception.args[0], "id_type Not_Supported is invalid")
 
@@ -216,7 +221,10 @@ class TestUtilities(TestCaseWithStubs):
         self.partner_params["user_id"] = None
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params, use_validation_api=True
+                self.utilities.url,
+                self.id_info_params,
+                self.partner_params,
+                use_validation_api=True,
             )
         self.assertEqual(ve.exception.args[0], "key user_id cannot be empty")
 
@@ -224,7 +232,10 @@ class TestUtilities(TestCaseWithStubs):
         self.id_info_params["first_name"] = None
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params, use_validation_api=True
+                self.utilities.url,
+                self.id_info_params,
+                self.partner_params,
+                use_validation_api=True,
             )
         self.assertEqual(ve.exception.args[0], "key first_name cannot be empty")
 
@@ -232,14 +243,19 @@ class TestUtilities(TestCaseWithStubs):
         self.partner_params.pop("user_id")
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params, use_validation_api=True
+                self.utilities.url,
+                self.id_info_params,
+                self.partner_params,
+                use_validation_api=True,
             )
         self.assertEqual(ve.exception.args[0], "key user_id is required")
 
         # jt6 id pa
 
     @responses.activate
-    def test_validate_id_params_should_raise_when_provided_with_invalid_input_for_jt6(self):
+    def test_validate_id_params_should_raise_when_provided_with_invalid_input_for_jt6(
+        self,
+    ):
         self.__reset_params()
 
         self._stub_service("https://testapi.smileidentity.com/v1")
@@ -271,7 +287,10 @@ class TestUtilities(TestCaseWithStubs):
         self.id_info_params["country"] = "ZW"
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params_jt6, use_validation_api=True
+                self.utilities.url,
+                self.id_info_params,
+                self.partner_params_jt6,
+                use_validation_api=True,
             )
         self.assertEqual(ve.exception.args[0], "country ZW is invalid")
 
@@ -279,10 +298,12 @@ class TestUtilities(TestCaseWithStubs):
         self.id_info_params["id_type"] = "Not_Supported"
         with self.assertRaises(ValueError) as ve:
             Utilities.validate_id_params(
-                self.utilities.url, self.id_info_params, self.partner_params_jt6, use_validation_api=True
+                self.utilities.url,
+                self.id_info_params,
+                self.partner_params_jt6,
+                use_validation_api=True,
             )
         self.assertEqual(ve.exception.args[0], "id_type Not_Supported is invalid")
-
 
     @responses.activate
     def test_get_job_status(self):

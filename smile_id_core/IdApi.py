@@ -48,9 +48,7 @@ class IdApi:
                 "Please ensure that you are setting your job_type to 5 to query ID Api"
             )
 
-        sec_key_object = get_signature(
-            self.partner_id, self.api_key
-        )
+        sec_key_object = get_signature(self.partner_id, self.api_key)
         payload = self.__configure_json(partner_params, id_params, sec_key_object)
         response = self.__execute_http(payload)
         if response.status_code != 200:

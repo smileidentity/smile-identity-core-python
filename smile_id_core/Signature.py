@@ -17,24 +17,6 @@ class Signature:
         self.partner_id = partner_id
         self.api_key = api_key
 
-    @deprecated("since version 2.0.0")
-    def generate_sec_key(self, timestamp=None):
-        public_key = RSA.importKey(base64.b64decode(self.api_key))
-        cipher = PKCS1_v1_5.new(public_key)
-        if timestamp is None:
-            timestamp = int(time.time())
-        hashed = self.__get_hash(timestamp)
-        encrypted = base64.b64encode(cipher.encrypt(hashed.encode("utf-8")))
-
-        signature = "{}|{}".format(encrypted.decode(encoding="UTF-8"), hashed)
-        return {"sec_key": signature, "timestamp": timestamp}
-
-    @deprecated("since version 2.0.0")
-    def __get_hash(self, timestamp):
-        to_hash = "{}:{}".format(int(self.partner_id), timestamp)
-        new_hash = str(to_hash).encode("utf-8")
-        return hashlib.sha256(new_hash).hexdigest()
-
     def generate_signature(self, timestamp=None):
         _timestamp = timestamp
         if _timestamp is None:
@@ -51,11 +33,3 @@ class Signature:
 
     def confirm_signature(self, timestamp, msg_signature):
         return self.generate_signature(timestamp)["signature"] == msg_signature
-
-    @deprecated("since version 2.0.0")
-    def confirm_sec_key(self, timestamp, sec_key):
-        encrypted, hashed = sec_key.split("|")
-        local_hash = self.__get_hash(timestamp)
-        # python libraries only allow decryption from a private key
-        # TODO: re look at this
-        return True

@@ -28,14 +28,14 @@ class Utilities:
 
     def get_job_status(self, partner_params, option_params, sec_params=None):
         if sec_params is None:
-            sec_params = get_signature(
-                self.partner_id, self.api_key
-            )
+            sec_params = get_signature(self.partner_id, self.api_key)
 
         validate_sec_params(sec_params)
         # validate_partner_param throws an error if job_type is empty/not provided,
         # but it's not required by get_job_status
-        Utilities.validate_partner_params({**partner_params, "job_type": partner_params.get("job_type", 1)})
+        Utilities.validate_partner_params(
+            {**partner_params, "job_type": partner_params.get("job_type", 1)}
+        )
         if not option_params or option_params is None:
             options = {
                 "return_job_status": True,
@@ -214,10 +214,7 @@ def validate_sec_params(sec_key_dict: Dict):
 
 def get_signature(partner_id, api_key):
     sec_key_gen = Signature(partner_id, api_key)
-    sec_key_object = (
-        sec_key_gen.generate_signature()
-    )
+    sec_key_object = sec_key_gen.generate_signature()
     signature = sec_key_object.get("signature")
-    payload = {"timestamp": sec_key_object["timestamp"]}
-    payload.update({"signature": signature})
+    payload = {"timestamp": sec_key_object["timestamp"], "signature": signature}
     return payload

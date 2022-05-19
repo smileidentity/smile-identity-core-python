@@ -102,8 +102,8 @@ class TestIdApi(unittest.TestCase):
 
     def get_id_response(self, signature=False):
         sec_timestamp = self.signatureObj.generate_signature(
-                timestamp=datetime.now().isoformat()
-            )
+            timestamp=datetime.now().isoformat()
+        )
         return {
             "JSONVersion": "1.0.0",
             "SmileJobID": "0000000324",
