@@ -363,7 +363,7 @@ structure:
 {
 	"user_id": 'user-1', // String: required
 	"job_id": 'job-1', // String: required
-	"product": 'authentication', // String: required one of 'authentication', 'identity_verification', 'smartselfie', 'ekyc_smartselfie', 'enhanced_kyc', 'document_verification'
+	"product": 'authentication', // String: required one of 'authentication', 'basic_kyc', 'smartselfie', 'biometric_kyc', 'enhanced_kyc', 'document_verification'
 	"callback_url": "https://smileidentity.com/callback" 	// String: required, optional if callback url was set during instantiation of the class
 }
 ```
