@@ -228,7 +228,7 @@ class TestIdApi(unittest.TestCase):
 
     def test_validate_return_data(self):
         self.__reset_params()
-        timestamp = int(time.time())
+        timestamp=datetime.now().isoformat()
         sec_timestamp = self.signatureObj.generate_signature(timestamp=timestamp)
         with patch("requests.post") as mocked_post:
             mocked_post.return_value.status_code = 200

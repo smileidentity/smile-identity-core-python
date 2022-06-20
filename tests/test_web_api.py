@@ -10,6 +10,7 @@ from Crypto.PublicKey import RSA
 
 from smile_id_core import WebApi, Signature, ServerError
 from tests.stub_mixin import TestCaseWithStubs
+from inspect import signature
 
 
 class TestWebApi(TestCaseWithStubs):
@@ -248,7 +249,7 @@ class TestWebApi(TestCaseWithStubs):
 
     @responses.activate
     def test_submit_job_should_raise_error_when_upload_fails(self):
-        sec_key = self._get_sec_key()
+        sec_key = self._get_signature()
         error = "Failed to upload zip"
         post_response = self.stub_upload_request(sec_key, error)
 
@@ -271,7 +272,7 @@ class TestWebApi(TestCaseWithStubs):
     @responses.activate
     def test_validate_return_data(self):
         self.__reset_params()
-        sec_key = self._get_sec_key()
+        sec_key = self._get_signature()
         post_response = self.stub_upload_request(sec_key)
         self.stub_get_job_status(sec_key, False)
         job_status_response = self.stub_get_job_status(sec_key, True)
@@ -295,13 +296,13 @@ class TestWebApi(TestCaseWithStubs):
             status=400,
             json={"error": "Invalid product.", "code": "2217"},
         )
-        sec = self._get_sec_key()
+        signature = self._get_signature()
         user_id = "user_id"
         job_id = "job_id"
         product = "product_type"
-        self.web_api.get_web_token(user_id, job_id, product, timestamp=sec["timestamp"])
+        self.web_api.get_web_token(user_id, job_id, product, timestamp=signature["timestamp"])
         body = {
-            **sec,
+            **signature,
             "user_id": user_id,
             "job_id": job_id,
             "product": product,
@@ -312,7 +313,7 @@ class TestWebApi(TestCaseWithStubs):
             "https://testapi.smileidentity.com/v1/token", responses.POST, body
         )
 
-    def _get_sec_key(self):
+    def _get_signature(self):
         sec_key = self.signatureObj.generate_signature(
             timestamp=datetime.now().isoformat()
         )

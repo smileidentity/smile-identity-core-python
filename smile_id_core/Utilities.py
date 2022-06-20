@@ -213,8 +213,4 @@ def validate_sec_params(sec_key_dict: Dict):
 
 
 def get_signature(partner_id, api_key):
-    sec_key_gen = Signature(partner_id, api_key)
-    sec_key_object = sec_key_gen.generate_signature()
-    signature = sec_key_object.get("signature")
-    payload = {"timestamp": sec_key_object["timestamp"], "signature": signature}
-    return payload
+    return Signature(partner_id, api_key).generate_signature()
