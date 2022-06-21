@@ -21,7 +21,7 @@ class Signature:
         _timestamp = timestamp
         if _timestamp is None:
             _timestamp = datetime.now().isoformat()
-        hmac_new = hmac.new(self.api_key.encode("utf-8"), digestmod=hashlib.sha256)
+        hmac_new = hmac.new(self.api_key, digestmod=hashlib.sha256)
         hmac_new.update(_timestamp.encode("utf-8"))
         hmac_new.update(str(self.partner_id).encode("utf-8"))
         hmac_new.update("sid_request".encode("utf-8"))
