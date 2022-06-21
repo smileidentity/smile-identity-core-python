@@ -10,6 +10,7 @@ from Crypto.PublicKey import RSA
 
 from smile_id_core import Signature, Utilities
 from tests.stub_mixin import TestCaseWithStubs
+from datetime import datetime
 
 
 class TestUtilities(TestCaseWithStubs):

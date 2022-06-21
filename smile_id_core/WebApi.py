@@ -136,14 +136,14 @@ class WebApi:
         self, user_id: str, job_id: str, product: str, timestamp=None, callback_url=None
     ):
 
-        sec_params = Signature(self.partner_id, self.api_key).generate_signature(
+        sig_params = Signature(self.partner_id, self.api_key).generate_signature(
             timestamp or datetime.now().isoformat()
         )
 
         return WebApi.execute_http(
             f"{self.url}/token",
             {
-                **sec_params,
+                **sig_params,
                 "user_id": user_id,
                 "job_id": job_id,
                 "product": product,

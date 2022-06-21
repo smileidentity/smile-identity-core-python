@@ -308,6 +308,8 @@ class TestWebApi(TestCaseWithStubs):
             "product": product,
             "callback_url": "https://a_callback.com",
             "partner_id": "001",
+            "source_sdk": "PYTHON",
+            "source_sdk_version": "2.0.0",
         }
         self.assert_request_called_with(
             "https://testapi.smileidentity.com/v1/token", responses.POST, body
