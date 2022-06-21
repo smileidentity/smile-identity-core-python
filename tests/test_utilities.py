@@ -309,11 +309,11 @@ class TestUtilities(TestCaseWithStubs):
     @responses.activate
     def test_get_job_status(self):
         self.__reset_params()
-        signature = self.signatureObj.generate_signature(timestamp=datetime.now().isoformat())
-        self.stub_get_job_status(signature, True)
+        sec_params = self.signatureObj.generate_signature(timestamp=datetime.now().isoformat())
+        self.stub_get_job_status(sec_params, True)
 
         job_status = self.utilities.get_job_status(
-            self.partner_params, self.options_params, signature
+            self.partner_params, self.options_params, sec_params
         )
         body = {
             "signature": sec_timestamp["signature"],
