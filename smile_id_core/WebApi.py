@@ -149,7 +149,7 @@ class WebApi:
                 "product": product,
                 "callback_url": callback_url or self.call_back_url,
                 "partner_id": self.partner_id,
-                "source_sdk": "PYTHON",
+                "source_sdk": "Python",
                 "source_sdk_version": "2.0.0",
             },
         )
@@ -199,7 +199,7 @@ class WebApi:
             "callback_url": self.call_back_url,
             "use_enrolled_image": use_enrolled_image,
             **sec_params,
-            "source_sdk": "PYTHON",
+            "source_sdk": "Python",
             "source_sdk_version": "2.0.0",
         }
 

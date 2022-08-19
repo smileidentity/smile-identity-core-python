@@ -65,8 +65,8 @@ class IdApi:
             **sec_key,
             "partner_id": self.partner_id,
             "partner_params": partner_params,
-            "source_sdk": "PYTHON",
-            "source_sdk_version": "2.0.0",
+            "source_sdk": "Python",
+            "source_sdk_version": "2.0.0"
         }
         payload.update(id_params)
         return payload

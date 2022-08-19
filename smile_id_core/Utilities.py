@@ -85,7 +85,7 @@ class Utilities:
             "user_id": user_id,
             "image_links": options.get("return_images"),
             "history": options.get("return_history"),
-            "source_sdk": "PYTHON",
+            "source_sdk": "Python",
             "source_sdk_version": "2.0.0",
         }
 
