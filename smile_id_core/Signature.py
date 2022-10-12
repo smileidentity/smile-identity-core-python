@@ -8,11 +8,7 @@ from datetime import datetime
 
 __all__ = ["Signature"]
 
-SignatureType = (
-    typing.TypedDict("SignatureType", {"signature": str, "timestamp": str})
-    if sys.version_info >= (3, 8)
-    else typing.Dict[str, str]
-)
+SignatureType = typing.Dict[str, str]
 
 
 class Signature:
@@ -28,7 +24,7 @@ class Signature:
                 Please visit https://portal.smileidentity.com/api-key to get your API key.
 
         Raises:
-            ValueError: _description_
+            ValueError: If partner_id or api_key is not a string.
         """
         if not isinstance(partner_id, str):
             raise ValueError("partner_id must a string.")
@@ -36,7 +32,7 @@ class Signature:
             raise ValueError("api_key must be a string.")
 
         self.partner_id: str = partner_id
-        self.api_key: bytes = api_key.encode("utf-8")
+        self.api_key: str = api_key
 
     def generate_signature(
         self, timestamp: typing.Optional[str] = None

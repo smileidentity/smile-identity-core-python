@@ -1,5 +1,5 @@
 import json
-from typing import Dict
+import typing
 
 import requests
 
@@ -13,7 +13,7 @@ __all__ = ["IdApi"]
 
 
 class IdApi:
-    def __init__(self, partner_id: str, api_key: str, sid_server: str or int):
+    def __init__(self, partner_id: str, api_key: str, sid_server: typing.Union[str, int]):
         if not partner_id or not api_key:
             raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
@@ -21,14 +21,14 @@ class IdApi:
         if sid_server in [0, 1, "0", "1"]:
             self.url = sid_server_map[int(sid_server)]
         else:
-            self.url = sid_server
+            self.url = str(sid_server)
 
     def submit_job(
         self,
-        partner_params: Dict,
-        id_params: Dict,
+        partner_params: typing.Dict,
+        id_params: typing.Dict,
         use_validation_api=True,
-        options_params: Dict = None,
+        options_params: typing.Dict = None,
     ):
         if not options_params:
             options_params = {}

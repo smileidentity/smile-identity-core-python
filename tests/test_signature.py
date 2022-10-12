@@ -1,37 +1,96 @@
 import base64
 import hashlib
 import hmac
-import unittest
+import typing
 from datetime import datetime
 
-from Crypto.Cipher import PKCS1_v1_5
+import pytest
+
 from Crypto.PublicKey import RSA
 
 from smile_id_core import Signature
 
 
-class TestSignature(unittest.TestCase):
-    def setUp(self):
-        self.key = RSA.generate(2048)
-        self.public_key = self.key.publickey().export_key()
-        self.api_key = base64.b64encode(self.public_key).decode("UTF-8")
-        self.partner_id = "001"
-        self.signatureObj = Signature(self.partner_id, self.api_key)
-        self.cipher = PKCS1_v1_5.new(self.key.exportKey())
+def mock_api_key() -> str:
+    """Generate a mock api key"""
+    key = RSA.generate(2048)
+    public_key = key.publickey().export_key()
+    api_key = base64.b64encode(public_key).decode("UTF-8")
+    return api_key
 
-    def test_partner_id_api_key(self):
-        self.assertEqual(self.signatureObj.partner_id, self.partner_id)
-        # self.assertEqual(self.public_key, self.signatureObj.decoded_api_key)
 
-    def test_generate_signature(self):
-        timestamp = datetime.now().isoformat()
-        signature = self.signatureObj.generate_signature(timestamp=timestamp)
-        self.assertEqual(signature["timestamp"], timestamp)
+def test_generate_signature_invalid_api_key():
+    """Test generate signature with invalid api key"""
+    api_key = None
+    partner_id: str = "001"
 
-        hmac_new = hmac.new(self.api_key.encode(), digestmod=hashlib.sha256)
-        hmac_new.update(timestamp.encode("utf-8"))
-        hmac_new.update(str(self.partner_id).encode("utf-8"))
-        hmac_new.update(b"sid_request")
-        calculated_signature = base64.b64encode(hmac_new.digest()).decode("utf-8")
+    with pytest.raises(ValueError) as ve:
+        Signature(partner_id, api_key)
 
-        self.assertEqual(signature["signature"], calculated_signature)
+    assert str(ve.value) == "api_key must be a string."
+
+
+def test_generate_signature_invalid_partner_id():
+    """Test generate signature with invalid partner id"""
+
+    api_key: str = mock_api_key()
+    partner_id = None
+
+    with pytest.raises(ValueError) as ve:
+        Signature(partner_id, api_key)
+
+    assert str(ve.value) == "partner_id must a string."
+
+
+def test_generate_signature():
+    """Test generate signature"""
+    api_key: str = mock_api_key()
+    partner_id: str = "001"
+    signer: Signature = Signature(partner_id, api_key)
+    timestamp: str = datetime.now().isoformat()
+    signature: typing.Dict[str, str] = signer.generate_signature(timestamp=timestamp)
+
+    assert "timestamp" in signature and isinstance(signature["timestamp"], str)
+    assert "signature" in signature and isinstance(signature["signature"], str)
+
+    assert signature["timestamp"] == timestamp
+
+    hmac_new = hmac.new(api_key.encode(), digestmod=hashlib.sha256)
+    hmac_new.update(timestamp.encode("utf-8"))
+    hmac_new.update(str(partner_id).encode("utf-8"))
+    hmac_new.update(b"sid_request")
+    calculated_signature = base64.b64encode(hmac_new.digest()).decode("utf-8")
+
+    assert signature["signature"] == calculated_signature
+
+
+def test_generate_signature_no_timestamp():
+    """Test generate signature"""
+    api_key: str = mock_api_key()
+    partner_id: str = "001"
+    signer: Signature = Signature(partner_id, api_key)
+    signature: typing.Dict[str, str] = signer.generate_signature()
+
+    assert "timestamp" in signature and isinstance(signature["timestamp"], str)
+    assert "signature" in signature and isinstance(signature["signature"], str)
+
+    assert signature["timestamp"] <= datetime.now().isoformat()
+
+    hmac_new = hmac.new(api_key.encode(), digestmod=hashlib.sha256)
+    hmac_new.update(signature["timestamp"].encode("utf-8"))
+    hmac_new.update(str(partner_id).encode("utf-8"))
+    hmac_new.update(b"sid_request")
+    calculated_signature = base64.b64encode(hmac_new.digest()).decode("utf-8")
+
+    assert signature["signature"] == calculated_signature
+
+
+def test_confirm_signature():
+    """Test confirm signature"""
+    api_key: str = mock_api_key()
+    partner_id: str = "001"
+    signer: Signature = Signature(partner_id, api_key)
+    timestamp: str = datetime.now().isoformat()
+    signature: typing.Dict[str, str] = signer.generate_signature(timestamp=timestamp)
+
+    assert signer.confirm_signature(timestamp, signature["signature"])
