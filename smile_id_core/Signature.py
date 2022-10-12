@@ -2,7 +2,6 @@
 import base64
 import hashlib
 import hmac
-import sys
 import typing
 from datetime import datetime
 

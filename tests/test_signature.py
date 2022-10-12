@@ -1,3 +1,4 @@
+"""tests for Signature class"""
 import base64
 import hashlib
 import hmac
@@ -24,10 +25,10 @@ def test_generate_signature_invalid_api_key():
     api_key = None
     partner_id: str = "001"
 
-    with pytest.raises(ValueError) as ve:
+    with pytest.raises(ValueError) as value_error:
         Signature(partner_id, api_key)
 
-    assert str(ve.value) == "api_key must be a string."
+    assert str(value_error.value) == "api_key must be a string."
 
 
 def test_generate_signature_invalid_partner_id():
@@ -36,10 +37,10 @@ def test_generate_signature_invalid_partner_id():
     api_key: str = mock_api_key()
     partner_id = None
 
-    with pytest.raises(ValueError) as ve:
+    with pytest.raises(ValueError) as value_error:
         Signature(partner_id, api_key)
 
-    assert str(ve.value) == "partner_id must a string."
+    assert str(value_error.value) == "partner_id must a string."
 
 
 def test_generate_signature():
