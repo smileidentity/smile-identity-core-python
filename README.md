@@ -1,9 +1,10 @@
 # Smile Identity Python Server Side
 
-Smile Identity provides the best solutions for real time Digital KYC, Identity Verification, User Onboarding, and User Authentication across Africa. Our server side libraries make it easy to integrate us on the server-side. Since the library is server-side, you will be required to pass the images (if required) to the library.
+Smile Identity provides the best solutions for real time Digital KYC, Identity Verification, User Onboarding, and User Authentication across Africa. Our server side libraries make it easy to integrate us on the server-side. Since the library is server-side, you may be required to pass images to the library (if required by the product you are using).
+
 If you haven’t already, [sign up for a free Smile Identity account](https://www.smileidentity.com/schedule-a-demo/), which comes with Sandbox access.
 
-Please see [changelog.md](changelog.md) for release versions and changes.
+Please see [changelog.md](CHANGELOG.md) for release notes.
 
 ## Features
 
@@ -42,10 +43,6 @@ Add the group, name and version to your application's build file, it will look s
 pip install smile-id-core
 ```
 
-## License
-
-MIT License
-
 ## Documentation
 
 This library requires specific input parameters, for more detail on these parameters please refer to our [documentation for Web API](https://docs.smileidentity.com/products/core-libraries/python).
@@ -63,3 +60,7 @@ For usage questions, the best resource is [our official documentation](https://d
 Bug reports and pull requests are welcome on GitHub at https://github.com/smileidentity/smile-identity-core-python3
 
 Please format the code with [black](https://github.com/psf/black) prior to submitting pull requests, by running `black` from the project's root.
+
+## License
+
+MIT License

@@ -1,11 +1,7 @@
 import base64
 import hashlib
 import hmac
-import time
 from datetime import datetime
-
-from Crypto.Cipher import PKCS1_v1_5
-from Crypto.PublicKey import RSA
 
 __all__ = ["Signature"]
 

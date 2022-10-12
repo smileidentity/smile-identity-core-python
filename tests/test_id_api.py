@@ -1,5 +1,4 @@
 import base64
-import time
 import unittest
 from datetime import datetime
 from unittest.mock import patch
@@ -228,7 +227,7 @@ class TestIdApi(unittest.TestCase):
 
     def test_validate_return_data(self):
         self.__reset_params()
-        timestamp=datetime.now().isoformat()
+        timestamp = datetime.now().isoformat()
         sec_timestamp = self.signatureObj.generate_signature(timestamp=timestamp)
         with patch("requests.post") as mocked_post:
             mocked_post.return_value.status_code = 200

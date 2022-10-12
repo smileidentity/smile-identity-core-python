@@ -1,6 +1,4 @@
 import base64
-import time
-
 from uuid import uuid4
 
 import pytest
@@ -309,7 +307,9 @@ class TestUtilities(TestCaseWithStubs):
     @responses.activate
     def test_get_job_status(self):
         self.__reset_params()
-        sec_params = self.signatureObj.generate_signature(timestamp=datetime.now().isoformat())
+        sec_params = self.signatureObj.generate_signature(
+            timestamp=datetime.now().isoformat()
+        )
         self.stub_get_job_status(sec_params, True)
 
         job_status = self.utilities.get_job_status(

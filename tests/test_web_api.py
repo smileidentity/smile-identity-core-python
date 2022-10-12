@@ -1,7 +1,5 @@
 import base64
-import time
 from datetime import datetime
-from typing import Dict
 from uuid import uuid4
 
 import responses
@@ -10,7 +8,6 @@ from Crypto.PublicKey import RSA
 
 from smile_id_core import WebApi, Signature, ServerError
 from tests.stub_mixin import TestCaseWithStubs
-from inspect import signature
 
 
 class TestWebApi(TestCaseWithStubs):
@@ -300,7 +297,9 @@ class TestWebApi(TestCaseWithStubs):
         user_id = "user_id"
         job_id = "job_id"
         product = "product_type"
-        self.web_api.get_web_token(user_id, job_id, product, timestamp=signature["timestamp"])
+        self.web_api.get_web_token(
+            user_id, job_id, product, timestamp=signature["timestamp"]
+        )
         body = {
             **signature,
             "user_id": user_id,

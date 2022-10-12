@@ -89,16 +89,14 @@ class WebApi:
         sec_params = self._get_security_key_params(options_params)
         use_enrolled_image = options_params.get("use_enrolled_image", False)
         prep_upload = WebApi.execute_http(
-            self.url + "/upload",
+            f"{self.url}/upload",
             self.__prepare_prep_upload_payload(
                 partner_params, sec_params, use_enrolled_image
             ),
         )
         if prep_upload.status_code != 200:
             raise ServerError(
-                "Failed to post entity to {}, status={}, response={}".format(
-                    self.url + "/upload", prep_upload.status_code, prep_upload.json()
-                )
+                f"Failed to post entity to {self.url}/upload, status={prep_upload.status_code}, response={prep_upload.json()}"
             )
         else:
             prep_upload_json_resp = prep_upload.json()
@@ -116,9 +114,7 @@ class WebApi:
             upload_response = WebApi.upload(upload_url, zip_stream)
             if upload_response.status_code != 200:
                 raise ServerError(
-                    "Failed to post entity to {}, status={}, response={}".format(
-                        upload_url, upload_response.status_code, upload_response.json()
-                    )
+                    f"Failed to post entity to {upload_url}, status={upload_response.status_code}, response={upload_response.json()}"
                 )
 
             if options_params["return_job_status"]:
@@ -178,7 +174,7 @@ class WebApi:
         if options_params:
             for key in options_params:
                 if key != "optional_callback" and not type(options_params[key]) == bool:
-                    raise ValueError(key + " needs to be a boolean")
+                    raise ValueError(f"{key} needs to be a boolean")
 
     def __validate_return_data(self, options):
         if not self.call_back_url and not options["return_job_status"]:
