@@ -124,9 +124,7 @@ def validate_images(images_params, use_enrolled_image=False, job_type=None):
             IMAGE_FILE_EXTENSIONS
         ):
             if not os.path.exists(image["image"]):
-                raise FileNotFoundError(
-                    "No such file or directory %s" % (image["image"])
-                )
+                raise FileNotFoundError(f"No such file or directory {image['image']}")
 
         image_type_id = int(image["image_type_id"])
         if image_type_id == 1 or image_type_id == 3:

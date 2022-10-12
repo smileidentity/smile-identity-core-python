@@ -25,11 +25,11 @@ class Signature:
         hashed = self.__get_hash(timestamp)
         encrypted = base64.b64encode(cipher.encrypt(hashed.encode("utf-8")))
 
-        signature = "{}|{}".format(encrypted.decode(encoding="UTF-8"), hashed)
+        signature = f"{encrypted.decode(encoding='UTF-8')}|{hashed}"
         return {"sec_key": signature, "timestamp": timestamp}
 
     def __get_hash(self, timestamp):
-        to_hash = "{}:{}".format(int(self.partner_id), timestamp)
+        to_hash = f"{int(self.partner_id)}:{timestamp}"
         new_hash = str(to_hash).encode("utf-8")
         return hashlib.sha256(new_hash).hexdigest()
 

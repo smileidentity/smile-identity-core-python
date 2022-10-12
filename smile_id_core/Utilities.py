@@ -35,7 +35,9 @@ class Utilities:
         validate_sec_params(sec_params)
         # validate_partner_param throws an error if job_type is empty/not provided,
         # but it's not required by get_job_status
-        Utilities.validate_partner_params({**partner_params, "job_type": partner_params.get("job_type", 1)})
+        Utilities.validate_partner_params(
+            {**partner_params, "job_type": partner_params.get("job_type", 1)}
+        )
         if not option_params or option_params is None:
             options = {
                 "return_job_status": True,
@@ -53,17 +55,12 @@ class Utilities:
 
     def __query_job_status(self, user_id, job_id, option_params, sec_params):
         job_status = Utilities.execute_post(
-            self.url + "/job_status",
+            f"{self.url}/job_status",
             self.__configure_job_query(user_id, job_id, option_params, sec_params),
         )
         if job_status.status_code != 200:
             raise ServerError(
-                "Failed to post entity to {}, response={}:{} - {}".format(
-                    self.url + "/job_status",
-                    job_status.status_code,
-                    job_status.reason,
-                    job_status.json(),
-                )
+                f"Failed to post entity to {self.url}/job_status, response={job_status.status_code}:{job_status.reason} - {job_status.json()}"
             )
         else:
             job_status_json_resp = job_status.json()
@@ -128,42 +125,40 @@ class Utilities:
                 if id_info_params[field]:
                     continue
                 else:
-                    raise ValueError("key " + field + " cannot be empty")
+                    raise ValueError(f"key {field} cannot be empty")
             else:
-                raise ValueError("key " + field + " cannot be empty")
+                raise ValueError(f"key {field} cannot be empty")
         if not use_validation_api:
             return
 
         response = Utilities.get_smile_id_services(sid_server)
         if response.status_code != 200:
             raise ServerError(
-                "Failed to get to {}, status={}, response={}".format(
-                    "/services", response.status_code, response.json()
-                )
+                f"Failed to get to /services, status={response.status_code}, response={response.json()}"
             )
         response_json = response.json()
         if job_type == 6:
             doc_verification = response_json["hosted_web"]["doc_verification"]
             if not id_info_params["country"] in doc_verification:
-                raise ValueError("country " + id_info_params["country"] + " is invalid")
+                raise ValueError(f"country {id_info_params['country']} is invalid")
             selected_country = doc_verification[id_info_params["country"]]["id_types"]
             if not id_info_params["id_type"] in selected_country:
-                raise ValueError("id_type " + id_info_params["id_type"] + " is invalid")
+                raise ValueError(f"id_type {id_info_params['id_type']} is invalid")
         else:
             id_types_by_country = response_json["id_types"]
             if not id_info_params["country"] in id_types_by_country:
-                raise ValueError("country " + id_info_params["country"] + " is invalid")
+                raise ValueError(f"country {id_info_params['country']} is invalid")
             selected_country = response_json["id_types"][id_info_params["country"]]
             if not id_info_params["id_type"] in selected_country:
-                raise ValueError("id_type " + id_info_params["id_type"] + " is invalid")
+                raise ValueError(f"id_type {id_info_params['id_type']} is invalid")
             id_params = selected_country[id_info_params["id_type"]]
             for key in id_params:
                 if key not in id_info_params and key not in partner_params:
-                    raise ValueError("key " + key + " is required")
+                    raise ValueError(f"key {key} is required")
                 if key in id_info_params and not id_info_params[key]:
-                    raise ValueError("key " + key + " cannot be empty")
+                    raise ValueError(f"key {key} cannot be empty")
                 if key in partner_params and not partner_params[key]:
-                    raise ValueError("key " + key + " cannot be empty")
+                    raise ValueError(f"key {key} cannot be empty")
 
     @staticmethod
     def get_smile_id_services(sid_server):
@@ -171,12 +166,10 @@ class Utilities:
             url = sid_server_map[sid_server]
         else:
             url = sid_server
-        response = Utilities.execute_get(url + "/services")
+        response = Utilities.execute_get(f"{url}/services")
         if response.status_code != 200:
             raise ServerError(
-                "Failed to get to {}, status={}, response={}".format(
-                    url + "/services", response.status_code, response.json()
-                )
+                f"Failed to get to {url}/services, status={response.status_code}, response={response.json()}"
             )
         return response
 
