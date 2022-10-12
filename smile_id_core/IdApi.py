@@ -55,9 +55,7 @@ class IdApi:
         response = self.__execute_http(payload)
         if response.status_code != 200:
             raise ServerError(
-                "Failed to post entity to {}, status={}, response={}".format(
-                    self.url + "/id_verification", response.status_code, response.json()
-                )
+                f"Failed to post entity to {self.url}/id_verification, status={response.status_code}, response={response.json()}"
             )
         return response
 
@@ -74,7 +72,7 @@ class IdApi:
     def __execute_http(self, payload):
         data = json.dumps(payload)
         resp = requests.post(
-            url=self.url + "/id_verification",
+            url=f"{self.url}/id_verification",
             data=data,
             headers={
                 "Accept": "application/json",

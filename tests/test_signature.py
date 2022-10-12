@@ -30,7 +30,7 @@ class TestSignature(unittest.TestCase):
         self.assertEqual(sec_timestamp["timestamp"], timestamp)
 
         hashed = hashlib.sha256(
-            "{}:{}".format(int(self.partner_id), timestamp).encode("utf-8")
+            f"{int(self.partner_id)}:{timestamp}".encode("utf-8")
         ).hexdigest()
         encrypted, hashed2 = sec_timestamp["sec_key"].split("|")
         self.assertEqual(hashed, hashed2)
