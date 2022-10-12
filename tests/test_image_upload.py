@@ -5,13 +5,11 @@ import zipfile
 
 import pytest
 
-from smile_id_core.image_upload import (
-    prepare_image_entry_dict,
-    prepare_info_json,
-    generate_zip_file,
-    prepare_image_payload,
-    validate_images,
-)
+from smile_id_core.image_upload import generate_zip_file
+from smile_id_core.image_upload import prepare_image_entry_dict
+from smile_id_core.image_upload import prepare_image_payload
+from smile_id_core.image_upload import prepare_info_json
+from smile_id_core.image_upload import validate_images
 
 
 def test_prepare_image_entry_dict():

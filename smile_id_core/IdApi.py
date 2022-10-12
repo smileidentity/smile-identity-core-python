@@ -1,14 +1,13 @@
 import json
 from typing import Dict
 
-from smile_id_core.Utilities import (
-    Utilities,
-    get_signature,
-    validate_sec_params,
-    sid_server_map,
-)
-from smile_id_core.ServerError import ServerError
 import requests
+
+from smile_id_core.ServerError import ServerError
+from smile_id_core.Utilities import get_signature
+from smile_id_core.Utilities import sid_server_map
+from smile_id_core.Utilities import Utilities
+from smile_id_core.Utilities import validate_sec_params
 
 __all__ = ["IdApi"]
 

@@ -5,16 +5,15 @@ from typing import Dict
 
 import requests
 
-from smile_id_core.image_upload import generate_zip_file, validate_images
 from smile_id_core.IdApi import IdApi
-from smile_id_core.Signature import Signature
-from smile_id_core.Utilities import (
-    Utilities,
-    get_signature,
-    validate_sec_params,
-    sid_server_map,
-)
+from smile_id_core.image_upload import generate_zip_file
+from smile_id_core.image_upload import validate_images
 from smile_id_core.ServerError import ServerError
+from smile_id_core.Signature import Signature
+from smile_id_core.Utilities import get_signature
+from smile_id_core.Utilities import sid_server_map
+from smile_id_core.Utilities import Utilities
+from smile_id_core.Utilities import validate_sec_params
 
 __all__ = ["WebApi"]
 

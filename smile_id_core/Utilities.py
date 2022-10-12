@@ -3,8 +3,8 @@ from typing import Dict
 
 import requests
 
-from smile_id_core.Signature import Signature
 from smile_id_core.ServerError import ServerError
+from smile_id_core.Signature import Signature
 
 __all__ = ["Utilities", "get_signature", "validate_sec_params", "sid_server_map"]
 
