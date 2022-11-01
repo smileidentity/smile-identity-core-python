@@ -1,17 +1,38 @@
 import json
 from typing import Dict
-
 import requests
+
+# import importlib.metadata if available, otherwise importlib_metadata (for Python < 3.8)
+try:
+    import importlib.metadata as importlib_metadata
+except ModuleNotFoundError:
+    import importlib_metadata
+
 
 from smile_id_core.Signature import Signature
 from smile_id_core.ServerError import ServerError
 
-__all__ = ["Utilities", "get_signature", "validate_sec_params", "sid_server_map"]
+__all__ = [
+    "Utilities",
+    "get_signature",
+    "get_version",
+    "validate_sec_params",
+    "sid_server_map",
+]
 
 sid_server_map = {
     0: "https://testapi.smileidentity.com/v1",
     1: "https://api.smileidentity.com/v1",
 }
+
+
+def get_version() -> str:
+    """Return the module version number specified in pyproject.toml.
+
+    Returns:
+        str: The module version number
+    """
+    return importlib_metadata.version(__package__)
 
 
 class Utilities:

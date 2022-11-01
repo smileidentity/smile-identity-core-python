@@ -1,5 +1,6 @@
 import base64
 import time
+import re
 
 from uuid import uuid4
 
@@ -9,7 +10,15 @@ from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
 from smile_id_core import Signature, Utilities
+from smile_id_core.Utilities import get_version
 from tests.stub_mixin import TestCaseWithStubs
+
+
+def test_get_version():
+    """Test that a well formatted version string is returned."""
+    assert isinstance(get_version(), str)
+    # tests that the version is in the form of a semver string.
+    assert re.match(r"^\d+\.\d+\.\d+$", get_version())
 
 
 class TestUtilities(TestCaseWithStubs):

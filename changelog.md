@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+### Added
+- report SDK versions to smile.
+
 ## [1.0.9] - 2022-11-01
 
 ### Added

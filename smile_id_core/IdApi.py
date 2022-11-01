@@ -1,14 +1,15 @@
 import json
+import requests
 from typing import Dict
 
 from smile_id_core.Utilities import (
     Utilities,
     get_signature,
+    get_version,
     validate_sec_params,
     sid_server_map,
 )
 from smile_id_core.ServerError import ServerError
-import requests
 
 __all__ = ["IdApi"]
 
@@ -61,13 +62,14 @@ class IdApi:
 
     def __configure_json(self, partner_params, id_params, sec_key):
         validate_sec_params(sec_key)
-        payload = {
+        return {
             **sec_key,
             "partner_id": self.partner_id,
             "partner_params": partner_params,
+            "source_sdk": "Python",
+            "source_sdk_version": get_version(),
+            **id_params,
         }
-        payload.update(id_params)
-        return payload
 
     def __execute_http(self, payload):
         data = json.dumps(payload)
