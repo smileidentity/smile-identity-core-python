@@ -580,7 +580,7 @@ If you are outside the virtual environment, run `poetry run pytest` from the roo
 
 To release a new version:
 
-- Bump the version number in `pyproject.toml` and `smile_id_core/__init__.py` 
+- Bump the version number in `pyproject.toml` (the version in `smile_id_core/__init__.py` will pick this up)
 - Update `changelog.md` with the new version number and the changes made
 - Run `poetry build` to build package.
 - Ensure your PyPI credentials are propery configured
