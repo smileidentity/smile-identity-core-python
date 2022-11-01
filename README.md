@@ -559,10 +559,10 @@ This will return the smile services endpoint as a json object and  can then be u
 
 ## Development
 
-Reference: https://virtualenv.pypa.io/en/latest/installation.html
-
-1. Set up virtual env.
-2. After checking out the repo, run `pip install -r requirements` to install all required packages.
+1. Ensure you have `poetry` installed: https://python-poetry.org/docs#installation
+2. After checking out the repo, run `poetry install`  -- this sets up a virtualenvironment and install all required packages.
+   1. Run `poetry shell` to activate the virtual environment.
+   2. Run `poetry env info` to get details about the virtual environment
 
 ## Deployment
 
@@ -571,23 +571,27 @@ This is the https://packaging.python.org/tutorials/packaging-projects/ that you 
 #### Testing
 
 Tests are based on `pytest`.
- 
-To run tests run `pytest` in the root folder of the project
+
+If your virtual environment is active, run `poetry run pytest` from the root of the project to run the tests.
+
+If you are outside the virtual environment, run `poetry run pytest` from the root of the project to run the tests.
 
 #### Deployment
 
 To release a new version:
 
-- Update the version number in setup.py
-- Run `python setup.py sdist` to build package.
-- Run `twine upload dist/*` to publish package.
+- Bump the version number in `pyproject.toml` (the version in `smile_id_core/__init__.py` will pick this up)
+- Update `changelog.md` with the new version number and the changes made
+- Run `poetry build` to build package.
+- Ensure your PyPI credentials are propery configured
+- Run `poetry publish` to publish package.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/smileidentity/smile-identity-core-python
+Bug reports and pull requests are welcome on GitHub at https://github.com/smileidentity/smile-identity-core-python-3
 
 Please format the code with [black](https://github.com/psf/black) prior to submitting pull requests, by running:
 ```
-black .
+poetry run black .
 ```
 from the project's root. 

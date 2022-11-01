@@ -1,8 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
-## [Unreleased] - 2022-10-19
-## Changed
-  * Moved information of python version to the class initialization.
+
+## [1.0.9] - 2022-11-01
+
+### Added
+- Python 3.11 support
+
+### Changed
+- Project is now built with [Poetry](https://python-poetry.org)
+- Moved information of python version to the class initialization
 
 ## [0.0.13] - 2020-09-16
 ### Added
