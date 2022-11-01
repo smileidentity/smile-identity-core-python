@@ -2,8 +2,9 @@
 # workflow and should be the same as the version number in the pyproject.toml file.
 name: Publish to PyPI
 on:
-  tags: # run on tags starting with a v character. ex. v1.0.0
-    - v*
+  push:
+    tags: # run on tags starting with a v character. ex. v1.0.0
+      - v*
 jobs:
   test:
     uses: ./.github/workflows/test.yml
