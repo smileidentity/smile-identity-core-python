@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "smile-id-core"
-version = "1.0.8"
+version = "1.0.9"
 description = "The official Smile Identity package exposes four classes namely; the WebApi class, the IDApi class, the Signature class and the Utilities class."
 license = "MIT"
 authors = ["Smile Identity <support@smileidentity.com>"]
