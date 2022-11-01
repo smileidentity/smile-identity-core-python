@@ -11,6 +11,7 @@ from smile_id_core.Signature import Signature
 from smile_id_core.Utilities import (
     Utilities,
     get_signature,
+    get_version,
     validate_sec_params,
     sid_server_map,
 )
@@ -198,6 +199,8 @@ class WebApi:
             "model_parameters": {},
             "callback_url": self.call_back_url,
             "use_enrolled_image": use_enrolled_image,
+            "source_sdk": "Python",
+            "source_sdk_version": get_version(),
             **sec_params,
         }
 
