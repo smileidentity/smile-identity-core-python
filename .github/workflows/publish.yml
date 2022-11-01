@@ -1,0 +1,28 @@
+# publishes to pypi based on git releases. NOTE: The git tag is used to trigger the
+# workflow and should be the same as the version number in the pyproject.toml file.
+name: Publish to PyPI
+on:
+  push:
+    tags: # run on tags starting with a v character. ex. v1.0.0
+      - v*
+jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install poetry
+      run: pipx install poetry
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+        cache: 'poetry'
+    - name: Install dependencies
+      run: poetry install
+    - name: build and publish to pypi
+      run : poetry publish --build --username $PYPI_USERNAME --password $PYPI_TOKEN
+      env:
+        PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+        PYPI_USERNAME: ${{ secrets.PYPI_USERNAME }}
