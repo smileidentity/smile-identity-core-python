@@ -580,18 +580,17 @@ If you are outside the virtual environment, run `poetry run pytest` from the roo
 
 To release a new version:
 
-- Bump the version number in `pyproject.toml` (the version in `smile_id_core/__init__.py` will pick this up)
-- Update `changelog.md` with the new version number and the changes made
-- Run `poetry build` to build package.
-- Ensure your PyPI credentials are propery configured
-- Run `poetry publish` to publish package.
+- Bump the version number in `pyproject.toml` (the version in `smile_id_core/__init__.py` will pick this up).
+- Update `CHANGELOG.md` with the new version number and the changes made.
+- Submit a pull request to the `main` branch. Merge the PR after it has been approved.
+- Create a git tag for the new version. The tag should be the same as the version number in `pyproject.toml`.
 
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/smileidentity/smile-identity-core-python-3
 
-Please format the code with [black](https://github.com/psf/black) prior to submitting pull requests, by running:
-```
+Please format the code with [black](https://github.com/psf/black) prior to submitting pull requests by running the following command from the project's root:
+
+```bash
 poetry run black .
 ```
-from the project's root. 
