@@ -1,5 +1,5 @@
 import json
-from typing import Union, Optional
+from typing import Union, Optional, Dict
 
 import requests
 from requests import Response
@@ -29,9 +29,9 @@ class Utilities:
 
     def get_job_status(
         self,
-        partner_params: dict,
-        option_params: dict,
-        sec_params: Optional[dict] = None,
+        partner_params: Dict,
+        option_params: Dict,
+        sec_params: Optional[Dict] = None,
     ) -> Response:
         if sec_params is None:
             sec_params = get_signature(
@@ -60,7 +60,7 @@ class Utilities:
         )
 
     def __query_job_status(
-        self, user_id: str, job_id: str, option_params: dict, sec_params: dict
+        self, user_id: str, job_id: str, option_params: Dict, sec_params: Dict
     ) -> Response:
         job_status = Utilities.execute_post(
             f"{self.url}/job_status",
@@ -86,8 +86,8 @@ class Utilities:
             return job_status
 
     def __configure_job_query(
-        self, user_id: str, job_id: str, options: dict, sec_params: dict
-    ) -> dict:
+        self, user_id: str, job_id: str, options: Dict, sec_params: Dict
+    ) -> Dict:
         return {
             **sec_params,
             "partner_id": self.partner_id,
@@ -98,7 +98,7 @@ class Utilities:
         }
 
     @staticmethod
-    def validate_partner_params(partner_params: dict) -> None:
+    def validate_partner_params(partner_params: Dict) -> None:
         if not partner_params:
             raise ValueError("Please ensure that you send through partner params")
 
@@ -121,8 +121,8 @@ class Utilities:
     @staticmethod
     def validate_id_params(
         sid_server: Union[str, int],
-        id_info_params: dict,
-        partner_params: dict,
+        id_info_params: Dict,
+        partner_params: Dict,
         use_validation_api=False,
     ) -> None:
         job_type = partner_params.get("job_type")
@@ -198,7 +198,7 @@ class Utilities:
         return resp
 
     @staticmethod
-    def execute_post(url: str, payload: dict) -> Response:
+    def execute_post(url: str, payload: Dict) -> Response:
         data = json.dumps(payload)
         resp = requests.post(
             url=url,
@@ -212,14 +212,14 @@ class Utilities:
         return resp
 
 
-def validate_sec_params(sec_key_dict: dict) -> None:
+def validate_sec_params(sec_key_dict: Dict) -> None:
     if not sec_key_dict.get("sec_key") and not sec_key_dict.get("signature"):
         raise Exception("Missing key, must provide a 'sec_key' or 'signature' field")
     if not sec_key_dict.get("timestamp"):
         raise Exception("Missing 'timestamp' field")
 
 
-def get_signature(partner_id: str, api_key: str, is_signature) -> dict[str, str]:
+def get_signature(partner_id: str, api_key: str, is_signature) -> Dict[str, str]:
     sec_key_gen = Signature(partner_id, api_key)
     sec_key_object = (
         sec_key_gen.generate_signature()

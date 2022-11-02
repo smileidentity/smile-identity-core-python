@@ -1,7 +1,7 @@
 import json
 import time
 from datetime import datetime
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, Dict
 
 import requests
 from requests import Response
@@ -43,12 +43,12 @@ class WebApi:
 
     def submit_job(
         self,
-        partner_params: dict,
-        images_params: dict,
-        id_info_params: dict,
-        options_params: dict,
+        partner_params: Dict,
+        images_params: Dict,
+        id_info_params: Dict,
+        options_params: Dict,
         use_validation_api=True,
-    ) -> dict:
+    ) -> Dict:
 
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params.get("job_type")
@@ -162,24 +162,24 @@ class WebApi:
             },
         )
 
-    def _get_security_key_params(self, options_params: dict) -> dict[str, str]:
+    def _get_security_key_params(self, options_params: Dict) -> Dict[str, str]:
         return get_signature(
             self.partner_id, self.api_key, options_params.get("signature")
         )
 
     def __call_id_api(
         self,
-        partner_params: dict,
-        id_info_params: dict,
+        partner_params: Dict,
+        id_info_params: Dict,
         use_validation_api: bool,
-        options_params: dict,
+        options_params: Dict,
     ) -> Response:
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
         return id_api.submit_job(
             partner_params, id_info_params, use_validation_api, options_params
         )
 
-    def __validate_options(self, options_params: dict) -> None:
+    def __validate_options(self, options_params: Dict) -> None:
         if not self.call_back_url and not options_params:
             raise ValueError(
                 "Please choose to either get your response via the callback or job status query"
@@ -190,19 +190,19 @@ class WebApi:
                 if key != "optional_callback" and not type(options_params[key]) == bool:
                     raise ValueError(f"{key} needs to be a boolean")
 
-    def __validate_return_data(self, options: dict) -> None:
+    def __validate_return_data(self, options: Dict) -> None:
         if not self.call_back_url and not options["return_job_status"]:
             raise ValueError(
                 "Please choose to either get your response via the callback or job status query"
             )
 
-    def __get_sec_key(self) -> dict:
+    def __get_sec_key(self) -> Dict:
         sec_key_gen = Signature(self.partner_id, self.api_key)
         return sec_key_gen.generate_sec_key()
 
     def __prepare_prep_upload_payload(
-        self, partner_params: dict, sec_params: dict, use_enrolled_image: bool
-    ) -> dict:
+        self, partner_params: Dict, sec_params: Dict, use_enrolled_image: bool
+    ) -> Dict:
         validate_sec_params(sec_params)
 
         return {
@@ -218,9 +218,9 @@ class WebApi:
     def poll_job_status(
         self,
         counter: int,
-        partner_params: dict,
-        options_params: dict,
-        sec_params: Optional[dict],
+        partner_params: Dict,
+        options_params: Dict,
+        sec_params: Optional[Dict],
     ) -> Response:
         if sec_params is None:
             sec_params = self._get_security_key_params(options_params)
@@ -245,7 +245,7 @@ class WebApi:
         return job_status
 
     @staticmethod
-    def execute_http(url: str, payload: dict) -> Response:
+    def execute_http(url: str, payload: Dict) -> Response:
         data = json.dumps(payload)
         resp = requests.post(
             url=url,

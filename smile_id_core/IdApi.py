@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import Optional, Dict
 
 from requests import Response
 
@@ -28,10 +28,10 @@ class IdApi:
 
     def submit_job(
         self,
-        partner_params: dict,
-        id_params: dict,
+        partner_params: Dict,
+        id_params: Dict,
         use_validation_api=True,
-        options_params: Optional[dict] = None,
+        options_params: Optional[Dict] = None,
     ) -> Response:
         if not options_params:
             options_params = {}
@@ -62,8 +62,8 @@ class IdApi:
         return response
 
     def __configure_json(
-        self, partner_params: dict, id_params: dict, sec_key: dict
-    ) -> dict:
+        self, partner_params: Dict, id_params: Dict, sec_key: Dict
+    ) -> Dict:
         validate_sec_params(sec_key)
         payload = {
             **sec_key,
@@ -73,7 +73,7 @@ class IdApi:
         payload.update(id_params)
         return payload
 
-    def __execute_http(self, payload: dict) -> Response:
+    def __execute_http(self, payload: Dict) -> Response:
         data = json.dumps(payload)
         resp = requests.post(
             url=f"{self.url}/id_verification",
