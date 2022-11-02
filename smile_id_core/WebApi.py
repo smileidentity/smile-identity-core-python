@@ -48,7 +48,7 @@ class WebApi:
         id_info_params: Dict,
         options_params: Dict,
         use_validation_api=True,
-    ) -> Dict:
+    ) -> Response:
 
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params.get("job_type")
@@ -80,7 +80,7 @@ class WebApi:
         if job_type == 5:
             return self.__call_id_api(
                 partner_params, id_info_params, use_validation_api, options_params
-            ).json()
+            )
 
         self.__validate_options(options_params)
         validate_images(
@@ -131,9 +131,9 @@ class WebApi:
                 job_status = self.poll_job_status(
                     0, partner_params, options_params, sec_params
                 )
-                return job_status.json()
+                return job_status
             else:
-                return {"success": True, "smile_job_id": smile_job_id}
+                return upload_response
 
     def get_web_token(
         self,
