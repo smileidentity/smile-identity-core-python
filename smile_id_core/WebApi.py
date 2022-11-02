@@ -21,7 +21,13 @@ __all__ = ["WebApi"]
 
 
 class WebApi:
-    def __init__(self, partner_id: str, call_back_url: str, api_key: str, sid_server: Union[str, int]):
+    def __init__(
+        self,
+        partner_id: str,
+        call_back_url: str,
+        api_key: str,
+        sid_server: Union[str, int],
+    ):
         if not partner_id or not api_key:
             raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
@@ -130,12 +136,19 @@ class WebApi:
                 return {"success": True, "smile_job_id": smile_job_id}
 
     def get_web_token(
-        self, user_id: str, job_id: str, product: str, timestamp: Optional[str] = None, callback_url: Optional[str] = None
+        self,
+        user_id: str,
+        job_id: str,
+        product: str,
+        timestamp: Optional[str] = None,
+        callback_url: Optional[str] = None,
     ) -> Response:
 
         timestamp = timestamp or datetime.now().isoformat()
         callback_url = callback_url or self.call_back_url
-        sec_params = Signature(self.partner_id, self.api_key).generate_signature(timestamp)
+        sec_params = Signature(self.partner_id, self.api_key).generate_signature(
+            timestamp
+        )
 
         return WebApi.execute_http(
             f"{self.url}/token",

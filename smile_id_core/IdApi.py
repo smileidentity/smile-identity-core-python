@@ -61,7 +61,9 @@ class IdApi:
             )
         return response
 
-    def __configure_json(self, partner_params: dict, id_params: dict, sec_key: dict) -> dict:
+    def __configure_json(
+        self, partner_params: dict, id_params: dict, sec_key: dict
+    ) -> dict:
         validate_sec_params(sec_key)
         payload = {
             **sec_key,

@@ -27,7 +27,12 @@ class Utilities:
         else:
             self.url = str(sid_server)
 
-    def get_job_status(self, partner_params: dict, option_params: dict, sec_params: Optional[dict] = None) -> Response:
+    def get_job_status(
+        self,
+        partner_params: dict,
+        option_params: dict,
+        sec_params: Optional[dict] = None,
+    ) -> Response:
         if sec_params is None:
             sec_params = get_signature(
                 self.partner_id, self.api_key, option_params.get("signature")
@@ -54,7 +59,9 @@ class Utilities:
             sec_params,
         )
 
-    def __query_job_status(self, user_id: str, job_id: str, option_params: dict, sec_params: dict) -> Response:
+    def __query_job_status(
+        self, user_id: str, job_id: str, option_params: dict, sec_params: dict
+    ) -> Response:
         job_status = Utilities.execute_post(
             f"{self.url}/job_status",
             self.__configure_job_query(user_id, job_id, option_params, sec_params),
@@ -78,7 +85,9 @@ class Utilities:
                 )
             return job_status
 
-    def __configure_job_query(self, user_id: str, job_id: str, options: dict, sec_params: dict) -> dict:
+    def __configure_job_query(
+        self, user_id: str, job_id: str, options: dict, sec_params: dict
+    ) -> dict:
         return {
             **sec_params,
             "partner_id": self.partner_id,
@@ -111,7 +120,10 @@ class Utilities:
 
     @staticmethod
     def validate_id_params(
-        sid_server: Union[str, int], id_info_params: dict, partner_params: dict, use_validation_api=False
+        sid_server: Union[str, int],
+        id_info_params: dict,
+        partner_params: dict,
+        use_validation_api=False,
     ) -> None:
         job_type = partner_params.get("job_type")
         if job_type != 6 and not id_info_params.get("entered"):
