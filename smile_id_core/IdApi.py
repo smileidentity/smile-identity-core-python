@@ -1,5 +1,5 @@
 import json
-from typing import Optional, Dict
+from typing import Optional, Dict, Union
 
 from requests import Response
 
@@ -16,7 +16,7 @@ __all__ = ["IdApi"]
 
 
 class IdApi:
-    def __init__(self, partner_id: str, api_key: str, sid_server: str | int):
+    def __init__(self, partner_id: str, api_key: str, sid_server: Union[str, int]):
         if not partner_id or not api_key:
             raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
