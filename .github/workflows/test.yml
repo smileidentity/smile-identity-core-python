@@ -30,5 +30,7 @@ jobs:
         cache: 'poetry'
     - name: Install dependencies
       run: poetry install
+    - name: Check types
+      run: poetry run mypy smile_id_core
     - name: test code
       run: poetry run pytest

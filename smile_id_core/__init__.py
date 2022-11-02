@@ -2,7 +2,7 @@
 try:
     import importlib.metadata as importlib_metadata
 except ModuleNotFoundError:
-    import importlib_metadata
+    import importlib_metadata  # type: ignore
 
 from smile_id_core.IdApi import IdApi
 from smile_id_core.ServerError import ServerError

@@ -1,9 +1,10 @@
 import json
 import time
 from datetime import datetime
-from typing import Dict
+from typing import Any, Optional, Union
 
 import requests
+from requests import Response
 
 from smile_id_core.image_upload import generate_zip_file, validate_images
 from smile_id_core.IdApi import IdApi
@@ -20,28 +21,28 @@ __all__ = ["WebApi"]
 
 
 class WebApi:
-    def __init__(self, partner_id, call_back_url, api_key, sid_server):
+    def __init__(self, partner_id: str, call_back_url: str, api_key: str, sid_server: Union[str, int]):
         if not partner_id or not api_key:
             raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
         self.call_back_url = call_back_url
         self.api_key = api_key
         self.sid_server = sid_server
-        self.utilities = None
+        self.utilities: Optional[Utilities] = None
 
-        if sid_server in [0, 1]:
-            self.url = sid_server_map[sid_server]
+        if sid_server in [0, 1, "0", "1"]:
+            self.url = sid_server_map[int(sid_server)]
         else:
-            self.url = sid_server
+            self.url = str(sid_server)
 
     def submit_job(
         self,
-        partner_params,
-        images_params,
-        id_info_params,
-        options_params,
+        partner_params: dict,
+        images_params: dict,
+        id_info_params: dict,
+        options_params: dict,
         use_validation_api=True,
-    ):
+    ) -> dict:
 
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params.get("job_type")
@@ -73,7 +74,7 @@ class WebApi:
         if job_type == 5:
             return self.__call_id_api(
                 partner_params, id_info_params, use_validation_api, options_params
-            )
+            ).json()
 
         self.__validate_options(options_params)
         validate_images(
@@ -100,8 +101,8 @@ class WebApi:
             )
         else:
             prep_upload_json_resp = prep_upload.json()
-            upload_url = prep_upload_json_resp["upload_url"]
-            smile_job_id = prep_upload_json_resp["smile_job_id"]
+            upload_url: str = prep_upload_json_resp["upload_url"]
+            smile_job_id: str = prep_upload_json_resp["smile_job_id"]
             zip_stream = generate_zip_file(
                 partner_id=self.partner_id,
                 callback_url=self.call_back_url,
@@ -124,17 +125,17 @@ class WebApi:
                 job_status = self.poll_job_status(
                     0, partner_params, options_params, sec_params
                 )
-                return job_status
+                return job_status.json()
             else:
                 return {"success": True, "smile_job_id": smile_job_id}
 
     def get_web_token(
-        self, user_id: str, job_id: str, product: str, timestamp=None, callback_url=None
-    ):
+        self, user_id: str, job_id: str, product: str, timestamp: Optional[str] = None, callback_url: Optional[str] = None
+    ) -> Response:
 
-        sec_params = Signature(self.partner_id, self.api_key).generate_signature(
-            timestamp or datetime.now().isoformat()
-        )
+        timestamp = timestamp or datetime.now().isoformat()
+        callback_url = callback_url or self.call_back_url
+        sec_params = Signature(self.partner_id, self.api_key).generate_signature(timestamp)
 
         return WebApi.execute_http(
             f"{self.url}/token",
@@ -143,29 +144,29 @@ class WebApi:
                 "user_id": user_id,
                 "job_id": job_id,
                 "product": product,
-                "callback_url": callback_url or self.call_back_url,
+                "callback_url": callback_url,
                 "partner_id": self.partner_id,
             },
         )
 
-    def _get_security_key_params(self, options_params):
+    def _get_security_key_params(self, options_params: dict) -> dict[str, str]:
         return get_signature(
             self.partner_id, self.api_key, options_params.get("signature")
         )
 
     def __call_id_api(
         self,
-        partner_params: Dict,
-        id_info_params: Dict,
+        partner_params: dict,
+        id_info_params: dict,
         use_validation_api: bool,
-        options_params: Dict,
-    ):
+        options_params: dict,
+    ) -> Response:
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
         return id_api.submit_job(
             partner_params, id_info_params, use_validation_api, options_params
         )
 
-    def __validate_options(self, options_params):
+    def __validate_options(self, options_params: dict) -> None:
         if not self.call_back_url and not options_params:
             raise ValueError(
                 "Please choose to either get your response via the callback or job status query"
@@ -176,19 +177,19 @@ class WebApi:
                 if key != "optional_callback" and not type(options_params[key]) == bool:
                     raise ValueError(f"{key} needs to be a boolean")
 
-    def __validate_return_data(self, options):
+    def __validate_return_data(self, options: dict) -> None:
         if not self.call_back_url and not options["return_job_status"]:
             raise ValueError(
                 "Please choose to either get your response via the callback or job status query"
             )
 
-    def __get_sec_key(self):
+    def __get_sec_key(self) -> dict:
         sec_key_gen = Signature(self.partner_id, self.api_key)
         return sec_key_gen.generate_sec_key()
 
     def __prepare_prep_upload_payload(
-        self, partner_params: Dict, sec_params: Dict, use_enrolled_image
-    ):
+        self, partner_params: dict, sec_params: dict, use_enrolled_image: bool
+    ) -> dict:
         validate_sec_params(sec_params)
 
         return {
@@ -202,8 +203,8 @@ class WebApi:
         }
 
     def poll_job_status(
-        self, counter, partner_params, options_params, sec_params: Dict
-    ):
+        self, counter: int, partner_params: dict, options_params: dict, sec_params: dict
+    ) -> Response:
         if sec_params is None:
             sec_params = self._get_security_key_params(options_params)
 
@@ -213,7 +214,8 @@ class WebApi:
             time.sleep(2)
         else:
             time.sleep(4)
-
+        if not isinstance(self.utilities, Utilities):
+            raise ValueError("Utilities not initialized")
         job_status = self.utilities.get_job_status(
             partner_params, options_params, sec_params
         )
@@ -226,7 +228,7 @@ class WebApi:
         return job_status
 
     @staticmethod
-    def execute_http(url, payload):
+    def execute_http(url: str, payload: dict) -> Response:
         data = json.dumps(payload)
         resp = requests.post(
             url=url,
@@ -240,7 +242,7 @@ class WebApi:
         return resp
 
     @staticmethod
-    def upload(url, file):
+    def upload(url: str, file: Any) -> Response:
         resp = requests.put(
             url=url, data=file, headers={"Content-type": "application/zip"}
         )

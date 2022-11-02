@@ -1,5 +1,7 @@
 import json
-from typing import Dict
+from typing import Optional
+
+from requests import Response
 
 from smile_id_core.Utilities import (
     Utilities,
@@ -14,7 +16,7 @@ __all__ = ["IdApi"]
 
 
 class IdApi:
-    def __init__(self, partner_id: str, api_key: str, sid_server: str or int):
+    def __init__(self, partner_id: str, api_key: str, sid_server: str | int):
         if not partner_id or not api_key:
             raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
@@ -22,15 +24,15 @@ class IdApi:
         if sid_server in [0, 1, "0", "1"]:
             self.url = sid_server_map[int(sid_server)]
         else:
-            self.url = sid_server
+            self.url = str(sid_server)
 
     def submit_job(
         self,
-        partner_params: Dict,
-        id_params: Dict,
+        partner_params: dict,
+        id_params: dict,
         use_validation_api=True,
-        options_params: Dict = None,
-    ):
+        options_params: Optional[dict] = None,
+    ) -> Response:
         if not options_params:
             options_params = {}
 
@@ -59,7 +61,7 @@ class IdApi:
             )
         return response
 
-    def __configure_json(self, partner_params, id_params, sec_key):
+    def __configure_json(self, partner_params: dict, id_params: dict, sec_key: dict) -> dict:
         validate_sec_params(sec_key)
         payload = {
             **sec_key,
@@ -69,7 +71,7 @@ class IdApi:
         payload.update(id_params)
         return payload
 
-    def __execute_http(self, payload):
+    def __execute_http(self, payload: dict) -> Response:
         data = json.dumps(payload)
         resp = requests.post(
             url=f"{self.url}/id_verification",
