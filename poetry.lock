@@ -308,7 +308,7 @@ python-versions = ">=3.6"
 name = "types-requests"
 version = "2.28.11.2"
 description = "Typing stubs for requests"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -319,7 +319,7 @@ types-urllib3 = "<1.27"
 name = "types-urllib3"
 version = "1.26.25.1"
 description = "Typing stubs for urllib3"
-category = "main"
+category = "dev"
 optional = false
 python-versions = "*"
 
@@ -359,7 +359,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=4.6)", "pytest-black (
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.2"
-content-hash = "4656400cc1ab54d699410781d3ad7806027306b464a27c754d4eafdee5a48ad8"
+content-hash = "0825c887afa64a32bc2375a56c1529d86d69e52cd5ff6ba6b0887652c2cdc2ee"
 
 [metadata.files]
 atomicwrites = [
