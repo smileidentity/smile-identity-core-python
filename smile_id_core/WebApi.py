@@ -1,7 +1,7 @@
 import json
 import time
 from datetime import datetime
-from typing import Any, Optional, Union, Dict
+from typing import Any, Optional, Union, Dict, List
 
 import requests
 from requests import Response
@@ -44,7 +44,7 @@ class WebApi:
     def submit_job(
         self,
         partner_params: Dict,
-        images_params: Dict,
+        images_params: List[Dict],
         id_info_params: Dict,
         options_params: Dict,
         use_validation_api=True,
