@@ -216,7 +216,11 @@ class WebApi:
         }
 
     def poll_job_status(
-        self, counter: int, partner_params: dict, options_params: dict, sec_params: Optional[dict]
+        self,
+        counter: int,
+        partner_params: dict,
+        options_params: dict,
+        sec_params: Optional[dict],
     ) -> Response:
         if sec_params is None:
             sec_params = self._get_security_key_params(options_params)
