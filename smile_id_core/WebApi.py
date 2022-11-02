@@ -48,7 +48,7 @@ class WebApi:
         id_info_params: Dict,
         options_params: Dict,
         use_validation_api=True,
-    ) -> Response:
+    ) -> Union[Response, Dict]:
 
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params.get("job_type")
@@ -133,7 +133,7 @@ class WebApi:
                 )
                 return job_status
             else:
-                return upload_response
+                return {"success": True, "smile_job_id": smile_job_id}
 
     def get_web_token(
         self,
