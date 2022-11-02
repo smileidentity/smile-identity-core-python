@@ -1,8 +1,8 @@
-# import importlib.metadata if available, otherwise importlib_metadata (for Python < 3.8)
-try:
+import sys
+if sys.version_info >= (3, 8):
     import importlib.metadata as importlib_metadata
-except ModuleNotFoundError:
-    import importlib_metadata  # type: ignore
+else:
+    import importlib_metadata
 
 from smile_id_core.IdApi import IdApi
 from smile_id_core.ServerError import ServerError

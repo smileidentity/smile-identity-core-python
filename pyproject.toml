@@ -29,6 +29,19 @@ pycryptodome = "3.9.8"
 pytest = "^7.0.0"
 responses = "0.13.3"
 black = "22.8.0"
+mypy = "^0.971"
+types-requests = "^2.28.11.2"
+
+[tool.mypy]
+files = "smile_id_core,tests"
+pretty = true
+show_error_codes = true
+strict_equality = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
 
 [build-system]
 requires = ["poetry-core"]
