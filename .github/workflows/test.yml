@@ -30,5 +30,8 @@ jobs:
         cache: 'poetry'
     - name: Install dependencies
       run: poetry install
-    - name: test code
+    - name: Type checking
+      # Mypy configuration defined in pyproject.toml
+      run: poetry run mypy
+    - name: Run tests
       run: poetry run pytest

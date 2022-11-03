@@ -1,7 +1,8 @@
 import json
-from typing import Dict
+from typing import Union, Optional, Dict
 
 import requests
+from requests import Response
 
 from smile_id_core.Signature import Signature
 from smile_id_core.ServerError import ServerError
@@ -15,18 +16,23 @@ sid_server_map = {
 
 
 class Utilities:
-    def __init__(self, partner_id, api_key, sid_server):
+    def __init__(self, partner_id: str, api_key: str, sid_server: Union[int, str]):
         if not partner_id or not api_key:
             raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
         self.api_key = api_key
         self.sid_server = sid_server
-        if sid_server in [0, 1]:
-            self.url = sid_server_map[sid_server]
+        if sid_server in [0, 1, "0", "1"]:
+            self.url = sid_server_map[int(sid_server)]
         else:
-            self.url = sid_server
+            self.url = str(sid_server)
 
-    def get_job_status(self, partner_params, option_params, sec_params=None):
+    def get_job_status(
+        self,
+        partner_params: Dict,
+        option_params: Dict,
+        sec_params: Optional[Dict] = None,
+    ) -> Response:
         if sec_params is None:
             sec_params = get_signature(
                 self.partner_id, self.api_key, option_params.get("signature")
@@ -47,13 +53,15 @@ class Utilities:
         else:
             options = option_params
         return self.__query_job_status(
-            partner_params.get("user_id"),
-            partner_params.get("job_id"),
+            str(partner_params.get("user_id")),
+            str(partner_params.get("job_id")),
             options,
             sec_params,
         )
 
-    def __query_job_status(self, user_id, job_id, option_params, sec_params):
+    def __query_job_status(
+        self, user_id: str, job_id: str, option_params: Dict, sec_params: Dict
+    ) -> Response:
         job_status = Utilities.execute_post(
             f"{self.url}/job_status",
             self.__configure_job_query(user_id, job_id, option_params, sec_params),
@@ -77,7 +85,9 @@ class Utilities:
                 )
             return job_status
 
-    def __configure_job_query(self, user_id, job_id, options, sec_params):
+    def __configure_job_query(
+        self, user_id: str, job_id: str, options: Dict, sec_params: Dict
+    ) -> Dict:
         return {
             **sec_params,
             "partner_id": self.partner_id,
@@ -88,7 +98,7 @@ class Utilities:
         }
 
     @staticmethod
-    def validate_partner_params(partner_params):
+    def validate_partner_params(partner_params: Dict) -> None:
         if not partner_params:
             raise ValueError("Please ensure that you send through partner params")
 
@@ -110,8 +120,11 @@ class Utilities:
 
     @staticmethod
     def validate_id_params(
-        sid_server, id_info_params, partner_params, use_validation_api=False
-    ):
+        sid_server: Union[str, int],
+        id_info_params: Dict,
+        partner_params: Dict,
+        use_validation_api=False,
+    ) -> None:
         job_type = partner_params.get("job_type")
         if job_type != 6 and not id_info_params.get("entered"):
             return
@@ -161,11 +174,11 @@ class Utilities:
                     raise ValueError(f"key {key} cannot be empty")
 
     @staticmethod
-    def get_smile_id_services(sid_server):
-        if sid_server in [0, 1]:
-            url = sid_server_map[sid_server]
+    def get_smile_id_services(sid_server: Union[str, int]) -> Response:
+        if sid_server in [0, 1, "0", "1"]:
+            url = sid_server_map[int(sid_server)]
         else:
-            url = sid_server
+            url = str(sid_server)
         response = Utilities.execute_get(f"{url}/services")
         if response.status_code != 200:
             raise ServerError(
@@ -174,7 +187,7 @@ class Utilities:
         return response
 
     @staticmethod
-    def execute_get(url):
+    def execute_get(url: str) -> Response:
         resp = requests.get(
             url=url,
             headers={
@@ -185,7 +198,7 @@ class Utilities:
         return resp
 
     @staticmethod
-    def execute_post(url, payload):
+    def execute_post(url: str, payload: Dict) -> Response:
         data = json.dumps(payload)
         resp = requests.post(
             url=url,
@@ -199,14 +212,14 @@ class Utilities:
         return resp
 
 
-def validate_sec_params(sec_key_dict: Dict):
+def validate_sec_params(sec_key_dict: Dict) -> None:
     if not sec_key_dict.get("sec_key") and not sec_key_dict.get("signature"):
         raise Exception("Missing key, must provide a 'sec_key' or 'signature' field")
     if not sec_key_dict.get("timestamp"):
         raise Exception("Missing 'timestamp' field")
 
 
-def get_signature(partner_id, api_key, is_signature):
+def get_signature(partner_id: str, api_key: str, is_signature) -> Dict[str, str]:
     sec_key_gen = Signature(partner_id, api_key)
     sec_key_object = (
         sec_key_gen.generate_signature()
