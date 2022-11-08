@@ -28,5 +28,5 @@ class Signature:
             "timestamp": timestamp,
         }
 
-    def confirm_signature(self, timestamp, msg_signature):
+    def confirm_signature(self, timestamp: str, msg_signature):
         return self.generate_signature(timestamp)["signature"] == msg_signature
