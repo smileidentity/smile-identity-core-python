@@ -9,8 +9,8 @@ The **WebApi Class** allows you as the Partner to validate a user’s identity a
 The **IDApi Class** lets you perform basic KYC Services including verifying an ID number as well as retrieve a user's Personal Information. It has the following public methods:
 - submit_job
 
-The **Signature Class** allows you as the Partner to generate a sec key to interact with our servers. It has the following public methods:
-- generate_sec_key
+The **Signature Class** allows you as the Partner to generate a signature key to interact with our servers. It has the following public methods:
+- generate_signature
 
 The **Utilities Class** allows you as the Partner to have access to our general Utility functions to gain access to your data. It has the following public methods:
 - get_job_status
@@ -19,7 +19,7 @@ The **Utilities Class** allows you as the Partner to have access to our general 
 - get_smile_id_services
 
 ### Security
-We accept 2 forms of security to communicate with our servers. The sec_key is the legacy means of communicating with our servers. This uses the v1 api key. The signature field is our new improved means of signing requests. To calculate a signature you need to generate a v2 api key. Generating a v2 api key does not invalidate existing v1 keys so you can safely upgrade. The library will default to calculating the legacy sec_key so your existing code will continue to behave as expected. To use the new signature form of security pass the boolean signature: true in the options object to any of our classes except Signature, where you would instead call the generate_signature function instead of the generate_sec_key function.
+ The signature field is our new improved means of signing requests. To calculate a signature you need to generate an api key. Generating an api key does not invalidate existing v1 keys so you can safely upgrade. The library will default to calculating the legacy sec_key so your existing code will continue to behave as expected. To use the new signature form of security pass the boolean signature: true in the options object to any of our classes except Signature, where you would instead call the generate_signature function instead of the generate_sec_key function.
 
 ## Documentation
 

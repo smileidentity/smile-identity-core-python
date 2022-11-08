@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - improved the documentation.
 - Added github action to release the package.
 - Added types to IdApi, ServerError, Utilities, and WebApi classes
+- Remove sec key
 
 ## [1.0.9] - 2022-11-01
 ### Added

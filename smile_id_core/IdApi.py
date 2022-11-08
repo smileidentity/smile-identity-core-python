@@ -6,7 +6,7 @@ from requests import Response
 from smile_id_core.Utilities import (
     Utilities,
     get_signature,
-    validate_sec_params,
+    validate_signature_params,
     sid_server_map,
 )
 from smile_id_core.ServerError import ServerError
@@ -50,10 +50,11 @@ class IdApi:
                 "Please ensure that you are setting your job_type to 5 to query ID Api"
             )
 
-        sec_key_object = get_signature(
-            self.partner_id, self.api_key, options_params.get("signature")
+        signature_object = get_signature(
+            self.partner_id, self.api_key
         )
-        payload = self.__configure_json(partner_params, id_params, sec_key_object)
+
+        payload = self.__configure_json(partner_params, id_params, signature_object)
         response = self.__execute_http(payload)
         if response.status_code != 200:
             raise ServerError(
@@ -62,11 +63,11 @@ class IdApi:
         return response
 
     def __configure_json(
-        self, partner_params: Dict, id_params: Dict, sec_key: Dict
+        self, partner_params: Dict, id_params: Dict, signature: Dict
     ) -> Dict:
-        validate_sec_params(sec_key)
+        validate_signature_params(signature)
         payload = {
-            **sec_key,
+            **signature,
             "partner_id": self.partner_id,
             "partner_params": partner_params,
         }

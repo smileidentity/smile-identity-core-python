@@ -12,7 +12,7 @@ from smile_id_core.Signature import Signature
 from smile_id_core.Utilities import (
     Utilities,
     get_signature,
-    validate_sec_params,
+    validate_signature_params,
     sid_server_map,
 )
 from smile_id_core.ServerError import ServerError
@@ -116,7 +116,7 @@ class WebApi:
                 partner_params=partner_params,
                 id_info_params=id_info_params,
                 upload_url=upload_url,
-                sec_params=sec_params,
+                signature_params=sec_params,
             )
             upload_response = WebApi.upload(upload_url, zip_stream)
             if upload_response.status_code != 200:
@@ -164,7 +164,7 @@ class WebApi:
 
     def _get_security_key_params(self, options_params: Dict) -> Dict[str, str]:
         return get_signature(
-            self.partner_id, self.api_key, options_params.get("signature")
+            self.partner_id, self.api_key
         )
 
     def __call_id_api(
@@ -203,7 +203,7 @@ class WebApi:
     def __prepare_prep_upload_payload(
         self, partner_params: Dict, sec_params: Dict, use_enrolled_image: bool
     ) -> Dict:
-        validate_sec_params(sec_params)
+        validate_signature_params(sec_params)
 
         return {
             "file_name": "selfie.zip",
@@ -225,7 +225,7 @@ class WebApi:
         if sec_params is None:
             sec_params = self._get_security_key_params(options_params)
 
-        validate_sec_params(sec_params)
+        validate_signature_params(sec_params)
         counter = counter + 1
         if counter < 4:
             time.sleep(2)
