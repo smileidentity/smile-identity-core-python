@@ -313,6 +313,6 @@ class TestWebApi(TestCaseWithStubs):
         )
 
     def _get_signature(self):
-        self.signatureObj.generate_signature(
+       return self.signatureObj.generate_signature(
             timestamp=datetime.now().isoformat()
         )
