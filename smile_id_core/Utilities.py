@@ -34,7 +34,9 @@ class Utilities:
         signature: Optional[Dict] = None,
     ) -> Response:
         if signature is None:
-            signature = get_signature(self.partner_id, self.api_key, option_params.get("use_sec_key"))
+            signature = get_signature(
+                self.partner_id, self.api_key, option_params.get("use_sec_key")
+            )
 
         validate_signature_params(signature)
         # validate_partner_param throws an error if job_type is empty/not provided,
@@ -77,7 +79,9 @@ class Utilities:
             if option_params.get("use_sec_key"):
                 valid = generated_signature.confirm_sec_key(timestamp, server_signature)
             else:
-                valid = generated_signature.confirm_signature(timestamp, server_signature)
+                valid = generated_signature.confirm_signature(
+                    timestamp, server_signature
+                )
             if not valid:
                 raise ServerError(
                     "Unable to confirm validity of the job_status response"

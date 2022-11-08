@@ -318,4 +318,6 @@ class TestWebApi(TestCaseWithStubs):
         if use_sec_key:
             self.signatureObj.generate_sec_key(timestamp=int(time.time()))
 
-        return self.signatureObj.generate_signature(timestamp=datetime.now().isoformat())
+        return self.signatureObj.generate_signature(
+            timestamp=datetime.now().isoformat()
+        )

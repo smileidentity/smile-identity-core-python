@@ -163,7 +163,9 @@ class WebApi:
         )
 
     def _get_security_key_params(self, options_params: Dict) -> Dict[str, str]:
-        return get_signature(self.partner_id, self.api_key, options_params.get("use_sec_key"))
+        return get_signature(
+            self.partner_id, self.api_key, options_params.get("use_sec_key")
+        )
 
     def __call_id_api(
         self,
