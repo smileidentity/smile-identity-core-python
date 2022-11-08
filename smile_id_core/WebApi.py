@@ -196,9 +196,6 @@ class WebApi:
                 "Please choose to either get your response via the callback or job status query"
             )
 
-    def __get_sec_key(self) -> Dict:
-        sec_key_gen = Signature(self.partner_id, self.api_key)
-        return sec_key_gen.generate_sec_key()
 
     def __prepare_prep_upload_payload(
         self, partner_params: Dict, sec_params: Dict, use_enrolled_image: bool
