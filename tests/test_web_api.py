@@ -248,7 +248,7 @@ class TestWebApi(TestCaseWithStubs):
 
     @responses.activate
     def test_submit_job_should_raise_error_when_upload_fails(self):
-        signature = self._get_signature()
+        signature = self._get_signature(False)
         error = "Failed to upload zip"
         post_response = self.stub_upload_request(signature, error)
 
@@ -271,7 +271,7 @@ class TestWebApi(TestCaseWithStubs):
     @responses.activate
     def test_validate_return_data(self):
         self.__reset_params()
-        signature = self._get_signature()
+        signature = self._get_signature(False)
         post_response = self.stub_upload_request(signature)
         self.stub_get_job_status(signature, False)
         job_status_response = self.stub_get_job_status(signature, True)
@@ -295,7 +295,7 @@ class TestWebApi(TestCaseWithStubs):
             status=400,
             json={"error": "Invalid product.", "code": "2217"},
         )
-        signature = self._get_signature()
+        signature = self._get_signature(False)
         user_id = "user_id"
         job_id = "job_id"
         product = "product_type"
@@ -314,7 +314,8 @@ class TestWebApi(TestCaseWithStubs):
             "https://testapi.smileidentity.com/v1/token", responses.POST, body
         )
 
-    def _get_signature(self):
-        return self.signatureObj.generate_signature(
-            timestamp=datetime.now().isoformat()
-        )
+    def _get_signature(self, use_sec_key):
+        if use_sec_key:
+            self.signatureObj.generate_sec_key(timestamp=int(time.time()))
+
+        return self.signatureObj.generate_signature(timestamp=datetime.now().isoformat())

@@ -50,7 +50,7 @@ class IdApi:
                 "Please ensure that you are setting your job_type to 5 to query ID Api"
             )
 
-        signature_object = get_signature(self.partner_id, self.api_key)
+        signature_object = get_signature(self.partner_id, self.api_key, options_params.get("use_sec_key"))
 
         payload = self.__configure_json(partner_params, id_params, signature_object)
         response = self.__execute_http(payload)

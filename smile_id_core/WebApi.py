@@ -163,7 +163,7 @@ class WebApi:
         )
 
     def _get_security_key_params(self, options_params: Dict) -> Dict[str, str]:
-        return get_signature(self.partner_id, self.api_key)
+        return get_signature(self.partner_id, self.api_key, options_params.get("use_sec_key"))
 
     def __call_id_api(
         self,
@@ -194,6 +194,10 @@ class WebApi:
                 "Please choose to either get your response via the callback or job status query"
             )
 
+    def __get_sec_key(self) -> Dict:
+        sec_key_gen = Signature(self.partner_id, self.api_key)
+        return sec_key_gen.generate_sec_key()
+
     def __prepare_prep_upload_payload(
         self, partner_params: Dict, sec_params: Dict, use_enrolled_image: bool
     ) -> Dict:
@@ -214,12 +218,12 @@ class WebApi:
         counter: int,
         partner_params: Dict,
         options_params: Dict,
-        sec_params: Optional[Dict],
+        signature_params: Optional[Dict],
     ) -> Response:
-        if sec_params is None:
-            sec_params = self._get_security_key_params(options_params)
+        if signature_params is None:
+            signature_params = self._get_security_key_params(options_params)
 
-        validate_signature_params(sec_params)
+        validate_signature_params(signature_params)
         counter = counter + 1
         if counter < 4:
             time.sleep(2)
@@ -228,12 +232,12 @@ class WebApi:
         if not isinstance(self.utilities, Utilities):
             raise ValueError("Utilities not initialized")
         job_status = self.utilities.get_job_status(
-            partner_params, options_params, sec_params
+            partner_params, options_params, signature_params
         )
         job_status_response = job_status.json()
         if not job_status_response["job_complete"] and counter < 20:
             return self.poll_job_status(
-                counter, partner_params, options_params, sec_params
+                counter, partner_params, options_params, signature_params
             )
 
         return job_status
