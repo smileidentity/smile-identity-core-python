@@ -133,7 +133,7 @@ class TestIdApi(unittest.TestCase):
             "FullData": {},
             "Source": "ID API",
             "timestamp": signature.get("timestamp"),
-            "signature": signature.get("signature")
+            "signature": signature.get("signature"),
         }
 
     @staticmethod

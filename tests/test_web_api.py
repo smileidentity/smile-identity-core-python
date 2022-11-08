@@ -299,7 +299,9 @@ class TestWebApi(TestCaseWithStubs):
         user_id = "user_id"
         job_id = "job_id"
         product = "product_type"
-        self.web_api.get_web_token(user_id, job_id, product, timestamp=signature["timestamp"])
+        self.web_api.get_web_token(
+            user_id, job_id, product, timestamp=signature["timestamp"]
+        )
         body = {
             **signature,
             "user_id": user_id,
@@ -313,6 +315,6 @@ class TestWebApi(TestCaseWithStubs):
         )
 
     def _get_signature(self):
-       return self.signatureObj.generate_signature(
+        return self.signatureObj.generate_signature(
             timestamp=datetime.now().isoformat()
         )

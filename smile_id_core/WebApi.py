@@ -163,9 +163,7 @@ class WebApi:
         )
 
     def _get_security_key_params(self, options_params: Dict) -> Dict[str, str]:
-        return get_signature(
-            self.partner_id, self.api_key
-        )
+        return get_signature(self.partner_id, self.api_key)
 
     def __call_id_api(
         self,
@@ -195,7 +193,6 @@ class WebApi:
             raise ValueError(
                 "Please choose to either get your response via the callback or job status query"
             )
-
 
     def __prepare_prep_upload_payload(
         self, partner_params: Dict, sec_params: Dict, use_enrolled_image: bool

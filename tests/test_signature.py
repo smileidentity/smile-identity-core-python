@@ -24,7 +24,6 @@ class TestSignature(unittest.TestCase):
         self.assertEqual(self.signatureObj.partner_id, self.partner_id)
         # self.assertEqual(self.public_key, self.signatureObj.decoded_api_key)
 
-
     def test_generate_signature(self):
         timestamp = datetime.now().isoformat()
         signature = self.signatureObj.generate_signature(timestamp=timestamp)

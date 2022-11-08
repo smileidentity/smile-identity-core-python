@@ -34,9 +34,7 @@ class Utilities:
         signature: Optional[Dict] = None,
     ) -> Response:
         if signature is None:
-            signature = get_signature(
-                self.partner_id, self.api_key
-            )
+            signature = get_signature(self.partner_id, self.api_key)
 
         validate_signature_params(signature)
         # validate_partner_param throws an error if job_type is empty/not provided,
@@ -74,7 +72,9 @@ class Utilities:
             job_status_json_resp = job_status.json()
             timestamp = job_status_json_resp["timestamp"]
             server_signature = job_status_json_resp["signature"]
-            valid = Signature(self.partner_id, self.api_key).confirm_signature(timestamp, server_signature)
+            valid = Signature(self.partner_id, self.api_key).confirm_signature(
+                timestamp, server_signature
+            )
             if not valid:
                 raise ServerError(
                     "Unable to confirm validity of the job_status response"
@@ -217,4 +217,7 @@ def validate_signature_params(signature_dict: Dict) -> None:
 
 def get_signature(partner_id: str, api_key: str) -> Dict[str, str]:
     signature_object = Signature(partner_id, api_key).generate_signature()
-    return {"timestamp": signature_object["timestamp"], "signature": signature_object["signature"]}  
+    return {
+        "timestamp": signature_object["timestamp"],
+        "signature": signature_object["signature"],
+    }
