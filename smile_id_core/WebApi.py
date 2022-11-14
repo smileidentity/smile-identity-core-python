@@ -214,7 +214,7 @@ class WebApi:
         signature_params: Optional[Dict],
     ) -> Response:
         if signature_params is None:
-            signature_params = get_signature(self.partner_id)
+            signature_params = get_signature(self.partner_id, self.api_key)
 
         validate_signature_params(signature_params)
         counter = counter + 1
