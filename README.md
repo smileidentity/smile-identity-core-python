@@ -485,7 +485,7 @@ signature_dict = signature.generate_signature(timestamp)  # where timestamp is o
 The response will be a dict:
 ```json
 {
-    "signature": "<the generated sec key>",
+    "signature": "<the generated signature>",
     "timestamp": "<timestamp that you passed in or that was generated>"
 }
 ```
@@ -501,7 +501,7 @@ signature_dict = signature.generate_signature(timestamp)  # where timestamp is o
 The response will be a dict:
 ```json
 {
-    "signature": "<the generated sec key>",
+    "signature": "<the generated signature>",
     "timestamp": "<timestamp that you passed in or that was generated>"
 }
 ```
