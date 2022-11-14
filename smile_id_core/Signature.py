@@ -17,7 +17,9 @@ class Signature:
         self.partner_id = partner_id
         self.api_key = api_key
 
-    def generate_signature(self, timestamp=datetime.now().isoformat()):
+    def generate_signature(self, timestamp=None):
+        if timestamp is None:
+            timestamp = datetime.now().isoformat()
         hmac_new = hmac.new(self.api_key.encode("utf-8"), digestmod=hashlib.sha256)
         hmac_new.update(timestamp.encode("utf-8"))
         hmac_new.update(str(self.partner_id).encode("utf-8"))
