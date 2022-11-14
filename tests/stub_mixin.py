@@ -29,7 +29,7 @@ class TestCaseWithStubs(
 
     def _get_job_status_response(self, signature_key, job_complete=True):
         return {
-            "signature": signature_key.get("signature") or signature_key.get("sec_key"),
+            "signature": signature_key.get("signature"),
             "timestamp": signature_key.get("timestamp"),
             "job_complete": job_complete,
             "job_success": True,

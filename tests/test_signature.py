@@ -24,17 +24,6 @@ class TestSignature(unittest.TestCase):
         self.assertEqual(self.signatureObj.partner_id, self.partner_id)
         # self.assertEqual(self.public_key, self.signatureObj.decoded_api_key)
 
-    def test_generate_sec_key(self):
-        timestamp = int(time.time())
-        sec_timestamp = self.signatureObj.generate_sec_key(timestamp=timestamp)
-        self.assertEqual(sec_timestamp["timestamp"], timestamp)
-
-        hashed = hashlib.sha256(
-            f"{int(self.partner_id)}:{timestamp}".encode("utf-8")
-        ).hexdigest()
-        encrypted, hashed2 = sec_timestamp["sec_key"].split("|")
-        self.assertEqual(hashed, hashed2)
-
     def test_generate_signature(self):
         timestamp = datetime.now().isoformat()
         signature = self.signatureObj.generate_signature(timestamp=timestamp)
@@ -47,7 +36,3 @@ class TestSignature(unittest.TestCase):
         calculated_signature = base64.b64encode(hmac_new.digest()).decode("utf-8")
 
         self.assertEqual(signature["signature"], calculated_signature)
-
-    # TODO: Confirm sec key tests
-    def test_confirm_sec_key(self):
-        pass

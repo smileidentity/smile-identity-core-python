@@ -34,9 +34,7 @@ class Utilities:
         signature: Optional[Dict] = None,
     ) -> Response:
         if signature is None:
-            signature = get_signature(
-                self.partner_id, self.api_key, option_params.get("use_sec_key")
-            )
+            signature = get_signature(self.partner_id, self.api_key)
 
         validate_signature_params(signature)
         # validate_partner_param throws an error if job_type is empty/not provided,
@@ -74,14 +72,8 @@ class Utilities:
             job_status_json_resp = job_status.json()
             timestamp = job_status_json_resp["timestamp"]
             server_signature = job_status_json_resp["signature"]
-            generated_signature = Signature(self.partner_id, self.api_key)
-
-            if option_params.get("use_sec_key"):
-                valid = generated_signature.confirm_sec_key(timestamp, server_signature)
-            else:
-                valid = generated_signature.confirm_signature(
-                    timestamp, server_signature
-                )
+            signature = Signature(self.partner_id, self.api_key)
+            valid = signature.confirm_signature(timestamp, server_signature)
             if not valid:
                 raise ServerError(
                     "Unable to confirm validity of the job_status response"
@@ -216,24 +208,15 @@ class Utilities:
 
 
 def validate_signature_params(signature_dict: Dict) -> None:
-    if not signature_dict.get("sec_key") and not signature_dict.get("signature"):
-        raise Exception("Missing key, must provide a 'sec_key' or 'signature' field")
+    if not signature_dict.get("signature"):
+        raise Exception("Missing key, must provide a 'signature' field")
     if not signature_dict.get("timestamp"):
         raise Exception("Missing 'timestamp' field")
 
 
-def get_signature(partner_id: str, api_key: str, use_sec_key: bool) -> Dict[str, str]:
-    sec_key_gen = Signature(partner_id, api_key)
-    sec_key_object = (
-        sec_key_gen.generate_sec_key()
-        if use_sec_key
-        else sec_key_gen.generate_signature()
-    )
-    sec_key = sec_key_object.get("sec_key")
-    signature = sec_key_object.get("signature")
-    payload = {"timestamp": sec_key_object["timestamp"]}
-    if signature:
-        payload.update({"signature": signature})
-    else:
-        payload.update({"sec_key": sec_key})
-    return payload
+def get_signature(partner_id: str, api_key: str) -> Dict[str, str]:
+    signature_object = Signature(partner_id, api_key).generate_signature()
+    return {
+        "timestamp": signature_object["timestamp"],
+        "signature": signature_object["signature"],
+    }

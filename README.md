@@ -23,8 +23,7 @@ The **Utilities Class** allows you as the Partner to have access to our general 
 
 Note: sec_key is currently deprecated in favour of signature.
 
-The signature field is our new improved means of signing requests. To calculate a signature you need to generate an api key. Generating an api key does not invalidate existing v1 keys so you can safely upgrade. The library will default to calculating the new signature. If you want to maintain the old behaviour, you will need to specify `use_sec_key=True`  in the options object to any of our classes except Signature.
-
+The signature field is our new improved means of signing requests. To calculate a signature you need to generate an api key. Generating an api key does not invalidate existing v1 keys so you can safely upgrade. The library will default to calculating the new signature.
 All references to `generate_sec_key` should be replaced by `generate_signature`.
 
 ## Documentation
