@@ -72,8 +72,8 @@ class Utilities:
             job_status_json_resp = job_status.json()
             timestamp = job_status_json_resp["timestamp"]
             server_signature = job_status_json_resp["signature"]
-            signature = Signature(self.partner_id, self.api_key)
-            valid = signature.confirm_signature(timestamp, server_signature)
+            new_signature = Signature(self.partner_id, self.api_key)
+            valid = new_signature.confirm_signature(timestamp, server_signature)
             if not valid:
                 raise ServerError(
                     "Unable to confirm validity of the job_status response"
