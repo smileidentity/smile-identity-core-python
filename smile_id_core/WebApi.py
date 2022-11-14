@@ -93,12 +93,12 @@ class WebApi:
         )
         self.__validate_return_data(options_params)
 
-        sec_params = self._get_security_key_params(options_params)
+        signature_params = get_signature(self.partner_id, self.api_key)
         use_enrolled_image = options_params.get("use_enrolled_image", False)
         prep_upload = WebApi.execute_http(
             f"{self.url}/upload",
             self.__prepare_prep_upload_payload(
-                partner_params, sec_params, use_enrolled_image
+                partner_params, signature_params, use_enrolled_image
             ),
         )
         if prep_upload.status_code != 200:
@@ -116,7 +116,7 @@ class WebApi:
                 partner_params=partner_params,
                 id_info_params=id_info_params,
                 upload_url=upload_url,
-                signature_params=sec_params,
+                signature_params=signature_params,
             )
             upload_response = WebApi.upload(upload_url, zip_stream)
             if upload_response.status_code != 200:
@@ -129,7 +129,7 @@ class WebApi:
                     self.partner_id, self.api_key, self.sid_server
                 )
                 job_status = self.poll_job_status(
-                    0, partner_params, options_params, sec_params
+                    0, partner_params, options_params, signature_params
                 )
                 return job_status
             else:
@@ -146,14 +146,14 @@ class WebApi:
 
         timestamp = timestamp or datetime.now().isoformat()
         callback_url = callback_url or self.call_back_url
-        sec_params = Signature(self.partner_id, self.api_key).generate_signature(
+        signature_params = Signature(self.partner_id, self.api_key).generate_signature(
             timestamp
         )
 
         return WebApi.execute_http(
             f"{self.url}/token",
             {
-                **sec_params,
+                **signature_params,
                 "user_id": user_id,
                 "job_id": job_id,
                 "product": product,
@@ -161,9 +161,6 @@ class WebApi:
                 "partner_id": self.partner_id,
             },
         )
-
-    def _get_security_key_params(self, options_params: Dict) -> Dict[str, str]:
-        return get_signature(self.partner_id, self.api_key)
 
     def __call_id_api(
         self,
@@ -214,12 +211,12 @@ class WebApi:
         counter: int,
         partner_params: Dict,
         options_params: Dict,
-        sec_params: Optional[Dict],
+        signature_params: Optional[Dict],
     ) -> Response:
-        if sec_params is None:
-            sec_params = self._get_security_key_params(options_params)
+        if signature_params is None:
+            signature_params = get_signature(self.partner_id)
 
-        validate_signature_params(sec_params)
+        validate_signature_params(signature_params)
         counter = counter + 1
         if counter < 4:
             time.sleep(2)
@@ -228,12 +225,12 @@ class WebApi:
         if not isinstance(self.utilities, Utilities):
             raise ValueError("Utilities not initialized")
         job_status = self.utilities.get_job_status(
-            partner_params, options_params, sec_params
+            partner_params, options_params, signature_params
         )
         job_status_response = job_status.json()
         if not job_status_response["job_complete"] and counter < 20:
             return self.poll_job_status(
-                counter, partner_params, options_params, sec_params
+                counter, partner_params, options_params, signature_params
             )
 
         return job_status
