@@ -6,10 +6,10 @@ import zipfile
 import pytest
 
 from smile_id_core.image_upload import (
-    prepare_image_entry_dict,
-    prepare_info_json,
     generate_zip_file,
+    prepare_image_entry_dict,
     prepare_image_payload,
+    prepare_info_json,
     validate_images,
 )
 

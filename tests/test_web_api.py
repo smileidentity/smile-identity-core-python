@@ -8,7 +8,7 @@ import responses
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
-from smile_id_core import WebApi, Signature, ServerError
+from smile_id_core import ServerError, Signature, WebApi
 from tests.stub_mixin import TestCaseWithStubs
 
 

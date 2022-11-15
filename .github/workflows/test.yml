@@ -29,9 +29,11 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'poetry'
     - name: Install dependencies
-      run: poetry install
+      run: poetry install --with github-actions,typing
     - name: Type checking
-      # Mypy configuration defined in pyproject.toml
+      # mypy configuration defined in pyproject.toml
       run: poetry run mypy
+    - name: Run isort
+      run: poetry run isort $(git ls-files '*.py') --check-only
     - name: Run tests
       run: poetry run pytest

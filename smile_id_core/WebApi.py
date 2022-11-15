@@ -1,21 +1,21 @@
 import json
 import time
 from datetime import datetime
-from typing import Any, Optional, Union, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 import requests
 from requests import Response
 
-from smile_id_core.image_upload import generate_zip_file, validate_images
 from smile_id_core.IdApi import IdApi
+from smile_id_core.image_upload import generate_zip_file, validate_images
+from smile_id_core.ServerError import ServerError
 from smile_id_core.Signature import Signature
 from smile_id_core.Utilities import (
     Utilities,
     get_signature,
-    validate_sec_params,
     sid_server_map,
+    validate_sec_params,
 )
-from smile_id_core.ServerError import ServerError
 
 __all__ = ["WebApi"]
 

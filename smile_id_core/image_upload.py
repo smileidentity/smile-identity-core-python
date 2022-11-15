@@ -1,7 +1,8 @@
-import json
-import zipfile
 import io
+import json
 import os
+import zipfile
+
 from smile_id_core.Utilities import validate_sec_params
 
 
