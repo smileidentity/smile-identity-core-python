@@ -33,5 +33,7 @@ jobs:
     - name: Type checking
       # mypy configuration defined in pyproject.toml
       run: poetry run mypy
+    - name: Run isort
+      run: poetry run isort $(git ls-files '*.py') --check-only
     - name: Run tests
       run: poetry run pytest

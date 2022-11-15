@@ -1,16 +1,16 @@
 import json
-from typing import Optional, Dict, Union
+from typing import Dict, Optional, Union
 
+import requests
 from requests import Response
 
+from smile_id_core.ServerError import ServerError
 from smile_id_core.Utilities import (
     Utilities,
     get_signature,
-    validate_sec_params,
     sid_server_map,
+    validate_sec_params,
 )
-from smile_id_core.ServerError import ServerError
-import requests
 
 __all__ = ["IdApi"]
 
