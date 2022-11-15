@@ -192,9 +192,9 @@ class WebApi:
             )
 
     def __prepare_prep_upload_payload(
-        self, partner_params: Dict, sec_params: Dict, use_enrolled_image: bool
+        self, partner_params: Dict, signature_params: Dict, use_enrolled_image: bool
     ) -> Dict:
-        validate_signature_params(sec_params)
+        validate_signature_params(signature_params)
 
         return {
             "file_name": "selfie.zip",
@@ -203,7 +203,7 @@ class WebApi:
             "model_parameters": {},
             "callback_url": self.call_back_url,
             "use_enrolled_image": use_enrolled_image,
-            **sec_params,
+            **signature_params,
         }
 
     def poll_job_status(

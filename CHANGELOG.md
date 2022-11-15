@@ -5,11 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Changed
-- improved the documentation.
+### Added
 - Added github action to release the package.
 - Added types to IdApi, ServerError, Utilities, and WebApi classes
+
+### Changed
+- improved the documentation.
 - Remove sec key
+- Renamed WebApi param from sec_params to signature_params
 
 ## [1.0.9] - 2022-11-01
 ### Added
