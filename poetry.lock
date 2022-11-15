@@ -287,6 +287,17 @@ pytest = ">=4.6"
 testing = ["fields", "hunter", "process-tests", "pytest-xdist", "six", "virtualenv"]
 
 [[package]]
+name = "pytest-github-actions-annotate-failures"
+version = "0.1.7"
+description = "pytest plugin to annotate failed tests with a workflow command for GitHub Actions"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+pytest = ">=4.0.0"
+
+[[package]]
 name = "pytest-xdist"
 version = "3.0.2"
 description = "pytest xdist plugin for distributed testing and loop-on-failing modes"
@@ -416,7 +427,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=4.6)", "pytest-black (
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.6.2"
-content-hash = "cf9da0dff0c8fef7a30f57fe2f892435b0320ee5d09014c45aa497ea7b783f2f"
+content-hash = "a773c3dd09a6ee78aacb5d08161902b6139ff43f36c3059367c78d0a61b93b54"
 
 [metadata.files]
 atomicwrites = [
@@ -628,6 +639,10 @@ pytest = [
 pytest-cov = [
     {file = "pytest-cov-4.0.0.tar.gz", hash = "sha256:996b79efde6433cdbd0088872dbc5fb3ed7fe1578b68cdbba634f14bb8dd0470"},
     {file = "pytest_cov-4.0.0-py3-none-any.whl", hash = "sha256:2feb1b751d66a8bd934e5edfa2e961d11309dc37b73b0eabe73b5945fee20f6b"},
+]
+pytest-github-actions-annotate-failures = [
+    {file = "pytest-github-actions-annotate-failures-0.1.7.tar.gz", hash = "sha256:c6af8f9d13f1f09ef4c104a30875a4975db131ddbba979c8e48fdc456c8dde1f"},
+    {file = "pytest_github_actions_annotate_failures-0.1.7-py2.py3-none-any.whl", hash = "sha256:c4a7346d1d95f731a6b53e9a45f10ca56593978149266dd7526876cce403ea38"},
 ]
 pytest-xdist = [
     {file = "pytest-xdist-3.0.2.tar.gz", hash = "sha256:688da9b814370e891ba5de650c9327d1a9d861721a524eb917e620eec3e90291"},

@@ -20,6 +20,10 @@ classifiers = [
 packages = [{ include = "smile_id_core" }]
 exclude = ["tests/**/*"]
 
+[build-system]
+requires = ["poetry-core>=1.1.0"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry.dependencies]
 pycryptodome = "^3.15.0"
 python = "^3.6.2"
@@ -27,12 +31,22 @@ requests="^2.27.1"
 
 [tool.poetry.group.dev.dependencies]
 black="^22.8.0"
-coverage="^6.2"
-mypy="^0.971"
+
+[tool.poetry.group.test.dependencies]
 pytest-cov="^4.0.0"
 pytest-xdist="^3.0.2"
 pytest="^7.0.1"
 responses="^0.17.0"
+
+[tool.poetry.group.github-actions]
+optional = true
+[tool.poetry.group.github-actions.dependencies]
+pytest-github-actions-annotate-failures = "^0.1.7"
+
+[tool.poetry.group.typing]
+optional = true
+[tool.poetry.group.typing.dependencies]
+mypy="^0.971"
 types-requests="^2.28.11.4"
 
 [tool.mypy]
@@ -40,12 +54,14 @@ files = "smile_id_core,tests"
 pretty = true
 show_error_codes = true
 strict_equality = true
-warn_unused_configs = true
-warn_redundant_casts = true
-warn_unused_ignores = true
 warn_no_return = true
+warn_redundant_casts = true
 warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
 
-[build-system]
-requires = ["poetry-core>=1.1.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.pytest.ini_options]
+addopts = "-n auto"
+testpaths = [
+    "tests"
+]
