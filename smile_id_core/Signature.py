@@ -5,6 +5,7 @@ from datetime import datetime
 
 __all__ = ["Signature"]
 
+
 class Signature:
     def __init__(self, partner_id: str, api_key: str):
         if not partner_id or not api_key:
