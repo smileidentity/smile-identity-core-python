@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - improved the documentation.
 - Remove sec key
-- Renamed WebApi param from sec_params to signature_params
+- Renamed WebApi get_job_status param from sec_params to signature_params
+- Renamed WebApi poll_job_status param from sec_params to signature_params
 
 ## [1.0.9] - 2022-11-01
 ### Added
