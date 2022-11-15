@@ -1,11 +1,11 @@
 import json
-from typing import Union, Optional, Dict
+from typing import Dict, Optional, Union
 
 import requests
 from requests import Response
 
-from smile_id_core.Signature import Signature
 from smile_id_core.ServerError import ServerError
+from smile_id_core.Signature import Signature
 
 __all__ = ["Utilities", "get_signature", "validate_signature_params", "sid_server_map"]
 
