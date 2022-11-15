@@ -5,10 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added 
+- Add coverage reports.
+
 ### Changed
 - improved the documentation.
 - Added github action to release the package.
-- Added types to IdApi, ServerError, Utilities, and WebApi classes
+- Added types to IdApi, ServerError, Utilities, and WebApi classes.
 
 ## [1.0.9] - 2022-11-01
 ### Added
@@ -47,10 +50,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.0.13] - 2020-09-16
 ### Added
-  - Created changelog.
-  - Fixed job status error string format.
-  - Added black for code formatting.
-  - Fixed python semantics.
-  - Moved zipfile out from webapi class.
+- Created changelog.
+- Fixed job status error string format.
+- Added black for code formatting.
+- Fixed python semantics.
+- Moved zipfile out from webapi class.
 
 ## [0.0.12] - 2022-08-19
