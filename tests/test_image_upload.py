@@ -42,8 +42,8 @@ def test_prepare_info_json():
         partner_params="partner_params",
         image_params=image_params,
         id_info_params="id_info_params",
-        sec_params={
-            "sec_key": "sec_key",
+        signature_params={
+            "signature": "signature",
             "timestamp": "timestamp",
         },
     )
@@ -80,7 +80,7 @@ def test_generate_zip_file(temp_image_file):
         partner_params="partner_params",
         image_params=image_params,
         id_info_params="id_info_params",
-        sec_params={"sec_key": "sec_key", "timestamp": "timestamp"},
+        signature_params={"signature": "signature", "timestamp": "timestamp"},
     )
 
     zf = zipfile.ZipFile(io.BytesIO(zip_stream))
