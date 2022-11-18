@@ -14,9 +14,10 @@ from tests.stub_mixin import TestCaseWithStubs
 
 def test_get_version():
     """Test that a well formatted version string is returned."""
-    assert isinstance(get_version(), str)
+    version  = Utilities.get_version()
+    assert isinstance(version, str)
     # tests that the version is in the form of a semver string.
-    assert re.match(r"^\d+\.\d+\.\d+$", get_version())
+    assert re.match(r"^\d+\.\d+\.\d+$", version)
 
 
 class TestUtilities(TestCaseWithStubs):
