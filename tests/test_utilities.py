@@ -9,7 +9,6 @@ from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
 from smile_id_core import Signature, Utilities
-from smile_id_core.Utilities import get_version
 from tests.stub_mixin import TestCaseWithStubs
 
 
