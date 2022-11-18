@@ -9,8 +9,9 @@ The **WebApi Class** allows you as the Partner to validate a user’s identity a
 The **IDApi Class** lets you perform basic KYC Services including verifying an ID number as well as retrieve a user's Personal Information. It has the following public methods:
 - submit_job
 
-The **Signature Class** allows you as the Partner to generate a sec key to interact with our servers. It has the following public methods:
-- generate_sec_key
+The **Signature Class** allows you as the Partner to generate a signature key to interact with our servers. It has the following public methods:
+- `generate_signature` - generate a signature which is then passed as a signature param when making requests to the Smile Identity server.
+- `confirm_signature` - ensure a response is truly from the Smile Identity server by confirming the incoming signature.
 
 The **Utilities Class** allows you as the Partner to have access to our general Utility functions to gain access to your data. It has the following public methods:
 - get_job_status
@@ -19,7 +20,8 @@ The **Utilities Class** allows you as the Partner to have access to our general 
 - get_smile_id_services
 
 ### Security
-We accept 2 forms of security to communicate with our servers. The sec_key is the legacy means of communicating with our servers. This uses the v1 api key. The signature field is our new improved means of signing requests. To calculate a signature you need to generate a v2 api key. Generating a v2 api key does not invalidate existing v1 keys so you can safely upgrade. The library will default to calculating the legacy sec_key so your existing code will continue to behave as expected. To use the new signature form of security pass the boolean signature: true in the options object to any of our classes except Signature, where you would instead call the generate_signature function instead of the generate_sec_key function.
+
+The signature field is our new improved means of signing requests. To calculate a signature you need to generate an api key. Generating an api key does not invalidate existing v1 keys so you can safely upgrade. The library will default to calculating the new signature.
 
 ## Documentation
 
@@ -299,7 +301,7 @@ If you have queried a job type 5 (_Validate an ID_), your response be a JSON Str
    "FullName":"John Doe",
    "DOB":"1900-09-20",
    "Photo":"SomeBase64Image",
-   "sec_key":"pjxsx...",
+   "signature":"pjxsx...",
    "timestamp":1570698930193
 }
 ```
@@ -460,7 +462,7 @@ Your response will return a JSON String containing the below:
    "FullName":"John Doe",
    "DOB":"1900-09-20",
    "Photo":"SomeBase64Image",
-   "sec_key":"pjxsx...",
+   "signature":"pjxsx...",
    "timestamp":1570698930193
 }
 
@@ -468,7 +470,7 @@ Your response will return a JSON String containing the below:
 
 #### Signature Class
 
-##### `generate_sec_key` method
+##### `generate_signature` method
 
 Use the Signature class as follows:
 For API Key V1 (Legacy)
@@ -477,13 +479,13 @@ from smile_id_core import Signature
 
 
 signature = Signature("partner_id", "api_key")
-signature_dict = signature.generate_sec_key(timestamp)  # where timestamp is optional
+signature_dict = signature.generate_signature(timestamp)  # where timestamp is optional
 ```
 
 The response will be a dict:
 ```json
 {
-    "sec_key": "<the generated sec key>",
+    "signature": "<the generated signature>",
     "timestamp": "<timestamp that you passed in or that was generated>"
 }
 ```
@@ -499,7 +501,7 @@ signature_dict = signature.generate_signature(timestamp)  # where timestamp is o
 The response will be a dict:
 ```json
 {
-    "signature": "<the generated sec key>",
+    "signature": "<the generated signature>",
     "timestamp": "<timestamp that you passed in or that was generated>"
 }
 ```
@@ -514,7 +516,7 @@ from smile_id_core import Utilities, ServerError
 
 try:
     connection = Utilities("<partner_id>", "<the decoded-version of-your-api-key>", "<sid_server>")
-    job_status = connection.get_job_status("<partner_params>", "<option_params>", "<sec_key_params>")
+    job_status = connection.get_job_status("<partner_params>", "<option_params>", "<signature_params>")
     print(job_status)
 except ValueError:
     # some of your params entered for a job are not valid or missing

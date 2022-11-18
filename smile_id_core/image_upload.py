@@ -1,8 +1,9 @@
-import json
-import zipfile
 import io
+import json
 import os
-from smile_id_core.Utilities import validate_sec_params
+import zipfile
+
+from smile_id_core.Utilities import validate_signature_params
 
 
 class ApiVersion:
@@ -21,7 +22,7 @@ def generate_zip_file(
     partner_params,
     image_params,
     id_info_params,
-    sec_params,
+    signature_params,
 ):
     info_json = prepare_info_json(
         partner_id,
@@ -30,7 +31,7 @@ def generate_zip_file(
         partner_params,
         image_params,
         id_info_params,
-        sec_params,
+        signature_params,
     )
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
@@ -52,9 +53,9 @@ def prepare_info_json(
     partner_params,
     image_params,
     id_info_params,
-    sec_params,
+    signature_params,
 ):
-    validate_sec_params(sec_params)
+    validate_signature_params(signature_params)
     return {
         "package_information": {
             "apiVersion": {
@@ -65,7 +66,7 @@ def prepare_info_json(
             "language": "python",
         },
         "misc_information": {
-            **sec_params,
+            **signature_params,
             "retry": "false",
             "partner_params": partner_params,
             "file_name": "selfie.zip",

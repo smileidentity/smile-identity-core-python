@@ -1,48 +1,55 @@
 import json
 import time
 from datetime import datetime
-from typing import Dict
+from typing import Any, Dict, List, Optional, Union
 
 import requests
+from requests import Response
 
-from smile_id_core.image_upload import generate_zip_file, validate_images
 from smile_id_core.IdApi import IdApi
+from smile_id_core.image_upload import generate_zip_file, validate_images
+from smile_id_core.ServerError import ServerError
 from smile_id_core.Signature import Signature
 from smile_id_core.Utilities import (
     Utilities,
     get_signature,
     get_version,
-    validate_sec_params,
     sid_server_map,
+    validate_signature_params,
 )
-from smile_id_core.ServerError import ServerError
 
 __all__ = ["WebApi"]
 
 
 class WebApi:
-    def __init__(self, partner_id, call_back_url, api_key, sid_server):
+    def __init__(
+        self,
+        partner_id: str,
+        call_back_url: str,
+        api_key: str,
+        sid_server: Union[str, int],
+    ):
         if not partner_id or not api_key:
             raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
         self.call_back_url = call_back_url
         self.api_key = api_key
         self.sid_server = sid_server
-        self.utilities = None
+        self.utilities: Optional[Utilities] = None
 
-        if sid_server in [0, 1]:
-            self.url = sid_server_map[sid_server]
+        if sid_server in [0, 1, "0", "1"]:
+            self.url = sid_server_map[int(sid_server)]
         else:
-            self.url = sid_server
+            self.url = str(sid_server)
 
     def submit_job(
         self,
-        partner_params,
-        images_params,
-        id_info_params,
-        options_params,
+        partner_params: Dict,
+        images_params: List[Dict],
+        id_info_params: Dict,
+        options_params: Dict,
         use_validation_api=True,
-    ):
+    ) -> Union[Response, Dict]:
 
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params.get("job_type")
@@ -87,12 +94,12 @@ class WebApi:
         )
         self.__validate_return_data(options_params)
 
-        sec_params = self._get_security_key_params(options_params)
+        signature_params = get_signature(self.partner_id, self.api_key)
         use_enrolled_image = options_params.get("use_enrolled_image", False)
         prep_upload = WebApi.execute_http(
             f"{self.url}/upload",
             self.__prepare_prep_upload_payload(
-                partner_params, sec_params, use_enrolled_image
+                partner_params, signature_params, use_enrolled_image
             ),
         )
         if prep_upload.status_code != 200:
@@ -101,8 +108,8 @@ class WebApi:
             )
         else:
             prep_upload_json_resp = prep_upload.json()
-            upload_url = prep_upload_json_resp["upload_url"]
-            smile_job_id = prep_upload_json_resp["smile_job_id"]
+            upload_url: str = prep_upload_json_resp["upload_url"]
+            smile_job_id: str = prep_upload_json_resp["smile_job_id"]
             zip_stream = generate_zip_file(
                 partner_id=self.partner_id,
                 callback_url=self.call_back_url,
@@ -110,7 +117,7 @@ class WebApi:
                 partner_params=partner_params,
                 id_info_params=id_info_params,
                 upload_url=upload_url,
-                sec_params=sec_params,
+                signature_params=signature_params,
             )
             upload_response = WebApi.upload(upload_url, zip_stream)
             if upload_response.status_code != 200:
@@ -123,35 +130,37 @@ class WebApi:
                     self.partner_id, self.api_key, self.sid_server
                 )
                 job_status = self.poll_job_status(
-                    0, partner_params, options_params, sec_params
+                    0, partner_params, options_params, signature_params
                 )
                 return job_status
             else:
                 return {"success": True, "smile_job_id": smile_job_id}
 
     def get_web_token(
-        self, user_id: str, job_id: str, product: str, timestamp=None, callback_url=None
-    ):
+        self,
+        user_id: str,
+        job_id: str,
+        product: str,
+        timestamp: Optional[str] = None,
+        callback_url: Optional[str] = None,
+    ) -> Response:
 
-        sec_params = Signature(self.partner_id, self.api_key).generate_signature(
-            timestamp or datetime.now().isoformat()
+        timestamp = timestamp or datetime.now().isoformat()
+        callback_url = callback_url or self.call_back_url
+        signature_params = Signature(self.partner_id, self.api_key).generate_signature(
+            timestamp
         )
 
         return WebApi.execute_http(
             f"{self.url}/token",
             {
-                **sec_params,
+                **signature_params,
                 "user_id": user_id,
                 "job_id": job_id,
                 "product": product,
-                "callback_url": callback_url or self.call_back_url,
+                "callback_url": callback_url,
                 "partner_id": self.partner_id,
             },
-        )
-
-    def _get_security_key_params(self, options_params):
-        return get_signature(
-            self.partner_id, self.api_key, options_params.get("signature")
         )
 
     def __call_id_api(
@@ -160,13 +169,13 @@ class WebApi:
         id_info_params: Dict,
         use_validation_api: bool,
         options_params: Dict,
-    ):
+    ) -> Response:
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
         return id_api.submit_job(
             partner_params, id_info_params, use_validation_api, options_params
         )
 
-    def __validate_options(self, options_params):
+    def __validate_options(self, options_params: Dict) -> None:
         if not self.call_back_url and not options_params:
             raise ValueError(
                 "Please choose to either get your response via the callback or job status query"
@@ -177,20 +186,16 @@ class WebApi:
                 if key != "optional_callback" and not type(options_params[key]) == bool:
                     raise ValueError(f"{key} needs to be a boolean")
 
-    def __validate_return_data(self, options):
+    def __validate_return_data(self, options: Dict) -> None:
         if not self.call_back_url and not options["return_job_status"]:
             raise ValueError(
                 "Please choose to either get your response via the callback or job status query"
             )
 
-    def __get_sec_key(self):
-        sec_key_gen = Signature(self.partner_id, self.api_key)
-        return sec_key_gen.generate_sec_key()
-
     def __prepare_prep_upload_payload(
-        self, partner_params: Dict, sec_params: Dict, use_enrolled_image
-    ):
-        validate_sec_params(sec_params)
+        self, partner_params: Dict, signature_params: Dict, use_enrolled_image: bool
+    ) -> Dict:
+        validate_signature_params(signature_params)
 
         return {
             "file_name": "selfie.zip",
@@ -201,35 +206,40 @@ class WebApi:
             "use_enrolled_image": use_enrolled_image,
             "source_sdk": "Python",
             "source_sdk_version": get_version(),
-            **sec_params,
+            **signature_params,
         }
 
     def poll_job_status(
-        self, counter, partner_params, options_params, sec_params: Dict
-    ):
-        if sec_params is None:
-            sec_params = self._get_security_key_params(options_params)
+        self,
+        counter: int,
+        partner_params: Dict,
+        options_params: Dict,
+        signature_params: Optional[Dict],
+    ) -> Response:
+        if signature_params is None:
+            signature_params = get_signature(self.partner_id, self.api_key)
 
-        validate_sec_params(sec_params)
+        validate_signature_params(signature_params)
         counter = counter + 1
         if counter < 4:
             time.sleep(2)
         else:
             time.sleep(4)
-
+        if not isinstance(self.utilities, Utilities):
+            raise ValueError("Utilities not initialized")
         job_status = self.utilities.get_job_status(
-            partner_params, options_params, sec_params
+            partner_params, options_params, signature_params
         )
         job_status_response = job_status.json()
         if not job_status_response["job_complete"] and counter < 20:
             return self.poll_job_status(
-                counter, partner_params, options_params, sec_params
+                counter, partner_params, options_params, signature_params
             )
 
         return job_status
 
     @staticmethod
-    def execute_http(url, payload):
+    def execute_http(url: str, payload: Dict) -> Response:
         data = json.dumps(payload)
         resp = requests.post(
             url=url,
@@ -243,7 +253,7 @@ class WebApi:
         return resp
 
     @staticmethod
-    def upload(url, file):
+    def upload(url: str, file: Any) -> Response:
         resp = requests.put(
             url=url, data=file, headers={"Content-type": "application/zip"}
         )

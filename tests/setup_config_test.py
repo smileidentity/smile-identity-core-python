@@ -3,6 +3,7 @@ This test suite contains different test around testing different setup configura
 for the core library.
 """
 import unittest
+
 from smile_id_core import __version__
 
 

@@ -8,7 +8,7 @@ import responses
 from Crypto.Cipher import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 
-from smile_id_core import WebApi, Signature, ServerError
+from smile_id_core import ServerError, Signature, WebApi
 from tests.stub_mixin import TestCaseWithStubs
 
 
@@ -248,9 +248,9 @@ class TestWebApi(TestCaseWithStubs):
 
     @responses.activate
     def test_submit_job_should_raise_error_when_upload_fails(self):
-        sec_key = self._get_sec_key(False)
+        signature = self._get_signature()
         error = "Failed to upload zip"
-        post_response = self.stub_upload_request(sec_key, error)
+        post_response = self.stub_upload_request(signature, error)
 
         self.__reset_params()
         with self.assertRaises(ServerError) as ve:
@@ -271,10 +271,10 @@ class TestWebApi(TestCaseWithStubs):
     @responses.activate
     def test_validate_return_data(self):
         self.__reset_params()
-        sec_key = self._get_sec_key(False)
-        post_response = self.stub_upload_request(sec_key)
-        self.stub_get_job_status(sec_key, False)
-        job_status_response = self.stub_get_job_status(sec_key, True)
+        signature = self._get_signature()
+        post_response = self.stub_upload_request(signature)
+        self.stub_get_job_status(signature, False)
+        job_status_response = self.stub_get_job_status(signature, True)
 
         response = self.web_api.submit_job(
             self.partner_params,
@@ -295,13 +295,15 @@ class TestWebApi(TestCaseWithStubs):
             status=400,
             json={"error": "Invalid product.", "code": "2217"},
         )
-        sec = self._get_sec_key(True)
+        signature = self._get_signature()
         user_id = "user_id"
         job_id = "job_id"
         product = "product_type"
-        self.web_api.get_web_token(user_id, job_id, product, timestamp=sec["timestamp"])
+        self.web_api.get_web_token(
+            user_id, job_id, product, timestamp=signature["timestamp"]
+        )
         body = {
-            **sec,
+            **signature,
             "user_id": user_id,
             "job_id": job_id,
             "product": product,
@@ -312,11 +314,7 @@ class TestWebApi(TestCaseWithStubs):
             "https://testapi.smileidentity.com/v1/token", responses.POST, body
         )
 
-    def _get_sec_key(self, signature):
-        if signature:
-            sec_key = self.signatureObj.generate_signature(
-                timestamp=datetime.now().isoformat()
-            )
-        else:
-            sec_key = self.signatureObj.generate_sec_key(timestamp=int(time.time()))
-        return sec_key
+    def _get_signature(self):
+        return self.signatureObj.generate_signature(
+            timestamp=datetime.now().isoformat()
+        )

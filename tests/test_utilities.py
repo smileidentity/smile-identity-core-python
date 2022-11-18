@@ -1,7 +1,6 @@
 import base64
-import time
 import re
-
+from datetime import datetime
 from uuid import uuid4
 
 import pytest
@@ -30,7 +29,7 @@ class TestUtilities(TestCaseWithStubs):
         self.signatureObj = Signature(self.partner_id, self.api_key)
         self.cipher = PKCS1_v1_5.new(self.key.exportKey())
         self.__reset_params()
-        self.utilities = Utilities(self.partner_id, self.public_key, 0)
+        self.utilities = Utilities(self.partner_id, self.api_key, 0)
 
     def __reset_params(self):
         self.partner_params = {
@@ -64,7 +63,7 @@ class TestUtilities(TestCaseWithStubs):
 
     def test_instance(self):
         self.assertEqual(self.utilities.partner_id, "001")
-        self.assertEqual(self.utilities.api_key, self.public_key)
+        self.assertEqual(self.utilities.api_key, self.api_key)
         self.assertEqual(
             self.utilities.url,
             "https://testapi.smileidentity.com/v1",
@@ -317,15 +316,14 @@ class TestUtilities(TestCaseWithStubs):
     @responses.activate
     def test_get_job_status(self):
         self.__reset_params()
-        sec_timestamp = self.signatureObj.generate_sec_key(timestamp=int(time.time()))
-        self.stub_get_job_status(sec_timestamp, True)
-
+        signature = self.signatureObj.generate_signature(datetime.now().isoformat())
+        self.stub_get_job_status(signature, True)
         job_status = self.utilities.get_job_status(
-            self.partner_params, self.options_params, sec_timestamp
+            self.partner_params, self.options_params, signature
         )
         body = {
-            "sec_key": sec_timestamp["sec_key"],
-            "timestamp": sec_timestamp["timestamp"],
+            "signature": signature["signature"],
+            "timestamp": signature["timestamp"],
             "partner_id": "001",
             "job_id": self.partner_params["job_id"],
             "user_id": self.partner_params["user_id"],

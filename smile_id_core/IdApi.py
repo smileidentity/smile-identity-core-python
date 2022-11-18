@@ -1,21 +1,23 @@
 import json
-import requests
-from typing import Dict
+from typing import Dict, Optional, Union
 
+import requests
+from requests import Response
+
+from smile_id_core.ServerError import ServerError
 from smile_id_core.Utilities import (
     Utilities,
     get_signature,
     get_version,
-    validate_sec_params,
     sid_server_map,
+    validate_signature_params,
 )
-from smile_id_core.ServerError import ServerError
 
 __all__ = ["IdApi"]
 
 
 class IdApi:
-    def __init__(self, partner_id: str, api_key: str, sid_server: str or int):
+    def __init__(self, partner_id: str, api_key: str, sid_server: Union[str, int]):
         if not partner_id or not api_key:
             raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
@@ -23,15 +25,15 @@ class IdApi:
         if sid_server in [0, 1, "0", "1"]:
             self.url = sid_server_map[int(sid_server)]
         else:
-            self.url = sid_server
+            self.url = str(sid_server)
 
     def submit_job(
         self,
         partner_params: Dict,
         id_params: Dict,
         use_validation_api=True,
-        options_params: Dict = None,
-    ):
+        options_params: Optional[Dict] = None,
+    ) -> Response:
         if not options_params:
             options_params = {}
 
@@ -49,10 +51,9 @@ class IdApi:
                 "Please ensure that you are setting your job_type to 5 to query ID Api"
             )
 
-        sec_key_object = get_signature(
-            self.partner_id, self.api_key, options_params.get("signature")
-        )
-        payload = self.__configure_json(partner_params, id_params, sec_key_object)
+        signature_object = get_signature(self.partner_id, self.api_key)
+
+        payload = self.__configure_json(partner_params, id_params, signature_object)
         response = self.__execute_http(payload)
         if response.status_code != 200:
             raise ServerError(
@@ -60,10 +61,12 @@ class IdApi:
             )
         return response
 
-    def __configure_json(self, partner_params, id_params, sec_key):
-        validate_sec_params(sec_key)
+    def __configure_json(
+        self, partner_params: Dict, id_params: Dict, signature: Dict
+    ) -> Dict:
+        validate_signature_params(signature)
         return {
-            **sec_key,
+            **signature,
             "partner_id": self.partner_id,
             "partner_params": partner_params,
             "source_sdk": "Python",
@@ -71,7 +74,7 @@ class IdApi:
             **id_params,
         }
 
-    def __execute_http(self, payload):
+    def __execute_http(self, payload: Dict) -> Response:
         data = json.dumps(payload)
         resp = requests.post(
             url=f"{self.url}/id_verification",

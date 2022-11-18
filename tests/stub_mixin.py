@@ -8,7 +8,7 @@ import responses
 class TestCaseWithStubs(
     unittest.TestCase,
 ):
-    def stub_get_job_status(self, sec_key, job_complete=True, with_error=None):
+    def stub_get_job_status(self, signature_key, job_complete=True, with_error=None):
         if with_error:
             job_status_response = {
                 "status": 400,
@@ -17,7 +17,7 @@ class TestCaseWithStubs(
         else:
             job_status_response = {
                 "status": 200,
-                "json": self._get_job_status_response(sec_key, job_complete),
+                "json": self._get_job_status_response(signature_key, job_complete),
             }
 
         responses.add(
@@ -27,10 +27,10 @@ class TestCaseWithStubs(
         )
         return job_status_response["json"]
 
-    def _get_job_status_response(self, sec_key, job_complete=True):
+    def _get_job_status_response(self, signature_key, job_complete=True):
         return {
-            "signature": sec_key.get("signature") or sec_key.get("sec_key"),
-            "timestamp": sec_key.get("timestamp"),
+            "signature": signature_key.get("signature"),
+            "timestamp": signature_key.get("timestamp"),
             "job_complete": job_complete,
             "job_success": True,
             "result": {
@@ -103,10 +103,10 @@ class TestCaseWithStubs(
             ],
         }
 
-    def _get_pre_upload_response(self, sec_key: Dict):
+    def _get_pre_upload_response(self, signature_key: Dict):
         return {
-            "signature": sec_key.get("signature") or sec_key.get("sec_key"),
-            "timestamp": sec_key.get("timestamp"),
+            "signature": signature_key.get("signature"),
+            "timestamp": signature_key.get("timestamp"),
             "upload_url": "https://some_url.com",
             "smile_job_id": "0000000857",
             "job_complete": True,
@@ -181,8 +181,8 @@ class TestCaseWithStubs(
             ],
         }
 
-    def stub_upload_request(self, sec_key, fail_with_message=None):
-        post_response = self._get_pre_upload_response(sec_key)
+    def stub_upload_request(self, signature, fail_with_message=None):
+        post_response = self._get_pre_upload_response(signature)
         responses.add(
             responses.POST,
             "https://testapi.smileidentity.com/v1/upload",
