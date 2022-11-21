@@ -13,6 +13,7 @@ from smile_id_core.Signature import Signature
 from smile_id_core.Utilities import (
     Utilities,
     get_signature,
+    get_version,
     sid_server_map,
     validate_signature_params,
 )
@@ -203,6 +204,8 @@ class WebApi:
             "model_parameters": {},
             "callback_url": self.call_back_url,
             "use_enrolled_image": use_enrolled_image,
+            "source_sdk": "Python",
+            "source_sdk_version": get_version(),
             **signature_params,
         }
 

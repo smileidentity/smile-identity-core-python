@@ -1,18 +1,40 @@
 import json
+import sys
 from typing import Dict, Optional, Union
 
 import requests
 from requests import Response
 
+# import importlib.metadata if available, otherwise importlib_metadata (for Python < 3.8)
+if sys.version_info >= (3, 8):
+    import importlib.metadata as importlib_metadata
+else:
+    import importlib_metadata
+
 from smile_id_core.ServerError import ServerError
 from smile_id_core.Signature import Signature
 
-__all__ = ["Utilities", "get_signature", "validate_signature_params", "sid_server_map"]
+__all__ = [
+    "Utilities",
+    "get_signature",
+    "get_version",
+    "validate_signature_params",
+    "sid_server_map",
+]
 
 sid_server_map = {
     0: "https://testapi.smileidentity.com/v1",
     1: "https://api.smileidentity.com/v1",
 }
+
+
+def get_version() -> str:
+    """Return the module version number specified in pyproject.toml.
+
+    Returns:
+        str: The module version number
+    """
+    return importlib_metadata.version(__package__)
 
 
 class Utilities:

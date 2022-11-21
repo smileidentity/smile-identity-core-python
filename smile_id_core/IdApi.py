@@ -8,6 +8,7 @@ from smile_id_core.ServerError import ServerError
 from smile_id_core.Utilities import (
     Utilities,
     get_signature,
+    get_version,
     sid_server_map,
     validate_signature_params,
 )
@@ -64,13 +65,14 @@ class IdApi:
         self, partner_params: Dict, id_params: Dict, signature: Dict
     ) -> Dict:
         validate_signature_params(signature)
-        payload = {
+        return {
             **signature,
             "partner_id": self.partner_id,
             "partner_params": partner_params,
+            "source_sdk": "Python",
+            "source_sdk_version": get_version(),
+            **id_params,
         }
-        payload.update(id_params)
-        return payload
 
     def __execute_http(self, payload: Dict) -> Response:
         data = json.dumps(payload)
