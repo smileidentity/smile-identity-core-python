@@ -10,7 +10,7 @@ jobs:
     uses: ./.github/workflows/test.yml
   publish:
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
     - name: Install poetry
