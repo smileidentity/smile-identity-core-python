@@ -23,7 +23,7 @@ jobs:
         with:
           cache: 'poetry'
       - name: Install dependencies
-        run: poetry install --group main
+        run: poetry install --only main
       - name: get cvml package version
         id: get_version
         run: echo "::set-output name=version::$(poetry version --short)"
