@@ -7,13 +7,6 @@ on:
   workflow_dispatch:
   workflow_call:
 jobs:
-  lint:
-    runs-on: ubuntu-20.04
-    steps:
-      - uses: actions/checkout@v3
-      - uses: psf/black@stable
-        with:
-          options: '--check --verbose'
   test:
     runs-on: ubuntu-20.04
     strategy:
@@ -30,6 +23,8 @@ jobs:
         cache: 'poetry'
     - name: Install dependencies
       run: poetry install --with github-actions,typing
+    - name: Run black
+      run: poetry run black $(git ls-files '*.py') --check
     - name: Type checking
       # mypy configuration defined in pyproject.toml
       run: poetry run mypy
