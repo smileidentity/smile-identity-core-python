@@ -1,5 +1,4 @@
 import base64
-import time
 import unittest
 from datetime import datetime
 from unittest.mock import patch

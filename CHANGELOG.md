@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.1] - 2023-02-22
+### Changed
+- Configure optional dependency groups for development dependencies. Requires fewer dependencies to be installed when installing the package.
+
 ## [2.0.0] - 2022-11-25
 ### Added
 - Add coverage reports.
