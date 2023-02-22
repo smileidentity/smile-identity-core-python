@@ -22,7 +22,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
         cache: 'poetry'
     - name: Install dependencies
-      run: poetry install --with dev,github-actions
+      run: poetry install --with dev,github-actions,typing
     - name: Run black
       run: poetry run black $(git ls-files '*.py') --check
     - name: Run isort
