@@ -28,17 +28,24 @@ jobs:
         id: get_version
         run: echo "::set-output name=version::$(poetry version --short)"
       - name: check if git tag exists
+        id: check_tag
         run: |
           git fetch --tags
           if git tag -l ${{ steps.get_version.outputs.version }}; then
             echo "git tag already exists"
-            exit 0
+            echo "::set-output name=publish::false"
+          else
+            echo "git tag does not exist"
+            echo "::set-output name=publish::true"
           fi
       - name: create git tag
+        if: steps.check_tag.outputs.publish == 'true'
         run: git tag ${{ steps.get_version.outputs.version }}
       - name: push git tag
+        if: steps.check_tag.outputs.publish == 'true'
         run: git push --tags
       - name: build and publish to pypi
+        if: steps.check_tag.outputs.publish == 'true'
         run : poetry publish --build --username $PYPI_USERNAME --password $PYPI_TOKEN
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
