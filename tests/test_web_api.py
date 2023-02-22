@@ -1,7 +1,5 @@
 import base64
-import time
 from datetime import datetime
-from typing import Dict
 from uuid import uuid4
 
 import responses
