@@ -61,7 +61,8 @@ For usage questions, the best resource is [our official documentation](https://d
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub [here](https://github.com/smileidentity/smile-identity-core-python-3-private/).
+Bug reports and pull requests are welcome on GitHub [here](https://github.com/smileidentity/smile-identity-core-python-3/).
+
 
 ## License
 
