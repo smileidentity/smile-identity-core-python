@@ -60,20 +60,28 @@ class TestWebApi(TestCaseWithStubs):
         self.__reset_params()
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(
-                self.partner_params, None, self.id_info_params, self.options_params
+                self.partner_params,
+                None,
+                self.id_info_params,
+                self.options_params,
             )
         self.assertEqual(
-            ve.exception.args[0], "Please ensure that you send through image details"
+            ve.exception.args[0],
+            "Please ensure that you send through image details",
         )
 
     def test_no_partner_params(self):
         self.__reset_params()
         with self.assertRaises(ValueError) as ve:
             response = self.web_api.submit_job(
-                None, self.image_params, self.id_info_params, self.options_params
+                None,
+                self.image_params,
+                self.id_info_params,
+                self.options_params,
             )
         self.assertEqual(
-            ve.exception.args[0], "Please ensure that you send through partner params"
+            ve.exception.args[0],
+            "Please ensure that you send through partner params",
         )
 
     def test_missing_partner_params(self):
@@ -156,7 +164,9 @@ class TestWebApi(TestCaseWithStubs):
 
     def test_non_valid_image(self):
         self.__reset_params()
-        self.image_params.append({"image_type_id": "0", "image": "path/to/image.jpg"})
+        self.image_params.append(
+            {"image_type_id": "0", "image": "path/to/image.jpg"}
+        )
         with self.assertRaises(FileNotFoundError) as ve:
             response = self.web_api.submit_job(
                 self.partner_params,
@@ -193,7 +203,9 @@ class TestWebApi(TestCaseWithStubs):
                 self.options_params,
                 False,
             )
-        self.assertEqual(ve.exception.args[0], "return_history needs to be a boolean")
+        self.assertEqual(
+            ve.exception.args[0], "return_history needs to be a boolean"
+        )
 
         self.__reset_params()
         self.options_params["return_images"] = "tEST"
@@ -205,7 +217,9 @@ class TestWebApi(TestCaseWithStubs):
                 self.options_params,
                 False,
             )
-        self.assertEqual(ve.exception.args[0], "return_images needs to be a boolean")
+        self.assertEqual(
+            ve.exception.args[0], "return_images needs to be a boolean"
+        )
 
         self.__reset_params()
         self.options_params["signature"] = "tEST"
@@ -217,7 +231,9 @@ class TestWebApi(TestCaseWithStubs):
                 self.options_params,
                 False,
             )
-        self.assertEqual(ve.exception.args[0], "signature needs to be a boolean")
+        self.assertEqual(
+            ve.exception.args[0], "signature needs to be a boolean"
+        )
 
     @responses.activate
     def test_submit_job_should_raise_error_when_pre_upload_fails(self):

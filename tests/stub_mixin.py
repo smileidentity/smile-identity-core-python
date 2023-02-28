@@ -8,7 +8,9 @@ import responses
 class TestCaseWithStubs(
     unittest.TestCase,
 ):
-    def stub_get_job_status(self, signature_key, job_complete=True, with_error=None):
+    def stub_get_job_status(
+        self, signature_key, job_complete=True, with_error=None
+    ):
         if with_error:
             job_status_response = {
                 "status": 400,
@@ -17,7 +19,9 @@ class TestCaseWithStubs(
         else:
             job_status_response = {
                 "status": 200,
-                "json": self._get_job_status_response(signature_key, job_complete),
+                "json": self._get_job_status_response(
+                    signature_key, job_complete
+                ),
             }
 
         responses.add(
@@ -195,7 +199,9 @@ class TestCaseWithStubs(
                 "status": 400,
                 "json": {"code": "2205", "error": fail_with_message},
             }
-        responses.add(responses.PUT, post_response["upload_url"], **upload_response)
+        responses.add(
+            responses.PUT, post_response["upload_url"], **upload_response
+        )
         return post_response
 
     def assert_request_called_with(self, url, method, body):
