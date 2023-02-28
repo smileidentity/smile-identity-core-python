@@ -65,20 +65,19 @@ profile = "black"
 line_length = 80
 
 [tool.mypy]
+allow_untyped_decorators = true
+disallow_untyped_defs = false
 files = "smile_id_core,tests"
+no_implicit_reexport = false
 pretty = true
 show_error_codes = true
+strict = true
 strict_equality = true
 warn_no_return = true
 warn_redundant_casts = true
 warn_unreachable = false
 warn_unused_configs = false
 warn_unused_ignores = false
-
-strict = true
-allow_untyped_decorators = true
-disallow_untyped_defs = false
-no_implicit_reexport = false
 
 [tool.pytest.ini_options]
 addopts = "-n auto"
