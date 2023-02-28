@@ -11,6 +11,7 @@ import requests
 from requests import Response
 
 from smile_id_core import constants
+from smile_id_core.base import Base
 from smile_id_core.constants import JobType
 from smile_id_core.ServerError import ServerError
 from smile_id_core.Signature import Signature
@@ -43,21 +44,20 @@ def get_version() -> str:
     return importlib_metadata.version(__package__)
 
 
-class Utilities:
+class Utilities(Base):
     """Query information on subitted job status."""
 
     def __init__(
         self, partner_id: str, api_key: str, sid_server: Union[int, str]
     ):
-        if not partner_id or not api_key:
-            raise ValueError("partner_id or api_key cannot be null or empty")
-        self.partner_id = partner_id
-        self.api_key = api_key
-        self.sid_server = sid_server
-        if sid_server in [0, 1, "0", "1"]:
-            self.url = sid_server_map[int(sid_server)]
-        else:
-            self.url = str(sid_server)
+        """Initialize all relevant params required for Utilities methods.
+
+        argument(s):
+            partner_id: distinct identification number for a partner
+            api_key(str): api_key obtained from the partner portal
+            sid_server(str or int): specifies production or sandbox
+        """
+        super().__init__(partner_id, api_key, sid_server)
 
     def get_job_status(
         self,
