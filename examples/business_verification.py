@@ -64,8 +64,7 @@ def submit_job() -> None:
     company is.
     """
     result = connection.submit_job(partner_params, id_info)
-    for key, value in result.items():
-        print(key, " ", value)
+    print(result)
 
 
 if __name__ == "__main__":

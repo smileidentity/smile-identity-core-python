@@ -8,14 +8,15 @@ the tax information returns only the company information
 """
 from typing import Any, Dict, Union
 
-from smile_id_core.constants import JobType, sid_server_map
+from smile_id_core.base import Base
+from smile_id_core.constants import JobType
 from smile_id_core.ServerError import ServerError
 from smile_id_core.Utilities import Utilities, get_signature
 
 __all__ = ["BusinessVerification"]
 
 
-class BusinessVerification:
+class BusinessVerification(Base):
     """This is an API class that lets you perform KYB Services.
 
     It exports the ServerError, JobType, Utilities, and some existing
@@ -33,14 +34,8 @@ class BusinessVerification:
             api_key(str): api_key obtained from the partner portal
             sid_server(str or int): specifies production or sandbox
         """
-        if not partner_id or not api_key:
-            raise ValueError("partner_id or api_key cannot be null or empty")
-        self.partner_id = partner_id
-        self.api_key = api_key
-        if sid_server in [0, 1, "0", "1"]:
-            self.url = sid_server_map[int(sid_server)]
-        else:
-            self.url = str(sid_server)
+        super().__init__(partner_id, api_key, sid_server)
+        self.utilities = Utilities(partner_id, api_key, sid_server)
 
     def submit_job(
         self,
@@ -69,7 +64,9 @@ class BusinessVerification:
             raise ValueError("Job type must be 7 for kyb")
 
         signature_object = get_signature(self.partner_id, self.api_key)
-        self.utilities = Utilities(self.partner_id, self.api_key, 0)
+        self.utilities = Utilities(
+            self.partner_id, self.api_key, self.sid_server
+        )
         payload = self.utilities.configure_json(
             partner_params=partner_params,
             id_params=id_params,

@@ -80,7 +80,7 @@ class TestIdApi(unittest.TestCase):
             )
         self.assertEqual(
             ve.exception.args[0],
-            "Please ensure that you are setting your job_type to 5 to query ID Api",
+            "Job type must be 5 for ID Api",
         )
 
     def test_id_info_params(self):
