@@ -74,7 +74,13 @@ class TestUtilities(TestCaseWithStubs):
         return {
             "id_types": {
                 "NG": {
-                    "NIN": ["country", "id_type", "id_number", "user_id", "job_id"],
+                    "NIN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                    ],
                     "CAC": [
                         "country",
                         "id_type",
@@ -83,7 +89,13 @@ class TestUtilities(TestCaseWithStubs):
                         "company",
                         "job_id",
                     ],
-                    "TIN": ["country", "id_type", "id_number", "user_id", "job_id"],
+                    "TIN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                    ],
                     "VOTER_ID": [
                         "country",
                         "id_type",
@@ -91,7 +103,13 @@ class TestUtilities(TestCaseWithStubs):
                         "user_id",
                         "job_id",
                     ],
-                    "BVN": ["country", "id_type", "id_number", "user_id", "job_id"],
+                    "BVN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                    ],
                     "PHONE_NUMBER": [
                         "country",
                         "id_type",
@@ -143,7 +161,8 @@ class TestUtilities(TestCaseWithStubs):
         with self.assertRaises(ValueError) as ve:
             response = Utilities.validate_partner_params(None)
         self.assertEqual(
-            ve.exception.args[0], "Please ensure that you send through partner params"
+            ve.exception.args[0],
+            "Please ensure that you send through partner params",
         )
 
     def test_missing_partner_params(self):
@@ -176,7 +195,9 @@ class TestUtilities(TestCaseWithStubs):
         )
 
     @responses.activate
-    def test_validate_id_params_should_raise_when_provided_with_invalid_input(self):
+    def test_validate_id_params_should_raise_when_provided_with_invalid_input(
+        self,
+    ):
         self.__reset_params()
 
         self._stub_service("https://testapi.smileidentity.com/v1")
@@ -223,7 +244,9 @@ class TestUtilities(TestCaseWithStubs):
                 self.partner_params,
                 use_validation_api=True,
             )
-        self.assertEqual(ve.exception.args[0], "id_type Not_Supported is invalid")
+        self.assertEqual(
+            ve.exception.args[0], "id_type Not_Supported is invalid"
+        )
 
         self.__reset_params()
         self.partner_params["user_id"] = None
@@ -311,12 +334,16 @@ class TestUtilities(TestCaseWithStubs):
                 self.partner_params_jt6,
                 use_validation_api=True,
             )
-        self.assertEqual(ve.exception.args[0], "id_type Not_Supported is invalid")
+        self.assertEqual(
+            ve.exception.args[0], "id_type Not_Supported is invalid"
+        )
 
     @responses.activate
     def test_get_job_status(self):
         self.__reset_params()
-        signature = self.signatureObj.generate_signature(datetime.now().isoformat())
+        signature = self.signatureObj.generate_signature(
+            datetime.now().isoformat()
+        )
         self.stub_get_job_status(signature, True)
         job_status = self.utilities.get_job_status(
             self.partner_params, self.options_params, signature
@@ -334,7 +361,9 @@ class TestUtilities(TestCaseWithStubs):
         self.assertEqual(job_status.status_code, 200)
         self.assertIsNotNone(job_status.json())
         self.assert_request_called_with(
-            "https://testapi.smileidentity.com/v1/job_status", responses.POST, body
+            "https://testapi.smileidentity.com/v1/job_status",
+            responses.POST,
+            body,
         )
 
     @responses.activate
