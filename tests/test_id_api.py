@@ -58,7 +58,8 @@ class TestIdApi(unittest.TestCase):
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(None, self.id_info_params)
         self.assertEqual(
-            ve.exception.args[0], "Please ensure that you send through partner params"
+            ve.exception.args[0],
+            "Please ensure that you send through partner params",
         )
 
     def test_no_id_info_params(self):
@@ -66,7 +67,8 @@ class TestIdApi(unittest.TestCase):
         with self.assertRaises(ValueError) as ve:
             response = self.id_api.submit_job(self.partner_params, None)
         self.assertEqual(
-            ve.exception.args[0], "Please ensure that you send through ID Information"
+            ve.exception.args[0],
+            "Please ensure that you send through ID Information",
         )
 
     def test_invalid_job_type(self):
@@ -85,19 +87,25 @@ class TestIdApi(unittest.TestCase):
         self.__reset_params()
         self.id_info_params["country"] = None
         with self.assertRaises(ValueError) as ve:
-            response = self.id_api.submit_job(self.partner_params, self.id_info_params)
+            response = self.id_api.submit_job(
+                self.partner_params, self.id_info_params
+            )
         self.assertEqual(ve.exception.args[0], "key country cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_type"] = None
         with self.assertRaises(ValueError) as ve:
-            response = self.id_api.submit_job(self.partner_params, self.id_info_params)
+            response = self.id_api.submit_job(
+                self.partner_params, self.id_info_params
+            )
         self.assertEqual(ve.exception.args[0], "key id_type cannot be empty")
 
         self.__reset_params()
         self.id_info_params["id_number"] = None
         with self.assertRaises(ValueError) as ve:
-            response = self.id_api.submit_job(self.partner_params, self.id_info_params)
+            response = self.id_api.submit_job(
+                self.partner_params, self.id_info_params
+            )
         self.assertEqual(ve.exception.args[0], "key id_number cannot be empty")
 
     def get_id_response(self):
@@ -141,7 +149,13 @@ class TestIdApi(unittest.TestCase):
         return {
             "id_types": {
                 "NG": {
-                    "NIN": ["country", "id_type", "id_number", "user_id", "job_id"],
+                    "NIN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                    ],
                     "CAC": [
                         "country",
                         "id_type",
@@ -150,7 +164,13 @@ class TestIdApi(unittest.TestCase):
                         "company",
                         "job_id",
                     ],
-                    "TIN": ["country", "id_type", "id_number", "user_id", "job_id"],
+                    "TIN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                    ],
                     "VOTER_ID": [
                         "country",
                         "id_type",
@@ -158,7 +178,13 @@ class TestIdApi(unittest.TestCase):
                         "user_id",
                         "job_id",
                     ],
-                    "BVN": ["country", "id_type", "id_number", "user_id", "job_id"],
+                    "BVN": [
+                        "country",
+                        "id_type",
+                        "id_number",
+                        "user_id",
+                        "job_id",
+                    ],
                     "PHONE_NUMBER": [
                         "country",
                         "id_type",

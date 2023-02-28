@@ -34,15 +34,19 @@ def generate_zip_file(
         signature_params,
     )
     zip_buffer = io.BytesIO()
-    with zipfile.ZipFile(zip_buffer, "a", zipfile.ZIP_DEFLATED, False) as zip_file:
+    with zipfile.ZipFile(
+        zip_buffer, "a", zipfile.ZIP_DEFLATED, False
+    ) as zip_file:
         zip_file.writestr("info.json", data=json.dumps(info_json))
         for image in image_params:
             image_file_path = image["image"]
-            if isinstance(image_file_path, str) and image_file_path.lower().endswith(
-                IMAGE_FILE_EXTENSIONS
-            ):
+            if isinstance(
+                image_file_path, str
+            ) and image_file_path.lower().endswith(IMAGE_FILE_EXTENSIONS):
                 # TODO: do we really silently skip a file if its extension is different?
-                zip_file.write(image_file_path, os.path.basename(image_file_path))
+                zip_file.write(
+                    image_file_path, os.path.basename(image_file_path)
+                )
     return zip_buffer.getvalue()
 
 
@@ -116,7 +120,9 @@ def validate_images(images_params, use_enrolled_image=False, job_type=None):
         raise ValueError("Please ensure that you send through image details")
 
     if not isinstance(images_params, list):
-        raise ValueError("Please ensure that you send through image details as a list")
+        raise ValueError(
+            "Please ensure that you send through image details as a list"
+        )
 
     has_id_image = False
     has_selfie = False
@@ -125,7 +131,9 @@ def validate_images(images_params, use_enrolled_image=False, job_type=None):
             IMAGE_FILE_EXTENSIONS
         ):
             if not os.path.exists(image["image"]):
-                raise FileNotFoundError(f"No such file or directory {image['image']}")
+                raise FileNotFoundError(
+                    f"No such file or directory {image['image']}"
+                )
 
         image_type_id = int(image["image_type_id"])
         if image_type_id == 1 or image_type_id == 3:

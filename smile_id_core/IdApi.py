@@ -17,7 +17,9 @@ __all__ = ["IdApi"]
 
 
 class IdApi:
-    def __init__(self, partner_id: str, api_key: str, sid_server: Union[str, int]):
+    def __init__(
+        self, partner_id: str, api_key: str, sid_server: Union[str, int]
+    ):
         if not partner_id or not api_key:
             raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
@@ -40,7 +42,9 @@ class IdApi:
         Utilities.validate_partner_params(partner_params)
 
         if not id_params:
-            raise ValueError("Please ensure that you send through ID Information")
+            raise ValueError(
+                "Please ensure that you send through ID Information"
+            )
 
         Utilities.validate_id_params(
             self.url, id_params, partner_params, use_validation_api
@@ -53,7 +57,9 @@ class IdApi:
 
         signature_object = get_signature(self.partner_id, self.api_key)
 
-        payload = self.__configure_json(partner_params, id_params, signature_object)
+        payload = self.__configure_json(
+            partner_params, id_params, signature_object
+        )
         response = self.__execute_http(payload)
         if response.status_code != 200:
             raise ServerError(
