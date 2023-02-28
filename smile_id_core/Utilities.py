@@ -38,7 +38,9 @@ def get_version() -> str:
 
 
 class Utilities:
-    def __init__(self, partner_id: str, api_key: str, sid_server: Union[int, str]):
+    def __init__(
+        self, partner_id: str, api_key: str, sid_server: Union[int, str]
+    ):
         if not partner_id or not api_key:
             raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
@@ -84,7 +86,9 @@ class Utilities:
     ) -> Response:
         job_status = Utilities.execute_post(
             f"{self.url}/job_status",
-            self.__configure_job_query(user_id, job_id, option_params, signature),
+            self.__configure_job_query(
+                user_id, job_id, option_params, signature
+            ),
         )
         if job_status.status_code != 200:
             raise ServerError(
@@ -117,14 +121,18 @@ class Utilities:
     @staticmethod
     def validate_partner_params(partner_params: Dict) -> None:
         if not partner_params:
-            raise ValueError("Please ensure that you send through partner params")
+            raise ValueError(
+                "Please ensure that you send through partner params"
+            )
 
         if (
             not partner_params.get("user_id")
             or not partner_params.get("job_id")
             or not partner_params.get("job_type")
         ):
-            raise ValueError("Partner Parameter Arguments may not be null or empty")
+            raise ValueError(
+                "Partner Parameter Arguments may not be null or empty"
+            )
 
         if not isinstance(partner_params.get("user_id"), str):
             raise ValueError("Please ensure user_id is a string")
@@ -170,17 +178,29 @@ class Utilities:
         if job_type == 6:
             doc_verification = response_json["hosted_web"]["doc_verification"]
             if not id_info_params["country"] in doc_verification:
-                raise ValueError(f"country {id_info_params['country']} is invalid")
-            selected_country = doc_verification[id_info_params["country"]]["id_types"]
+                raise ValueError(
+                    f"country {id_info_params['country']} is invalid"
+                )
+            selected_country = doc_verification[id_info_params["country"]][
+                "id_types"
+            ]
             if not id_info_params["id_type"] in selected_country:
-                raise ValueError(f"id_type {id_info_params['id_type']} is invalid")
+                raise ValueError(
+                    f"id_type {id_info_params['id_type']} is invalid"
+                )
         else:
             id_types_by_country = response_json["id_types"]
             if not id_info_params["country"] in id_types_by_country:
-                raise ValueError(f"country {id_info_params['country']} is invalid")
-            selected_country = response_json["id_types"][id_info_params["country"]]
+                raise ValueError(
+                    f"country {id_info_params['country']} is invalid"
+                )
+            selected_country = response_json["id_types"][
+                id_info_params["country"]
+            ]
             if not id_info_params["id_type"] in selected_country:
-                raise ValueError(f"id_type {id_info_params['id_type']} is invalid")
+                raise ValueError(
+                    f"id_type {id_info_params['id_type']} is invalid"
+                )
             id_params = selected_country[id_info_params["id_type"]]
             for key in id_params:
                 if key not in id_info_params and key not in partner_params:

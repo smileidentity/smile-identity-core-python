@@ -32,6 +32,8 @@ class TestSignature(unittest.TestCase):
         hmac_new.update(timestamp.encode("utf-8"))
         hmac_new.update(str(self.partner_id).encode("utf-8"))
         hmac_new.update("sid_request".encode("utf-8"))
-        calculated_signature = base64.b64encode(hmac_new.digest()).decode("utf-8")
+        calculated_signature = base64.b64encode(hmac_new.digest()).decode(
+            "utf-8"
+        )
 
         self.assertEqual(signature["signature"], calculated_signature)

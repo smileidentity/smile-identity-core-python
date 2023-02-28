@@ -80,7 +80,10 @@ class WebApi:
 
         if job_type == 5:
             return self.__call_id_api(
-                partner_params, id_info_params, use_validation_api, options_params
+                partner_params,
+                id_info_params,
+                use_validation_api,
+                options_params,
             )
 
         self.__validate_options(options_params)
@@ -147,9 +150,9 @@ class WebApi:
 
         timestamp = timestamp or datetime.now().isoformat()
         callback_url = callback_url or self.call_back_url
-        signature_params = Signature(self.partner_id, self.api_key).generate_signature(
-            timestamp
-        )
+        signature_params = Signature(
+            self.partner_id, self.api_key
+        ).generate_signature(timestamp)
 
         return WebApi.execute_http(
             f"{self.url}/token",
@@ -183,7 +186,10 @@ class WebApi:
 
         if options_params:
             for key in options_params:
-                if key != "optional_callback" and not type(options_params[key]) == bool:
+                if (
+                    key != "optional_callback"
+                    and not type(options_params[key]) == bool
+                ):
                     raise ValueError(f"{key} needs to be a boolean")
 
     def __validate_return_data(self, options: Dict) -> None:
@@ -193,7 +199,10 @@ class WebApi:
             )
 
     def __prepare_prep_upload_payload(
-        self, partner_params: Dict, signature_params: Dict, use_enrolled_image: bool
+        self,
+        partner_params: Dict,
+        signature_params: Dict,
+        use_enrolled_image: bool,
     ) -> Dict:
         validate_signature_params(signature_params)
 
