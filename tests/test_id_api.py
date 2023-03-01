@@ -308,11 +308,10 @@ def test_validate_return_data(
             signature_fixture,
         )
 
-        response = client.submit_job(
-            partner_params, id_info_params, False
-        ).json()
+        response = client.submit_job(partner_params, id_info_params, False)
 
         assert response is not None
+
         assert (
             response["PartnerParams"]
             == get_id_response(signature_fixture)["PartnerParams"]
