@@ -20,8 +20,8 @@ import uuid
 from typing import List
 
 from smile_id_core import WebApi
+from smile_id_core.constants import ImageTypes, JobType
 from smile_id_core.types import ImageParams, OptionsParams
-from smile_id_core.constants import JobType, ImageTypes
 
 # Login to the Smile Identity portal to view your partner id.
 partner_id: str = os.environ["PARTNER_ID"]
