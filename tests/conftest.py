@@ -310,9 +310,6 @@ def get_job_status_response(
     }
 
 
-# Added stub_mixing here:
-
-
 def stub_get_job_status(
     signature_key: SignatureParams,
     job_complete: bool = True,
