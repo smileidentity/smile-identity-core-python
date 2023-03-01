@@ -1,28 +1,53 @@
-# publishes to pypi based on git releases. NOTE: The git tag is used to trigger the
-# workflow and should be the same as the version number in the pyproject.toml file.
+# Creates a git tag and publishes to pypi based on the
+# version specified in pyproject.toml.
 name: Publish to PyPI
 on:
   push:
-    tags: # run on tags starting with a v character. ex. v1.0.0
-      - v*
+    branches:
+      - main
+    paths:
+      - pyproject.toml
+  workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   test:
     uses: ./.github/workflows/test.yml
   publish:
     needs: test
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
       - name: Install poetry
         run: pipx install poetry
       - uses: actions/setup-python@v4
         with:
-          python-version: "3.x"
           cache: "poetry"
+          python-version: "3.11"
       - name: Install dependencies
-        run: poetry install
+        run: poetry install --only main
+      - name: get cvml package version
+        id: get_version
+        run: echo "::set-output name=version::$(poetry version --short)"
+      - name: check if git tag exists
+        id: check_tag
+        run: |
+          git fetch --tags
+          if [[ $(git tag -l ${{ steps.get_version.outputs.version }} | wc -l) -eq '1' ]]; then
+            echo "git tag already exists"
+            echo "::set-output name=publish::false"
+          else
+            echo "git tag does not exist"
+            echo "::set-output name=publish::true"
+          fi
+      - name: create git tag
+        if: steps.check_tag.outputs.publish == 'true'
+        run: git tag ${{ steps.get_version.outputs.version }}
+      - name: push git tag
+        if: steps.check_tag.outputs.publish == 'true'
+        run: git push --tags
       - name: build and publish to pypi
+        if: steps.check_tag.outputs.publish == 'true'
         run: poetry publish --build --username $PYPI_USERNAME --password $PYPI_TOKEN
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
