@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: poetry install --with dev
       - name: lint code
-        run: poetry run pylint $(git ls-files '*.py') --fail-under 6.0 --verbose
+        run: poetry run pylint $(git ls-files '*.py') --fail-under 7.0 --verbose
       - name: check docstyle (Google styledoc)
         run: poetry run pydocstyle $(git ls-files '*.py') --verbose --convention=google
       - name: run mypy
