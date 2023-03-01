@@ -20,6 +20,7 @@ import uuid
 from typing import List
 
 from smile_id_core import WebApi
+from smile_id_core.constants import ImageTypes, JobType
 from smile_id_core.types import ImageParams, OptionsParams
 
 # Login to the Smile Identity portal to view your partner id.
@@ -36,7 +37,7 @@ connection = WebApi(partner_id, default_callback, api_key, sid_server)
 partner_params = {
     "job_id": f"job-{uuid.uuid4()}",  # your unique job_id
     "user_id": f"user-{uuid.uuid4()}",  # your unique user_id
-    "job_type": 6,
+    "job_type": JobType.DOCUMENT_VERIFICATION,
 }
 
 
@@ -82,23 +83,23 @@ You may use the recommended web sdk to capture the images
 """
 image_details: List[ImageParams] = [
     {
-        "image_type_id": 0,  # 0 or 2
+        "image_type_id": ImageTypes.SELFIE_FILE,  # 0 or 2
         "file_name": image_path,  # path to selfie image or base64image string
     },
     {
         # Not required if you don't require proof of life (note photo of photo
         # check will still be performed on the uploaded selfie)
-        "image_type_id": 6,  # 4 or 6
+        "image_type_id": ImageTypes.LIVENESS_IMAGE_STRING,  # 4 or 6
         "image": base64image,  # path to liveness base64image string
     },
     {
-        "image_type_id": 1,  # 1 or 3
+        "image_type_id": ImageTypes.ID_CARD_FILE,  # 1 or 3
         "file_name": image_path,  # path to front of id document image string
     },
     {
         # Optional, only use if you're uploading the back of the id document
-        # image
-        "image_type_id": 7,  # 5 or 7
+        # image. ID card image(back)as a base64 image string
+        "image_type_id": ImageTypes.ID_CARD_BACK_STRING,  # 5 or 7
         "image": base64image,  # path to back of id document base64image string
     },
 ]
@@ -127,7 +128,10 @@ options = OptionsParams(
 def submit_job() -> None:
     """Submit job via the WebAPi."""
     result = connection.submit_job(
-        partner_params, image_details, id_info, options
+        partner_params,
+        image_details,
+        id_info,
+        options,
     )
     print(result)
 

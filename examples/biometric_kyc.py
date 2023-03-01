@@ -15,6 +15,7 @@ import uuid
 from typing import List
 
 from smile_id_core import WebApi
+from smile_id_core.constants import ImageTypes, JobType
 from smile_id_core.types import ImageParams, OptionsParams
 
 # Login to the Smile Identity portal to view your partner id.
@@ -28,7 +29,7 @@ default_callback = os.environ["DEFAULT_CALLBACK"]
 connection = WebApi(partner_id, default_callback, api_key, sid_server)
 # Create required tracking parameters
 partner_params = {
-    "job_type": 1,  # unique job type
+    "job_type": JobType.BIOMETRIC_KYC,  # unique job type
     "job_id": f"job-{uuid.uuid4()}",  # your unique job_id
     "user_id": f"user-{uuid.uuid4()}",  # your unique user_id
 }
@@ -67,7 +68,8 @@ base64image = create_base64_str(selfie_path)
 
 image_details: List[ImageParams] = [
     {
-        "image_type_id": 2,
+        # Selfie image as a base64 image string (image_type_id: 2)
+        "image_type_id": ImageTypes.SELFIE_IMAGE_STRING,
         "image": base64image,
     }
 ]
@@ -101,7 +103,10 @@ options = OptionsParams(
 def submit_job() -> None:
     """Submit job via the WebAPi."""
     result = connection.submit_job(
-        partner_params, image_details, id_info, options
+        partner_params,
+        image_details,
+        id_info,
+        options,
     )
     print(result)
 

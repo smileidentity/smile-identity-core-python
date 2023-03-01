@@ -1,8 +1,6 @@
 """ID API class for kyc services."""
 from typing import Any, Dict, Optional, Union
 
-from requests import Response
-
 from smile_id_core.base import Base
 from smile_id_core.BusinessVerification import BusinessVerification
 from smile_id_core.constants import JobType
