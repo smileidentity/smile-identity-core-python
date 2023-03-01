@@ -7,7 +7,30 @@ on:
   workflow_dispatch:
   workflow_call:
 jobs:
+  lint:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install poetry
+        run: pipx install poetry
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+          cache: "poetry"
+      - name: Install dependencies
+        run: poetry install --with dev
+      - name: lint code
+        run: poetry run pylint $(git ls-files '*.py') --fail-under 6.0 --verbose
+      - name: check docstyle (Google styledoc)
+        run: poetry run pydocstyle $(git ls-files '*.py') --verbose --convention=google || true
+      - name: run mypy
+        run: poetry run mypy $(git ls-files '*.py') || true
+      - name: check black formatting
+        run: poetry run black --check --verbose $(git ls-files '*.py')
+      - name: check sorted order
+        run: poetry run isort $(git ls-files '*.py') --check-only
   test:
+    timeout-minutes: 5
     runs-on: ubuntu-20.04
     strategy:
       matrix:
@@ -22,13 +45,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: "poetry"
       - name: Install dependencies
-        run: poetry install --with dev,github-actions,typing
-      - name: Run black
-        run: poetry run black $(git ls-files '*.py') --check
-      - name: Run isort
-        run: poetry run isort $(git ls-files '*.py') --check-only
-      - name: Type checking
-        # mypy configuration defined in pyproject.toml
-        run: poetry run mypy || true
+        run: poetry install --with dev,github-actions
       - name: Run tests
-        run: poetry run pytest
+        run: poetry run pytest --cov --cov-fail-under 90 --cov-report term-missing
