@@ -1,14 +1,12 @@
+"""Checks if importlib_metadata.version(__package__) was defined.
+
+This test suite contains different test around testing different setup
+configurations for the core library.
 """
-This test suite contains different test around testing different setup configurations
-for the core library.
-"""
-import unittest
 
 from smile_id_core import __version__
 
 
-class SetupConfigTest(
-    unittest.TestCase,
-):
-    def test_version_exists(self):
-        self.assertIsNotNone(__version__, "Package version is not defined.")
+def test_version_exists() -> None:
+    """Assertion check on version()."""
+    assert (__version__, "Package version is not defined.") is not None

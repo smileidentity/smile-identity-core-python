@@ -40,7 +40,7 @@ class IdApi(Base):
         id_params: Dict[str, str],
         use_validation_api: bool = True,
         options_params: Optional[OptionsParams] = None,
-    ) -> Response:
+    ) -> Dict[str, Any]:
         """Validate data params & query id_verification endpoint for KYC jobs.
 
         Performs checks on id_info_params, partner_params, makes endpoint
@@ -97,4 +97,4 @@ class IdApi(Base):
                 f"Failed to post entity to {url},"
                 f" status={response.status_code}, response={response.json()}"
             )
-        return response
+        return dict(response.json())
