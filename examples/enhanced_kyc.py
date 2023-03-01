@@ -44,7 +44,6 @@ id_info = {
 
 def submit_job() -> None:
     """Submit job via the ID API."""
-
     result = connection.submit_job(partner_params, id_info)
     print(result)
 

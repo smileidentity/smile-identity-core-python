@@ -127,7 +127,10 @@ options = OptionsParams(
 def submit_job() -> None:
     """Submit job via the WebAPi."""
     result = connection.submit_job(
-        partner_params, image_details, id_info, options
+        partner_params,
+        image_details,
+        id_info,
+        options,
     )
     print(result)
 
