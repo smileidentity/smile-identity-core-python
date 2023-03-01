@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added custom types
 - Added Business verification
 - Added runnable examples for products
+- Increased test coverage to 99%
 
 ### Fixed
 - Resolved image-upload bug in handling image types
