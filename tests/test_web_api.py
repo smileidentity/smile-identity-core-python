@@ -485,7 +485,6 @@ class TestWebApi(TestCaseWithStubs):
             False,
         )
 
-        # response = cast(Response, response)
         assert response
         assert response == job_status_response
 
