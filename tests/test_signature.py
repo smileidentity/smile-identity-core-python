@@ -1,39 +1,39 @@
+"""Test class for the SIgnature class"""
 import base64
 import hashlib
 import hmac
-import unittest
 from datetime import datetime
+from typing import Tuple
 
-from Crypto.Cipher import PKCS1_v1_5
-from Crypto.PublicKey import RSA
+import pytest
 
-from smile_id_core import Signature
+from smile_id_core.Signature import Signature
 
 
-class TestSignature(unittest.TestCase):
-    def setUp(self):
-        self.key = RSA.generate(2048)
-        self.public_key = self.key.publickey().export_key()
-        self.api_key = base64.b64encode(self.public_key).decode("UTF-8")
-        self.partner_id = "001"
-        self.signatureObj = Signature(self.partner_id, self.api_key)
-        self.cipher = PKCS1_v1_5.new(self.key.exportKey())
+def test_no_partner_id_api_key(
+    setup_client: Tuple[str, str, str], signature_fixture: Signature
+) -> None:
+    """Validates API key from signature object"""
+    api_key, partner_id, _ = setup_client
+    assert api_key == signature_fixture.api_key
+    pytest.raises(ValueError, Signature, partner_id, None)
+    pytest.raises(ValueError, Signature, None, api_key)
 
-    def test_partner_id_api_key(self):
-        self.assertEqual(self.signatureObj.partner_id, self.partner_id)
-        # self.assertEqual(self.public_key, self.signatureObj.decoded_api_key)
 
-    def test_generate_signature(self):
-        timestamp = datetime.now().isoformat()
-        signature = self.signatureObj.generate_signature(timestamp=timestamp)
-        self.assertEqual(signature["timestamp"], timestamp)
+def test_generate_signature(
+    setup_client: Tuple[str, str, str],
+    signature_fixture: Signature,
+) -> None:
+    """Generates and validates generated singature"""
+    timestamp = datetime.now().isoformat()
+    api_key, partner_id, _ = setup_client
+    signature = signature_fixture.generate_signature(timestamp=timestamp)
+    assert signature["timestamp"] == timestamp
 
-        hmac_new = hmac.new(self.api_key.encode(), digestmod=hashlib.sha256)
-        hmac_new.update(timestamp.encode("utf-8"))
-        hmac_new.update(str(self.partner_id).encode("utf-8"))
-        hmac_new.update("sid_request".encode("utf-8"))
-        calculated_signature = base64.b64encode(hmac_new.digest()).decode(
-            "utf-8"
-        )
+    hmac_new = hmac.new(api_key.encode(), digestmod=hashlib.sha256)
+    hmac_new.update(timestamp.encode("utf-8"))
+    hmac_new.update(str(partner_id).encode("utf-8"))
+    hmac_new.update("sid_request".encode("utf-8"))
+    calculated_signature = base64.b64encode(hmac_new.digest()).decode("utf-8")
 
-        self.assertEqual(signature["signature"], calculated_signature)
+    assert signature["signature"] == calculated_signature
