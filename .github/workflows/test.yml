@@ -24,7 +24,7 @@ jobs:
       - name: check docstyle (Google styledoc)
         run: poetry run pydocstyle $(git ls-files '*.py') --verbose --convention=google || true
       - name: run mypy
-        run: poetry run mypy $(git ls-files '*.py') || true
+        run: poetry run mypy $(git ls-files '*.py')
       - name: check black formatting
         run: poetry run black --check --verbose $(git ls-files '*.py')
       - name: check sorted order
