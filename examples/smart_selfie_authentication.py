@@ -17,6 +17,7 @@ from typing import List
 
 from smile_id_core import WebApi
 from smile_id_core.types import ImageParams, OptionsParams
+from smile_id_core.constants import JobType, ImageTypes
 
 # Login to the Smile Identity portal to view your partner id.
 partner_id: str = os.environ["PARTNER_ID"]
@@ -32,7 +33,7 @@ connection = WebApi(partner_id, default_callback, api_key, sid_server)
 partner_params = {
     "job_id": f"job-{uuid.uuid4()}",  # Your unique job_id
     "user_id": f"user-{uuid.uuid4()}",  # Your unique user_id
-    "job_type": 2,
+    "job_type": JobType.SMART_SELFIE_AUTHENTICATION,
 }
 
 
@@ -69,11 +70,11 @@ base64selfie = create_base64_str(selfie_path)
 
 image_details: List[ImageParams] = [
     {
-        "image_type_id": 0,  # 0 or 2
+        "image_type_id": ImageTypes.SELFIE_FILE,  # 0 or 2
         "file_name": selfie_path,  # path to selfie image
     },
     {
-        "image_type_id": 2,
+        "image_type_id": ImageTypes.SELFIE_IMAGE_STRING,
         "image": base64selfie,  # path to selfie base64image string
     },
 ]

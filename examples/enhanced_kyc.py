@@ -12,6 +12,7 @@ import os
 import uuid
 
 from smile_id_core import IdApi
+from smile_id_core.constants import JobType
 
 # Login to the Smile Identity portal to view your partner id.
 partner_id: str = os.environ["PARTNER_ID"]
@@ -27,7 +28,7 @@ connection = IdApi(partner_id, api_key, sid_server)
 partner_params = {
     "job_id": f"job-{uuid.uuid4()}",  # your unique job_id
     "user_id": f"user-{uuid.uuid4()}",  # your unique user_id
-    "job_type": 5,
+    "job_type": JobType.ENHANCED_KYC,
 }
 
 # Create ID info
