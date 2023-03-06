@@ -577,7 +577,6 @@ def test_poll_job_status(
     signature_fixture: Signature,
     client_web: WebApi,
 ) -> None:
-
     pytest.raises(
         ServerError,
         client_web.poll_job_status,
