@@ -188,7 +188,9 @@ def test_validate_images_require_a_selfie_for_alljt_except_jt6() -> None:
     )
 
 
-def test_validate_images_require_a_selfie_when_enrolled_image_is_false_jt6() -> None:
+def test_validate_images_require_a_selfie_when_enrolled_image_is_false_jt6() -> (
+    None
+):
     """Checks that attempted image validation for all job types other than
     document verification require at least 1 selfie image with
     use_enrolled_image set to false"""
@@ -212,7 +214,9 @@ def test_validate_images_require_a_selfie_when_enrolled_image_is_false_jt6() -> 
     )
 
 
-def test_validate_images_require_no_selfie_when_enrolled_image_is_true_jt6() -> None:
+def test_validate_images_require_no_selfie_when_enrolled_image_is_true_jt6() -> (
+    None
+):
     image_params: List[ImageParams] = [
         {
             "image_type_id": 1,

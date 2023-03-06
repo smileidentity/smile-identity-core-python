@@ -291,7 +291,6 @@ def test_validate_return_data(
     signature_fixture: Signature,
     client: IdApi,
 ) -> None:
-
     """Uses mocked examples for payload responses; checks that
     response status code is 200 and response body is not empty"""
     partner_params, id_info_params = (
@@ -329,7 +328,6 @@ def test_validate_return_data_business_verification(
     signature_fixture: Signature,
     client: IdApi,
 ) -> None:
-
     """Uses mocked examples for payload responses; checks that
     response status code is 200 and response body is not empty"""
 
