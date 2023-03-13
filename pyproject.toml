@@ -44,7 +44,7 @@ pytest-cov = "^4.0.0"
 pydocstyle = "^6.3.0"
 pytest-xdist = "^3.0.2"
 responses = ">=0.17,<0.24"
-types-mock = "^4.0.15.2"
+types-mock = ">=4.0.15.2,<6.0.0.0"
 
 [tool.poetry.group.github-actions]
 optional = true
