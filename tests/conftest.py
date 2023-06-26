@@ -18,7 +18,6 @@ from smile_id_core.types import ImageParams, OptionsParams, SignatureParams
 from smile_id_core.Utilities import Utilities
 from smile_id_core.WebApi import WebApi
 
-
 @pytest.fixture(scope="function")
 def setup_client() -> Tuple[str, str, str]:
     """Setups/initialises relevant params for tests and validates them."""
@@ -28,7 +27,6 @@ def setup_client() -> Tuple[str, str, str]:
     partner_id: str = "001"
     sid_server = "0"
     return api_key, partner_id, sid_server
-
 
 @pytest.fixture(scope="function")
 def setup_web_client() -> Tuple[str, str, str, str]:
@@ -43,7 +41,6 @@ def setup_web_client() -> Tuple[str, str, str, str]:
     )
     return api_key, partner_id, sid_server, callback_url
 
-
 @pytest.fixture(scope="function")
 def kyc_partner_params() -> Dict[str, Any]:
     """Reset partner_params parameters for kyc jobs."""
@@ -54,7 +51,6 @@ def kyc_partner_params() -> Dict[str, Any]:
     }
 
     return partner_params
-
 
 @pytest.fixture(scope="function")
 def kyc_id_info() -> Dict[str, str]:
@@ -73,7 +69,6 @@ def kyc_id_info() -> Dict[str, str]:
 
     return id_info_params
 
-
 @pytest.fixture(scope="function")
 def kyb_partner_params() -> Dict[str, Any]:
     """Fixture initializes(resets) partner_params for kyb jobs."""
@@ -83,7 +78,6 @@ def kyb_partner_params() -> Dict[str, Any]:
         "job_type": JobType.BUSINESS_VERIFICATION,
     }
     return partner_params
-
 
 @pytest.fixture(scope="function")
 def web_partner_params() -> Dict[str, Any]:
@@ -95,7 +89,6 @@ def web_partner_params() -> Dict[str, Any]:
     }
     return partner_params
 
-
 @pytest.fixture(scope="function")
 def option_params() -> OptionsParams:
     """Initialize option_params; sets them all to True."""
@@ -106,7 +99,6 @@ def option_params() -> OptionsParams:
         "use_enrolled_image": True,
     }
     return options_params
-
 
 @pytest.fixture(scope="function")
 def image_params() -> List[ImageParams]:
@@ -126,7 +118,6 @@ def image_params() -> List[ImageParams]:
     )
     return image_param
 
-
 @pytest.fixture(scope="function")
 def kyb_id_info() -> Dict[str, str]:
     """Fixture initializes(resets) id_info_params for kyb jobs."""
@@ -139,14 +130,12 @@ def kyb_id_info() -> Dict[str, str]:
     }
     return id_info_params
 
-
 @pytest.fixture(scope="function")
 def client(setup_client: Tuple[str, str, str]) -> IdApi:
     """Create IdApi object for kyc job."""
     api_key, partner_id, sid_server = setup_client
     id_api = IdApi(partner_id, api_key, sid_server)
     return id_api
-
 
 @pytest.fixture(scope="function")
 def client_kyb(setup_client: Tuple[str, str, str]) -> BusinessVerification:
@@ -155,14 +144,12 @@ def client_kyb(setup_client: Tuple[str, str, str]) -> BusinessVerification:
     kyb_api = BusinessVerification(partner_id, api_key, sid_server)
     return kyb_api
 
-
 @pytest.fixture(scope="function")
 def client_web(setup_client: Tuple[str, str, str]) -> WebApi:
     """Create BusinessVerification object for kyb job."""
     api_key, partner_id, sid_server = setup_client
     web_api = WebApi(partner_id, "https://a_callback.com", api_key, sid_server)
     return web_api
-
 
 @pytest.fixture(scope="function")
 def client_utilities(setup_client: Tuple[str, str, str]) -> Utilities:
@@ -171,20 +158,17 @@ def client_utilities(setup_client: Tuple[str, str, str]) -> Utilities:
     utilities = Utilities(partner_id, api_key, sid_server)
     return utilities
 
-
 @pytest.fixture(scope="function")
 def signature_fixture(setup_client: Tuple[str, str, str]) -> Signature:
     """Create signature object for jobs that use the signature class."""
     api_key, partner_id, _ = setup_client
     return Signature(partner_id, api_key)
 
-
 @pytest.fixture(scope="function")
 def signature_params(signature_fixture: Signature) -> SignatureParams:
     """Uses signature_fixture to create a SignatureParam."""
     signature = signature_fixture.generate_signature(datetime.now().isoformat())
     return signature
-
 
 @pytest.fixture(scope="function")
 def partner_params_jt6() -> Dict[str, Any]:
@@ -196,7 +180,6 @@ def partner_params_jt6() -> Dict[str, Any]:
     }
     return partner_params
 
-
 @pytest.fixture(scope="function")
 def partner_params_util() -> Dict[str, Any]:
     """Define partner params for utitlity test class."""
@@ -207,7 +190,6 @@ def partner_params_util() -> Dict[str, Any]:
     }
 
     return partner_params
-
 
 def get_job_status_response(
     signature_params: SignatureParams,
@@ -309,7 +291,6 @@ def get_job_status_response(
         ],
     }
 
-
 def stub_get_job_status(
     signature_key: SignatureParams,
     job_complete: bool = True,
@@ -339,7 +320,6 @@ def stub_get_job_status(
         **job_status_response,  # type: ignore
     )
     return job_status_response
-
 
 def get_pre_upload_response(signature_key: SignatureParams) -> Dict[str, Any]:
     """Return pre-upload response as stub for testing."""
@@ -440,7 +420,6 @@ def get_pre_upload_response(signature_key: SignatureParams) -> Dict[str, Any]:
         ],
     }
 
-
 def stub_upload_request(
     signature: SignatureParams, fail_with_message: str = None  # type: ignore
 ) -> Dict[str, Any]:
@@ -474,7 +453,6 @@ def stub_upload_request(
         **upload_response,  # type: ignore
     )
     return post_response
-
 
 def assert_request_called_with(
     url: str, method: Any, body: Dict[str, Any]

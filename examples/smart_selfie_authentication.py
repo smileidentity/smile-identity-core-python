@@ -36,7 +36,6 @@ partner_params = {
     "job_type": JobType.SMART_SELFIE_AUTHENTICATION,
 }
 
-
 def create_base64_str(path: str) -> str:
     """Convert image to a base64 string.
 
@@ -48,7 +47,6 @@ def create_base64_str(path: str) -> str:
         base64_data = base64.b64encode(binary_file_data)
         base64_img = base64_data.decode("utf-8")
         return base64_img
-
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -66,7 +64,6 @@ base64selfie = create_base64_str(selfie_path)
  image)
  6 - Liveness image jpg or png base64 encoded (if you have the base64image
  string of the liveness image) """
-
 
 image_details: List[ImageParams] = [
     {
@@ -93,7 +90,6 @@ options = OptionsParams(
     use_enrolled_image=True,
 )
 
-
 def submit_job() -> None:
     """Submit job via the WebAPi."""
     result = connection.submit_job(
@@ -103,7 +99,6 @@ def submit_job() -> None:
         options,
     )
     print(result)
-
 
 if __name__ == "__main__":
     submit_job()

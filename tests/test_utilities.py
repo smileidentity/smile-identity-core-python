@@ -21,14 +21,12 @@ from smile_id_core.Utilities import (
 )
 from tests.conftest import assert_request_called_with, stub_get_job_status
 
-
 def test_get_version() -> None:
     """Test that a well formatted version string is returned."""
     version = get_version()
     assert isinstance(version, str)
     # tests that the version is in the form of a semver string.
     assert re.match(r"^\d+\.\d+\.\d+$", version)
-
 
 def test_handle_wrong_credentials(
     setup_client: Tuple[str, str, str], client_utilities: Utilities
@@ -42,7 +40,6 @@ def test_handle_wrong_credentials(
     pytest.raises(ValueError, Utilities, partner_id, None, 0)
     pytest.raises(ValueError, Utilities, None, api_key, 0)
 
-
 def test_instance(
     client_utilities: Utilities, setup_client: Tuple[str, str, str]
 ) -> None:
@@ -51,7 +48,6 @@ def test_instance(
     assert client_utilities.partner_id == partner_id
     assert client_utilities.api_key == api_key
     assert client_utilities.url == "https://testapi.smileidentity.com/v1"
-
 
 def get_smile_services_response() -> Dict[str, Any]:
     """Returns supported Nigeria ID type examples for mocks"""
@@ -140,7 +136,6 @@ def get_smile_services_response() -> Dict[str, Any]:
         },
     }
 
-
 def test_validate_id_params(
     setup_client: Tuple[str, str, str], signature_fixture: Signature
 ) -> None:
@@ -197,7 +192,6 @@ def test_validate_id_params(
     signature["timestamp"] = (datetime.now() - timedelta(days=1)).isoformat()
     utilities = Utilities(partner_id, api_key, 0)
 
-
 def test_validate_signature_params(signature_fixture: Signature) -> None:
     """Validates signature params"""
     signature = signature_fixture.generate_signature(datetime.now().isoformat())
@@ -205,7 +199,6 @@ def test_validate_signature_params(signature_fixture: Signature) -> None:
     pytest.raises(Exception, validate_signature_params, signature_)
     signature_ = {"signature": signature["signature"], "timestamp": None}  # type: ignore
     pytest.raises(Exception, validate_signature_params, signature_)
-
 
 def test_no_partner_params(client_utilities: Utilities) -> None:
     """Checks for missing partner params and raises an error"""
@@ -216,7 +209,6 @@ def test_no_partner_params(client_utilities: Utilities) -> None:
         str(value_error.value)
         == "Please ensure that you send through partner params"
     )
-
 
 def test_missing_partner_params(
     kyc_partner_params: Dict[str, Any], setup_client: Tuple[str, str, str]
@@ -294,7 +286,6 @@ def test_missing_partner_params(
         utilities.validate_partner_params,
         partner_params,
     )
-
 
 @responses.activate
 def test_validate_id_params_should_raise_when_provided_with_invalid_input(
@@ -386,7 +377,6 @@ def test_validate_id_params_should_raise_when_provided_with_invalid_input(
         )
     assert str(value_error.value) == "key user_id is required"
 
-
 @responses.activate
 def test_validate_id_params_raise_when_given_invalid_input_for_jt6(
     partner_params_jt6: Dict[str, Any],
@@ -435,7 +425,6 @@ def test_validate_id_params_raise_when_given_invalid_input_for_jt6(
             use_validation_api=True,
         )
     assert str(value_error.value) == "id_type Not_Supported is invalid"
-
 
 @responses.activate
 def test_get_job_status(
@@ -497,7 +486,6 @@ def test_get_job_status(
     )
     assert none_signature.status_code == set_signature.status_code
 
-
 @responses.activate
 def test_get_job_status_raises_server_error(
     signature_fixture: Signature,
@@ -531,7 +519,6 @@ def test_get_job_status_raises_server_error(
         signature,
     )
 
-
 @responses.activate
 def test_get_smile_id_services(client_utilities: Utilities) -> None:
     """Validates job status code after making test api calls to production
@@ -550,7 +537,6 @@ def test_get_smile_id_services(client_utilities: Utilities) -> None:
 
     assert job_status.status_code == 200
 
-
 def test_get_smile_id_services_success():
     with patch("requests.get") as mock_get:
         mock_get.return_value.status_code = 200
@@ -562,7 +548,6 @@ def test_get_smile_id_services_success():
         response = Utilities.get_smile_id_services(0)
         assert response.status_code == 200
 
-
 def test_get_smile_id_services_failure():
     with patch("requests.get") as mock_get:
         mock_get.return_value.status_code = 500
@@ -572,7 +557,6 @@ def test_get_smile_id_services_failure():
         }
 
         pytest.raises(ServerError, Utilities.get_smile_id_services, 0)
-
 
 def stub_service(url: str, json: Union[Dict[str, Any], Any] = None) -> None:
     """When response from get_smile_services_response module call is not
@@ -586,7 +570,6 @@ def stub_service(url: str, json: Union[Dict[str, Any], Any] = None) -> None:
         f"{url}/services",
         json=json,
     )
-
 
 def test_error_return_data(client_utilities):
     """Tests for error return data due to server error"""

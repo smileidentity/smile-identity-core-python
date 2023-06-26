@@ -24,7 +24,6 @@ if sys.version_info >= (3, 8):
 else:
     import importlib_metadata
 
-
 __all__ = [
     "Utilities",
     "get_signature",
@@ -34,7 +33,6 @@ __all__ = [
 
 sid_server_map = constants.sid_server_map
 
-
 def get_version() -> str:
     """Return the module version number specified in pyproject.toml.
 
@@ -42,7 +40,6 @@ def get_version() -> str:
         str: The module version number
     """
     return importlib_metadata.version(__package__)
-
 
 class Utilities(Base):
     """Query information on subitted job status."""
@@ -58,7 +55,6 @@ class Utilities(Base):
             sid_server(str or int): specifies production or sandbox
         """
         super().__init__(partner_id, api_key, sid_server)
-
     def get_job_status(
         self,
         partner_params: Dict[str, Any],
@@ -105,7 +101,6 @@ class Utilities(Base):
             options,
             signature,
         )
-
     def query_job_status(
         self,
         user_id: str,
@@ -153,7 +148,6 @@ class Utilities(Base):
                 "Unable to confirm validity of the job_status response"
             )
         return job_status
-
     def configure_job_query(
         self,
         user_id: str,
@@ -184,7 +178,6 @@ class Utilities(Base):
             "image_links": options.get("return_images"),
             "history": options.get("return_history"),
         }
-
     @staticmethod
     def validate_partner_params(partner_params: Dict[str, Any]) -> None:
         """Validate partner_params content.
@@ -214,7 +207,6 @@ class Utilities(Base):
 
         if not isinstance(partner_params.get("job_type"), int):
             raise ValueError("Please ensure job_type is a number")
-
     @staticmethod
     def validate_id_params(
         sid_server: Union[str, int],
@@ -292,7 +284,6 @@ class Utilities(Base):
                     raise ValueError(f"key {key} cannot be empty")
                 if key in partner_params and not partner_params.get(key):
                     raise ValueError(f"key {key} cannot be empty")
-
     @staticmethod
     def get_smile_id_services(sid_server: Union[str, int]) -> Response:
         """Make endpoint calls based on production/sandbox specifications.
@@ -314,7 +305,6 @@ class Utilities(Base):
                 f" status={response.status_code}, response={response.json()}"
             )
         return response
-
     @staticmethod
     def execute_get(url: str) -> Response:
         """Send Get request to url endpoint.
@@ -330,7 +320,6 @@ class Utilities(Base):
             },
         )
         return resp
-
     @staticmethod
     def execute_post(url: str, payload: Dict[str, str]) -> Response:
         """Make post request to specified url with payload data.
@@ -352,7 +341,6 @@ class Utilities(Base):
             },
         )
         return resp
-
     @staticmethod
     def execute_http(url: str, payload: Dict[str, Response]) -> Response:
         """Send http request to specified endpoint url and return response.
@@ -375,7 +363,6 @@ class Utilities(Base):
             },
         )
         return resp
-
     def configure_json(
         self,
         partner_params: Dict[str, Any],
@@ -403,7 +390,6 @@ class Utilities(Base):
             **id_params,
         }
 
-
 def validate_signature_params(signature_dict: SignatureParams) -> None:
     """Perform checks on existence of signature and timestamp keys.
 
@@ -414,7 +400,6 @@ def validate_signature_params(signature_dict: SignatureParams) -> None:
         raise Exception("Missing key, must provide a 'signature' field")
     if not signature_dict.get("timestamp"):
         raise Exception("Missing 'timestamp' field")
-
 
 def get_signature(partner_id: str, api_key: str) -> SignatureParams:
     """Generate signature and returns its timestamp and signature.

@@ -17,7 +17,6 @@ from smile_id_core.Utilities import Utilities, get_signature
 
 __all__ = ["BusinessVerification"]
 
-
 class BusinessVerification(Base):
     """This is an API class that lets you perform KYB Services.
 
@@ -38,7 +37,6 @@ class BusinessVerification(Base):
         """
         super().__init__(partner_id, api_key, sid_server)
         self.utilities = Utilities(partner_id, api_key, sid_server)
-
     def submit_job(
         self,
         partner_params: Dict[str, Any],

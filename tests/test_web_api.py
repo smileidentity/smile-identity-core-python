@@ -24,10 +24,8 @@ from tests.conftest import (
 current_dir = os.path.dirname(os.path.abspath(__file__))
 image_path = os.path.join(current_dir, "../tests/fixtures/1pixel.jpg")
 
-
 """Checks through unittests that all function in Web API application file
 are tested"""
-
 
 def test_handle_wrong_credentials(
     setup_web_client: Tuple[str, str, str, str]
@@ -48,7 +46,6 @@ def test_handle_wrong_credentials(
     )
     pytest.raises(ValueError, WebApi, None, callback_url, api_key, 0)
 
-
 def test_instance(
     setup_web_client: Tuple[str, str, str, str],
     client_utilities: Utilities,
@@ -59,7 +56,6 @@ def test_instance(
     assert partner_id == "001"
     assert callback_url == "https://a_callback.com"
     assert client_utilities.url == "https://testapi.smileidentity.com/v1"
-
 
 def test_no_image_params(
     client_web: WebApi,
@@ -84,7 +80,6 @@ def test_no_image_params(
         == "Please ensure that you send through image details"
     )
 
-
 def test_no_callback_url_jt5(
     setup_web_client: Tuple[str, str, str, str],
     web_partner_params: Dict[str, Any],
@@ -105,7 +100,6 @@ def test_no_callback_url_jt5(
         option_params,
         True,
     )
-
 
 def test_no_id_info_params_jt5(
     web_partner_params: Dict[str, Any],
@@ -152,7 +146,6 @@ def test_no_id_info_params_jt5(
         True,
     )
 
-
 def test_no_option_params(
     setup_web_client: Tuple[str, str, str, str],
     web_partner_params: Dict[str, Any],
@@ -172,7 +165,6 @@ def test_no_option_params(
         callback_url,
         True,
     )
-
 
 def test_validate_return(
     option_params: OptionsParams,
@@ -194,7 +186,6 @@ def test_validate_return(
         option_params,
         False,
     )
-
 
 def test__validate_options(
     setup_web_client: Tuple[str, str, str, str],
@@ -218,7 +209,6 @@ def test__validate_options(
         True,
     )
 
-
 def test_no_partner_params(
     client_web: WebApi,
     image_params: List[ImageParams],
@@ -238,7 +228,6 @@ def test_no_partner_params(
         str(value_error.value)
         == "Please ensure that you send through partner params"
     )
-
 
 @responses.activate
 def test_success_true_smile_job_type(
@@ -267,7 +256,6 @@ def test_success_true_smile_job_type(
         False,
     )
     #  == {"success": True, "smile_job_id": "0000000857"},)
-
 
 def test_missing_partner_params_for_at_least_1_param(
     client_web: WebApi,
@@ -317,7 +305,6 @@ def test_missing_partner_params_for_at_least_1_param(
         == "Partner Parameter Arguments may not be null or empty"
     )
 
-
 def test_id_info_params(
     client_web: WebApi,
     web_partner_params: Dict[str, Any],
@@ -351,7 +338,6 @@ def test_id_info_params(
         )
     assert str(value_error.value) == "key id_number cannot be empty"
 
-
 def test_non_valid_image(
     client_web: WebApi,
     web_partner_params: Dict[str, Any],
@@ -377,7 +363,6 @@ def test_non_valid_image(
     assert (
         str(value_error.value) == "No such file or directory path/to/image.jpg"
     )
-
 
 def test_boolean_options_params_non_jt5(
     client_web: WebApi,
@@ -434,7 +419,6 @@ def test_boolean_options_params_non_jt5(
         )
     assert str(value_error.value) == "signature needs to be a boolean"
 
-
 @responses.activate
 def test_submit_job_should_raise_error_when_pre_upload_fails(
     client_web: WebApi,
@@ -467,7 +451,6 @@ def test_submit_job_should_raise_error_when_pre_upload_fails(
         " https://testapi.smileidentity.com/v1/upload, status=400,"
         " response={'code': '2204', 'error': 'unauthorized'}"
     )
-
 
 @responses.activate
 def test_submit_job_should_raise_error_when_upload_fails(
@@ -506,7 +489,6 @@ def test_submit_job_should_raise_error_when_upload_fails(
 
     # web_api = WebApi("001", "https://a_callback.com", api_key, 0)
 
-
 @responses.activate
 def test_validate_return_data(
     client_web: WebApi,
@@ -533,7 +515,6 @@ def test_validate_return_data(
 
     assert response
     assert cast(Response, response).json() == job_status_response["json"]
-
 
 @responses.activate
 def test_get_web_token(
@@ -566,12 +547,10 @@ def test_get_web_token(
         "https://testapi.smileidentity.com/v1/token", responses.POST, body
     )
 
-
 def get_signature(signature_fixture: Signature) -> SignatureParams:
     return signature_fixture.generate_signature(
         timestamp=datetime.now().isoformat()
     )
-
 
 def test_poll_job_status(
     web_partner_params: Dict[str, Any],

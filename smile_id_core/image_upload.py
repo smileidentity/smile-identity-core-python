@@ -15,7 +15,6 @@ from smile_id_core.types import (
 )
 from smile_id_core.Utilities import validate_signature_params
 
-
 class ApiVersion:
     """Specify API version details."""
 
@@ -23,9 +22,7 @@ class ApiVersion:
     MAJOR_VERSION = 2
     MINOR_VERSION = 0
 
-
 IMAGE_FILE_EXTENSIONS = (".png", ".jpg", ".jpeg")
-
 
 def generate_zip_file(
     partner_id: str,
@@ -83,7 +80,6 @@ def generate_zip_file(
                     )
     return zip_buffer.getvalue()
 
-
 def prepare_info_json(
     partner_id: str,
     callback_url: str,
@@ -140,7 +136,6 @@ def prepare_info_json(
         "server_information": upload_url,
     }
 
-
 def prepare_image_payload(
     image_params: List[ImageParams],
 ) -> List[Dict[str, Any]]:
@@ -162,7 +157,6 @@ def prepare_image_payload(
             file = str(image.get("file_name"))
         image_lists.append(prepare_image_entry_dict(file, type_id))
     return image_lists
-
 
 def prepare_image_entry_dict(
     image: Optional[str], image_type_id: int
@@ -191,7 +185,6 @@ def prepare_image_entry_dict(
         "image": image,
         "file_name": "",
     }
-
 
 def validate_images(
     images_params: List[ImageParams],

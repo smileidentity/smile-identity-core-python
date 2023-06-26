@@ -6,7 +6,6 @@ configurations for the core library.
 
 from smile_id_core import __version__
 
-
 def test_version_exists() -> None:
     """Assertion check on version()."""
     assert (__version__, "Package version is not defined.") is not None

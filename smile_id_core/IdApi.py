@@ -12,7 +12,6 @@ from smile_id_core.Utilities import Utilities, get_signature
 
 __all__ = ["IdApi"]
 
-
 class IdApi(Base):
     """This API class that lets you perform KYC Services.
 
@@ -33,7 +32,6 @@ class IdApi(Base):
         """
         super().__init__(partner_id, api_key, sid_server)
         self.utilities = Utilities(partner_id, api_key, sid_server)
-
     def submit_job(
         self,
         partner_params: Dict[str, Any],

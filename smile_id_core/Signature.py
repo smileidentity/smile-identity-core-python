@@ -9,7 +9,6 @@ from smile_id_core.types import SignatureParams
 
 __all__ = ["Signature"]
 
-
 class Signature:
     """Generates signature for a given partner ID and API key.
 
@@ -31,7 +30,6 @@ class Signature:
             raise ValueError("partner_id or api_key cannot be null or empty")
         self.partner_id = partner_id
         self.api_key = api_key
-
     def generate_signature(
         self, timestamp: Optional[str] = None
     ) -> SignatureParams:
@@ -56,7 +54,6 @@ class Signature:
             signature=calculated_signature.decode("utf-8"),
             timestamp=timestamp,
         )
-
     def confirm_signature(self, timestamp: str, msg_signature: str) -> bool:
         """Perform validation for a signature value.
 

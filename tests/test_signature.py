@@ -9,7 +9,6 @@ import pytest
 
 from smile_id_core.Signature import Signature
 
-
 def test_no_partner_id_api_key(
     setup_client: Tuple[str, str, str], signature_fixture: Signature
 ) -> None:
@@ -18,7 +17,6 @@ def test_no_partner_id_api_key(
     assert api_key == signature_fixture.api_key
     pytest.raises(ValueError, Signature, partner_id, None)
     pytest.raises(ValueError, Signature, None, api_key)
-
 
 def test_generate_signature(
     setup_client: Tuple[str, str, str],

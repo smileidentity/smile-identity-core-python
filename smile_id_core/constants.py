@@ -2,7 +2,6 @@
 import typing
 from enum import IntEnum
 
-
 class ImageTypes(IntEnum):
     """Represents the different ImageType codes used by the SmileAPI."""
 
@@ -14,7 +13,6 @@ class ImageTypes(IntEnum):
     ID_CARD_BACK_FILE = 5  # ID card image(back) in a file format
     LIVENESS_IMAGE_STRING = 6  # Liveness image as a base64 image string
     ID_CARD_BACK_STRING = 7  # ID card image(back)as a base64 image string
-
 
 class JobType(IntEnum):
     """Represents the different JobType codes used by the SmileAPI."""
@@ -47,7 +45,6 @@ class JobType(IntEnum):
 
     # Compares document verification to an id check
     COMPARE_USER_INFO = 9
-
 
 # Defines production and sandbox test endpoints
 

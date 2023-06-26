@@ -1,7 +1,6 @@
 """ServerError Class."""
 __all__ = ["ServerError"]
 
-
 class ServerError(Exception):
     """Server error handling."""
 

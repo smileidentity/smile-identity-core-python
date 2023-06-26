@@ -42,12 +42,10 @@ id_info = {
     "phone_number": "true",  # true or false
 }
 
-
 def submit_job() -> None:
     """Submit job via the ID API."""
     result = connection.submit_job(partner_params, id_info)
     print(result)
-
 
 if __name__ == "__main__":
     submit_job()

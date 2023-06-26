@@ -31,7 +31,6 @@ partner_params = {
     "job_type": JobType.SMART_SELFIE_REGISTRATION,
 }
 
-
 def create_base64_str(path: str) -> str:
     """Convert image to a base64 string.
 
@@ -46,7 +45,6 @@ def create_base64_str(path: str) -> str:
         base64_img = base64_data.decode("utf-8")
         return base64_img
 
-
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # selfie-file-path
 selfie_path = os.path.join(current_dir, "../tests/fixtures/1pixel.jpg")
@@ -59,7 +57,6 @@ base64image = create_base64_str(selfie_path)
  2 - Selfie image jpg or png base64 encoded (if you have the base64image
  string of the selfie)
  """
-
 
 image_details: List[ImageParams] = [
     {
@@ -82,7 +79,6 @@ options = OptionsParams(
     use_enrolled_image=False,
 )
 
-
 def submit_job() -> None:
     """Submit job via the WebAPi."""
     result = connection.submit_job(
@@ -92,7 +88,6 @@ def submit_job() -> None:
         options,
     )
     print(result)
-
 
 if __name__ == "__main__":
     submit_job()

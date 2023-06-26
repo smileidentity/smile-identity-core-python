@@ -1,7 +1,6 @@
 """Unit tests for different constants used across the SmileAPI"""
 from smile_id_core.constants import ImageTypes, JobType
 
-
 def test_image_types() -> None:
     """Tests that image type values match the proper numeric tags"""
     assert ImageTypes.SELFIE_FILE.value == 0
@@ -12,7 +11,6 @@ def test_image_types() -> None:
     assert ImageTypes.ID_CARD_BACK_FILE.value == 5
     assert ImageTypes.LIVENESS_IMAGE_STRING.value == 6
     assert ImageTypes.ID_CARD_BACK_STRING.value == 7
-
 
 def test_job_types() -> None:
     """Tests that job type values match the proper numeric tags"""
