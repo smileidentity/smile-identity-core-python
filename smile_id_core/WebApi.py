@@ -79,7 +79,7 @@ class WebApi(Base):
         id_info_params: Dict[str, Any],
         options_params: OptionsParams,
         use_validation_api: bool = True,
-        ) -> Union[Response, Dict]:
+        ) -> Union[Response, Dict[str, Any]]:
         """Perform key/parameter validation, creates zipped file and uploads."""
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params.get("job_type")
