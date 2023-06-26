@@ -3,8 +3,11 @@ import os
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Tuple
 
+from requests import Response
+
 import pytest
 import responses
+from typing import cast
 
 from smile_id_core.constants import JobType
 from smile_id_core.ServerError import ServerError
@@ -529,7 +532,7 @@ def test_validate_return_data(
     )
 
     assert response
-    assert response.json() == job_status_response["json"]
+    assert cast(Response, response).json() == job_status_response["json"]
 
 
 @responses.activate
