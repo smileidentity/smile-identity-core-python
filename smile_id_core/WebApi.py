@@ -66,7 +66,7 @@ class WebApi(Base):
         id_info_params: Dict[str, str],
         use_validation_api: bool,
         options_params: OptionsParams,
-    ) -> Dict[str, Any]:
+        ) -> Response:
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
         return id_api.submit_job(
             partner_params, id_info_params, use_validation_api, options_params
@@ -79,7 +79,7 @@ class WebApi(Base):
         id_info_params: Dict[str, Any],
         options_params: OptionsParams,
         use_validation_api: bool = True,
-    ) -> Dict[str, Any]:
+        ) -> Union[Response, Dict]:
         """Perform key/parameter validation, creates zipped file and uploads."""
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params.get("job_type")

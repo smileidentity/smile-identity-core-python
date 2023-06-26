@@ -1,6 +1,8 @@
 """ID API class for kyc services."""
 from typing import Any, Dict, Optional, Union
 
+from requests import Response
+
 from smile_id_core.base import Base
 from smile_id_core.BusinessVerification import BusinessVerification
 from smile_id_core.constants import JobType
@@ -38,7 +40,7 @@ class IdApi(Base):
         id_params: Dict[str, str],
         use_validation_api: bool = True,
         options_params: Optional[OptionsParams] = None,
-    ) -> Dict[str, Any]:
+    ) -> Response:
         """Validate data params & query id_verification endpoint for KYC jobs.
 
         Performs checks on id_info_params, partner_params, makes endpoint
