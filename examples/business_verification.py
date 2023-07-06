@@ -55,6 +55,7 @@ id_info = {
     # Kenya (KE)
 }
 
+
 def submit_job() -> None:
     """Jobs are submitted to through the IdApi/BusinessVerification call.
 
@@ -63,6 +64,7 @@ def submit_job() -> None:
     """
     result = connection.submit_job(partner_params, id_info)
     print(result)
+
 
 if __name__ == "__main__":
     submit_job()

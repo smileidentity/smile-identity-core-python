@@ -3,6 +3,7 @@ from typing import Union
 
 from smile_id_core import constants
 
+
 class Base:
     """A super class that defines reusable constructor variables."""
 

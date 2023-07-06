@@ -24,6 +24,7 @@ with open(image_path, "rb") as binary_file:
     base64_data = base64.b64encode(binary_file.read())
     base64_img = base64_data.decode("utf-8")
 
+
 def test_prepare_image_entry_dict():
     """Tests image entry dict"""
     assert prepare_image_entry_dict("directory/file.jpg", 5) == {
@@ -51,6 +52,7 @@ def test_prepare_image_entry_dict():
         prepare_image_entry_dict(image_file_path, 5)["image"] == image_file_path
     )
 
+
 def test_prepare_info_json():
     """Validates inputs to prepare_info_json function"""
     image_params: List[ImageParams] = [
@@ -76,6 +78,7 @@ def test_prepare_info_json():
     assert info_json["images"] == prepare_image_payload(image_params)
     assert info_json["misc_information"]["smile_client_id"] == "partner_id"
 
+
 @pytest.fixture()
 def temp_image_file():
     """Creates temp image file (Generator)"""
@@ -87,6 +90,7 @@ def temp_image_file():
     yield temp_image_file.name
 
     os.remove(temp_image_file.name)
+
 
 def test_generate_zip_file() -> None:
     """Generates zipped file with temp_image_file"""
@@ -115,6 +119,7 @@ def test_generate_zip_file() -> None:
             os.path.basename(image_path),
         ]
 
+
 def test_validate_images__ok_file_exists() -> None:
     """Validates image file exists (is Not None)"""
     image_params: List[ImageParams] = [
@@ -125,6 +130,7 @@ def test_validate_images__ok_file_exists() -> None:
     ]
 
     assert validate_images(image_params) is not None
+
 
 def test_validate_images__error_file_not_found():
     """Validates that non-existent image files is not found"""
@@ -140,6 +146,7 @@ def test_validate_images__error_file_not_found():
     assert (
         str(exc_info.value) == "No such file or directory nonexistent/file.jpg"
     )
+
 
 def test_validate_images_jt6_id_not_provided() -> None:
     """Tests for missing id card for document verification"""
@@ -157,6 +164,7 @@ def test_validate_images_jt6_id_not_provided() -> None:
         == "You are attempting to complete a Document Verification job without"
         " providing an id card image."
     )
+
 
 def test_validate_images_require_a_selfie_for_alljt_except_jt6() -> None:
     """Checks that image validation for all job types other than
@@ -178,6 +186,7 @@ def test_validate_images_require_a_selfie_for_alljt_except_jt6() -> None:
         str(exc_info.value)
         == "You need to send through at least one selfie image."
     )
+
 
 def test_validate_images_require_a_selfie_when_enrolled_image_is_false_jt6() -> (
     None
@@ -204,6 +213,7 @@ def test_validate_images_require_a_selfie_when_enrolled_image_is_false_jt6() -> 
         == "You need to send through at least one selfie image."
     )
 
+
 def test_validate_images_require_no_selfie_when_enrolled_image_is_true_jt6() -> (
     None
 ):
@@ -222,6 +232,7 @@ def test_validate_images_require_no_selfie_when_enrolled_image_is_true_jt6() -> 
         )
         is True
     )
+
 
 def test_validate_images_params():
     image_params: List[ImageParams] = [
@@ -299,6 +310,7 @@ def test_validate_images_params():
             use_enrolled_image=True,
         )
     assert str(exc_info.value) == "image_type_id cannot be None or empty"
+
 
 def test_validate_image_is_a_list():
     image_params = {"image": base64_img, "image_type_id": 4}

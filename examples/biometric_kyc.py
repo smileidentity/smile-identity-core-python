@@ -46,6 +46,7 @@ partner_params = {
   string of the liveness image).
 """
 
+
 def create_base64_str(path: str) -> str:
     """Convert image to a base64 string.
 
@@ -57,6 +58,7 @@ def create_base64_str(path: str) -> str:
         base64_data = base64.b64encode(binary_file_data)
         base64_img = base64_data.decode("utf-8")
         return base64_img
+
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # selfie-file-path
@@ -97,6 +99,7 @@ options = OptionsParams(
     use_enrolled_image=False,
 )
 
+
 def submit_job() -> None:
     """Submit job via the WebAPi."""
     result = connection.submit_job(
@@ -106,6 +109,7 @@ def submit_job() -> None:
         options,
     )
     print(result)
+
 
 if __name__ == "__main__":
     submit_job()

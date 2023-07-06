@@ -8,6 +8,7 @@ import pytest
 from smile_id_core import IdApi, ServerError, Signature
 from smile_id_core.constants import JobType
 
+
 def test_handle_wrong_credentials(
     setup_client: Tuple[str, str, str], signature_fixture: Signature
 ) -> None:
@@ -20,12 +21,14 @@ def test_handle_wrong_credentials(
     pytest.raises(ValueError, IdApi, partner_id, None, 0)
     pytest.raises(ValueError, IdApi, None, api_key, 0)
 
+
 def test_instance(setup_client: Tuple[str, str, str], client: IdApi) -> None:
     """Perform value checks on partner id, api key and endpoint url"""
     api_key, _, _ = setup_client
     assert client.partner_id == "001"
     assert client.api_key == api_key
     assert client.url == "https://testapi.smileidentity.com/v1"
+
 
 def test_empty_partner_id(setup_client: Tuple[str, str, str]) -> None:
     """Check for empty partner_id and raises an error"""
@@ -36,6 +39,7 @@ def test_empty_partner_id(setup_client: Tuple[str, str, str]) -> None:
         str(value_error.value)
         == "partner_id or api_key cannot be null or empty"
     )
+
 
 def test_no_partner_params(
     client: IdApi,
@@ -50,6 +54,7 @@ def test_no_partner_params(
         == "Please ensure that you send through partner params"
     )
 
+
 def test_no_id_info_params(
     client: IdApi,
     kyc_partner_params: Dict[str, Any],
@@ -62,6 +67,7 @@ def test_no_id_info_params(
         str(value_error.value)
         == "Please ensure that you send through ID Information"
     )
+
 
 def test_invalid_job_type(
     client: IdApi,
@@ -77,6 +83,7 @@ def test_invalid_job_type(
     with pytest.raises(ValueError) as value_error:
         client.submit_job(partner_params, id_info_params, False)
     assert str(value_error.value) == "Job type must be 5 for ID Api"
+
 
 def test_id_info_params(
     client: IdApi,
@@ -122,6 +129,7 @@ def test_id_info_params(
         id_info_params,
     )
 
+
 def get_id_response(signature_fixture: Signature) -> Dict[str, Any]:
     """Set up mocked example of expected json response for ID API tests"""
     signature = signature_fixture.generate_signature(
@@ -158,6 +166,7 @@ def get_id_response(signature_fixture: Signature) -> Dict[str, Any]:
         "timestamp": signature.get("timestamp"),
         "signature": signature.get("signature"),
     }
+
 
 def get_smile_services_response() -> Dict[str, Any]:
     """Returns supported Nigeria ID type examples for mocks"""
@@ -233,6 +242,7 @@ def get_smile_services_response() -> Dict[str, Any]:
         }
     }
 
+
 def test_error_return_data(
     kyc_partner_params: Dict[str, Any],
     kyc_id_info: Dict[str, str],
@@ -274,6 +284,7 @@ def test_error_return_data(
         " response={'code': '2204', 'error': 'unauthorized'}"
     )
 
+
 def test_validate_return_data(
     kyc_partner_params: Dict[str, Any],
     kyc_id_info: Dict[str, str],
@@ -309,6 +320,7 @@ def test_validate_return_data(
             response["IDNumber"]
             == get_id_response(signature_fixture)["IDNumber"]
         )
+
 
 def test_validate_return_data_business_verification(
     kyc_partner_params: Dict[str, Any],
@@ -346,6 +358,7 @@ def test_validate_return_data_business_verification(
         response = client.submit_job(partner_params, id_info_params, False)
 
         assert response
+
 
 def test_custom_sid_server_url(setup_client: Tuple[str, str, str]) -> None:
     """Checks for custom server url"""

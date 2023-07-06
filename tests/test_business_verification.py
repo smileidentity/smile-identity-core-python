@@ -9,6 +9,7 @@ from smile_id_core import JobType, ServerError
 from smile_id_core.BusinessVerification import BusinessVerification
 from smile_id_core.Signature import Signature
 
+
 def test_instance(
     setup_client: Tuple[str, str, str], client_kyb: BusinessVerification
 ) -> None:
@@ -17,6 +18,7 @@ def test_instance(
     assert client_kyb.partner_id == "001"
     assert client_kyb.api_key == api_key
     assert client_kyb.url == "https://testapi.smileidentity.com/v1"
+
 
 def test_empty_partner_id(setup_client: Tuple[str, str, str]) -> None:
     """Check for empty partner_id and raises an error"""
@@ -27,6 +29,7 @@ def test_empty_partner_id(setup_client: Tuple[str, str, str]) -> None:
         str(value_error.value)
         == "partner_id or api_key cannot be null or empty"
     )
+
 
 def test_no_partner_params(
     client_kyb: BusinessVerification,
@@ -40,6 +43,7 @@ def test_no_partner_params(
         == "Please ensure that you send through partner params"
     )
 
+
 def test_no_id_info_params(
     client_kyb: BusinessVerification,
     kyc_partner_params: Dict[str, Any],
@@ -51,6 +55,7 @@ def test_no_id_info_params(
         str(value_error.value)
         == "Please ensure that you send through ID Information"
     )
+
 
 def test_id_info_params(
     client_kyb: BusinessVerification,
@@ -93,6 +98,7 @@ def test_id_info_params(
         id_info_params,
     )
 
+
 def test_invalid_job_type(
     client_kyb: BusinessVerification,
     kyc_id_info: Dict[str, str],
@@ -107,6 +113,7 @@ def test_invalid_job_type(
     with pytest.raises(ValueError) as value_error:
         client_kyb.submit_job(partner_params, id_info_params)
     assert str(value_error.value) == "Job type must be 7 for kyb"
+
 
 def get_id_response(signature_fixture: Signature) -> Dict[str, Any]:
     """Generates Signature and returns a test payload response"""
@@ -210,6 +217,7 @@ def get_id_response(signature_fixture: Signature) -> Dict[str, Any]:
         "success": True,
     }
 
+
 def test_error_return_data(
     client_kyb: BusinessVerification,
     kyb_partner_params: Dict[str, Any],
@@ -242,6 +250,7 @@ def test_error_return_data(
         "business_verification, status=400, response={'code': '2204', "
         "'error': 'unauthorized'}"
     )
+
 
 def test_validate_return_data(
     kyb_partner_params: Dict[str, Any],

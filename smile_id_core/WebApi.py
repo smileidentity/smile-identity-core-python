@@ -24,6 +24,7 @@ from smile_id_core.Utilities import (
 
 __all__ = ["WebApi"]
 
+
 class WebApi(Base):
     """Allows validation of user ID against ID authority/third parties.
 
@@ -58,6 +59,7 @@ class WebApi(Base):
             self.partner_id, self.api_key, self.sid_server
         )
         self.signature_params = get_signature(self.partner_id, self.api_key)
+
     def __call_id_api(
         self,
         partner_params: Dict[str, Any],
@@ -69,6 +71,7 @@ class WebApi(Base):
         return id_api.submit_job(
             partner_params, id_info_params, use_validation_api, options_params
         )
+
     def submit_job(
         self,
         partner_params: Dict[str, Any],
@@ -190,6 +193,7 @@ class WebApi(Base):
             )
             return job_status
         return {"success": True, "smile_job_id": smile_job_id}
+
     def get_web_token(
         self,
         user_id: str,
@@ -217,6 +221,7 @@ class WebApi(Base):
                 "partner_id": self.partner_id,
             },
         )
+
     def __validate_options(self, options_params: OptionsParams) -> None:
         """Perform validations on options params and callback_url."""
         if not self.call_back_url and not options_params:
@@ -231,6 +236,7 @@ class WebApi(Base):
                     (options_params.get(key)), bool
                 ):
                     raise ValueError(f"{key} needs to be a boolean")
+
     def __validate_return_data(self, options: OptionsParams) -> None:
         """Validate missing callback_url and option_params params."""
         if not self.call_back_url and not options["return_job_status"]:
@@ -238,6 +244,7 @@ class WebApi(Base):
                 "Please choose to either get your response via the callback or"
                 " job status query"
             )
+
     def __prepare_prep_upload_payload(
         self,
         partner_params: Dict[str, str],
@@ -267,6 +274,7 @@ class WebApi(Base):
             "source_sdk_version": get_version(),
             **signature_params,
         }
+
     def poll_job_status(
         self,
         counter: int,
@@ -296,6 +304,7 @@ class WebApi(Base):
             )
 
         return job_status
+
     @staticmethod
     def execute_http(url: str, payload: Dict[str, str]) -> Response:
         """Send http request to specified endpoint url and return response.
@@ -318,6 +327,7 @@ class WebApi(Base):
             },
         )
         return resp
+
     @staticmethod
     def upload(url: str, file: Any) -> Response:
         """Send a PUT request to upload file to specified url."""
