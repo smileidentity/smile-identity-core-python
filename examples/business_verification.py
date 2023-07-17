@@ -24,7 +24,6 @@ api_key: str = os.environ["API_KEY"]
 
 connection = BusinessVerification(partner_id, api_key, sid_server)
 
-
 """ Create required tracking parameters
 Every communication between your server and the Smile Identity servers contain
 these parameters. Use them to match up the job results with the job and user

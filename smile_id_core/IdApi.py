@@ -1,6 +1,8 @@
 """ID API class for kyc services."""
 from typing import Any, Dict, Optional, Union
 
+from requests import Response
+
 from smile_id_core.base import Base
 from smile_id_core.BusinessVerification import BusinessVerification
 from smile_id_core.constants import JobType
@@ -38,7 +40,7 @@ class IdApi(Base):
         id_params: Dict[str, str],
         use_validation_api: bool = True,
         options_params: Optional[OptionsParams] = None,
-    ) -> Dict[str, Any]:
+    ) -> Response:
         """Validate data params & query id_verification endpoint for KYC jobs.
 
         Performs checks on id_info_params, partner_params, makes endpoint
@@ -48,11 +50,11 @@ class IdApi(Base):
         partner_params: Dictionary containing all partner params
         id_params: Dictionary containing id info params
         use_validation_api: Performs validation based on boolean value
-        option_params: Dictionary containaing optional info params such as
+        option_params: Dictionary containing optional info params such as
             return_job_status, return_image_links, and return_history.
             Each of these keys has a boolean value
 
-        Returns: https post request output of type Response. Alternarively,
+        Returns: https post request output of type Response. Alternatively,
         raises a server or value error if there's an exception.
         """
         if not options_params:
@@ -95,4 +97,4 @@ class IdApi(Base):
                 f"Failed to post entity to {url},"
                 f" status={response.status_code}, response={response.json()}"
             )
-        return dict(response.json())
+        return response

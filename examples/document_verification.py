@@ -63,7 +63,6 @@ image_path = os.path.join(current_dir, "../tests/fixtures/1pixel.jpg")
 # selfie-base64-string
 base64image = create_base64_str(image_path)
 
-
 """Create image list.
 
   image_type_id Integer

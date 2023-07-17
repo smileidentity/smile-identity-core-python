@@ -60,7 +60,6 @@ base64image = create_base64_str(selfie_path)
  string of the selfie)
  """
 
-
 image_details: List[ImageParams] = [
     {
         "image_type_id": ImageTypes.SELFIE_IMAGE_STRING,  # 0 or 2

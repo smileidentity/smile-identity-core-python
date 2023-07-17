@@ -1,10 +1,11 @@
 """ Test class for Web API"""
 import os
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, cast
 
 import pytest
 import responses
+from requests import Response
 
 from smile_id_core.constants import JobType
 from smile_id_core.ServerError import ServerError
@@ -20,7 +21,6 @@ from tests.conftest import (
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 image_path = os.path.join(current_dir, "../tests/fixtures/1pixel.jpg")
-
 
 """Checks through unittests that all function in Web API application file
 are tested"""
@@ -529,7 +529,7 @@ def test_validate_return_data(
     )
 
     assert response
-    assert response == job_status_response["json"]
+    assert cast(Response, response).json() == job_status_response["json"]
 
 
 @responses.activate

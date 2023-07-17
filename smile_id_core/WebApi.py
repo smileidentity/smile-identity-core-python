@@ -66,7 +66,7 @@ class WebApi(Base):
         id_info_params: Dict[str, str],
         use_validation_api: bool,
         options_params: OptionsParams,
-    ) -> Dict[str, Any]:
+    ) -> Response:
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
         return id_api.submit_job(
             partner_params, id_info_params, use_validation_api, options_params
@@ -79,8 +79,8 @@ class WebApi(Base):
         id_info_params: Dict[str, Any],
         options_params: OptionsParams,
         use_validation_api: bool = True,
-    ) -> Dict[str, Any]:
-        """Perform key/paramter validation, creates zipped file and uploads."""
+    ) -> Union[Response, Dict[str, Any]]:
+        """Perform key/parameter validation, creates zipped file and uploads."""
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params.get("job_type")
 
@@ -191,7 +191,7 @@ class WebApi(Base):
             job_status = self.poll_job_status(
                 0, partner_params, options_params, signature_params
             )
-            return dict(job_status.json())
+            return job_status
         return {"success": True, "smile_job_id": smile_job_id}
 
     def get_web_token(
@@ -255,9 +255,9 @@ class WebApi(Base):
 
         argument(s):
         partner_params: Dict containing all partner params
-        Signature_params: Dict containaing generated signature and timestamp
+        Signature_params: Dict containing generated signature and timestamp
         use_enrolled_image: Performs validation based on boolean value
-        option_params: Dict containaing optional info params such as
+        option_params: Dict containing optional info params such as
             return_job_status, return_image_links, and return_history.
             Each of these keys has a boolean value
         """

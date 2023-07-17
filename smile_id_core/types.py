@@ -7,7 +7,6 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import TypedDict
 
-
 OptionsParams = TypedDict(
     "OptionsParams",
     {
@@ -17,7 +16,6 @@ OptionsParams = TypedDict(
         "use_enrolled_image": bool,
     },
 )
-
 
 SignatureParams = TypedDict(
     "SignatureParams",

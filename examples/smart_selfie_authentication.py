@@ -67,7 +67,6 @@ base64selfie = create_base64_str(selfie_path)
  6 - Liveness image jpg or png base64 encoded (if you have the base64image
  string of the liveness image) """
 
-
 image_details: List[ImageParams] = [
     {
         "image_type_id": ImageTypes.SELFIE_FILE,  # 0 or 2
