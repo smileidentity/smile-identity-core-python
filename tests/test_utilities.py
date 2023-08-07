@@ -203,7 +203,7 @@ def test_validate_signature_params(signature_fixture: Signature) -> None:
     signature = signature_fixture.generate_signature(datetime.now().isoformat())
     signature_ = {"timestamp": signature["timestamp"]}
     pytest.raises(Exception, validate_signature_params, signature_)
-    signature_ = {"signature": signature["signature"], "timestamp": None}  # type: ignore
+    signature_ = {"signature": signature["signature"], "timestamp": None}  # type: ignore # noqa
     pytest.raises(Exception, validate_signature_params, signature_)
 
 

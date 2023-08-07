@@ -3,7 +3,7 @@ import base64
 import json
 import os
 from datetime import datetime
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple
 from uuid import uuid4
 
 import pytest
