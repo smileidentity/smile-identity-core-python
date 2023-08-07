@@ -259,27 +259,27 @@ class Utilities(Base):
         response_json = response.json()
         if job_type == JobType.DOCUMENT_VERIFICATION:
             doc_verification = response_json["hosted_web"]["doc_verification"]
-            if not id_info_params["country"] in doc_verification:
+            if id_info_params["country"] not in doc_verification:
                 raise ValueError(
                     f"country {id_info_params['country']} is invalid"
                 )
             selected_country = doc_verification[id_info_params["country"]][
                 "id_types"
             ]
-            if not id_info_params["id_type"] in selected_country:
+            if id_info_params["id_type"] not in selected_country:
                 raise ValueError(
                     f"id_type {id_info_params['id_type']} is invalid"
                 )
         else:
             id_types_by_country = response_json["id_types"]
-            if not id_info_params["country"] in id_types_by_country:
+            if id_info_params["country"] not in id_types_by_country:
                 raise ValueError(
                     f"country {id_info_params['country']} is invalid"
                 )
             selected_country = response_json["id_types"][
                 id_info_params["country"]
             ]
-            if not id_info_params["id_type"] in selected_country:
+            if id_info_params["id_type"] not in selected_country:
                 raise ValueError(
                     f"id_type {id_info_params['id_type']} is invalid"
                 )

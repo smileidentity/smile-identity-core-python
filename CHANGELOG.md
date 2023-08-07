@@ -5,15 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- ruff for linting
 
+### Changed
+- Downgrade dependencies versions where possible to increase compatibility with other python packages.
 
 ## [2.1.0] - 2023-07-21
 ### Changed
 - Configure optional dependency groups for development dependencies. Requires fewer dependencies to be installed when installing the package.
 - Improved the documentation
 
-### Added 
-- Added smile-Id constants
+### Added
+- Added smile-id constants
 - Added custom types
 - Added Business verification
 - Added runnable examples for products
@@ -24,7 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Drop support for 3.6
-
 
 ## [2.0.1] - 2023-02-22
 ### Changed
