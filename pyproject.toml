@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "smile-id-core"
-version = "2.0.1"
+version = "2.1.0"
 description = "The official Smile Identity package exposes four classes namely; the WebApi class, the IDApi class, the Signature class and the Utilities class."
 license = "MIT"
 authors = ["Smile Identity <support@smileidentity.com>"]
@@ -36,6 +36,7 @@ optional = true
 black = ">=22.8,<24.0"
 coverage = "7.2.7"
 isort = "^5.10.1"
+keepachangelog-manager = ">=3.3.1"
 mock = ">=4.0.3,<6.0.0"
 mypy = "1.4.1"
 pydocstyle = "^6.3.0"
@@ -50,7 +51,6 @@ types-mock = ">=4.0.15.2,<6.0.0.0"
 [tool.poetry.group.github-actions]
 optional = true
 [tool.poetry.group.github-actions.dependencies]
-keepachangelog-manager = ">=3.3.1"
 pytest-github-actions-annotate-failures = ">=0.1.7,<0.3.0"
 
 [tool.black]
