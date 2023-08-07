@@ -8,12 +8,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Drop support for 3.6
 
-## [2.0.1] - 2023-02-22
+### Added
+- ruff for linting
+
+### Changed
+- Downgrade dependencies versions where possible to increase compatibility with other python packages.
+
+## [2.0.1] - 2023-02-28
 ### Changed
 - Configure optional dependency groups for development dependencies. Requires fewer dependencies to be installed when installing the package.
 - Improved the documentation
 
-### Added - 2023-02-28
+### Added
 - Added smile-Id constants
 - Added custom types
 - Added Business verification
