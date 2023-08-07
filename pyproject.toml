@@ -24,11 +24,11 @@ requires = ["poetry-core>=1.1.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.dependencies]
-pycryptodome = "^3.15.0"
+pycryptodome = "^3.0.0"
 python = "^3.7"
-requests = "^2.27.1"
-typing-extensions = "4.7.1"
-types-requests = "^2.28.11.5"
+requests = "^2.0.0"
+typing-extensions = "4.2.0"
+types-requests = "^2.0.0.0"
 
 [tool.poetry.group.dev]
 optional = true
@@ -38,17 +38,19 @@ coverage = "7.2.7"
 isort = "^5.10.1"
 mock = ">=4.0.3,<6.0.0"
 mypy = "1.4.1"
+pydocstyle = "^6.3.0"
 pylint = "2.13.9"
 pytest = "^7.0.1"
 pytest-cov = "^4.0.0"
-pydocstyle = "^6.3.0"
 pytest-xdist = "^3.0.2"
 responses = ">=0.17,<0.24"
+ruff = "^0.0.282"
 types-mock = ">=4.0.15.2,<6.0.0.0"
 
 [tool.poetry.group.github-actions]
 optional = true
 [tool.poetry.group.github-actions.dependencies]
+keepachangelog-manager = ">=3.3.1"
 pytest-github-actions-annotate-failures = ">=0.1.7,<0.3.0"
 
 [tool.black]
