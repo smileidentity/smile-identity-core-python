@@ -19,10 +19,14 @@ jobs:
           cache: "poetry"
       - name: Install dependencies
         run: poetry install --with dev
+      - name: check ruff
+        run: poetry run ruff check $(git ls-files '*.py')
       - name: lint code
         run: poetry run pylint $(git ls-files '*.py') --fail-under 7.0 --verbose
       - name: check docstyle (Google styledoc)
         run: poetry run pydocstyle $(git ls-files '*.py') --verbose --convention=google
+      - name: check changelog
+        run: poetry run changelogmanager --error-format github validate
       - name: run mypy
         run: poetry run mypy $(git ls-files '*.py')
       - name: check black formatting
