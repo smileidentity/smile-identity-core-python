@@ -167,82 +167,6 @@ def get_id_response(signature_fixture: Signature) -> Dict[str, Any]:
         "signature": signature.get("signature"),
     }
 
-
-def get_smile_services_response() -> Dict[str, Any]:
-    """Returns supported Nigeria ID type examples for mocks"""
-    return {
-        "id_types": {
-            "NG": {
-                "NIN": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                ],
-                "CAC": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "company",
-                    "job_id",
-                ],
-                "TIN": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                ],
-                "VOTER_ID": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                ],
-                "BVN": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                ],
-                "PHONE_NUMBER": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                    "first_name",
-                    "last_name",
-                ],
-                "DRIVERS_LICENSE": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                    "first_name",
-                    "last_name",
-                    "dob",
-                ],
-                "PASSPORT": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                    "first_name",
-                    "last_name",
-                    "dob",
-                ],
-            },
-        }
-    }
-
-
 def test_error_return_data(
     kyc_partner_params: Dict[str, Any],
     kyc_id_info: Dict[str, str],
@@ -270,12 +194,6 @@ def test_error_return_data(
 
             mocked_get.return_value.status_code = 200
             mocked_get.return_value.ok = True
-            mocked_get.return_value.text.return_value = (
-                get_smile_services_response()
-            )
-            mocked_get.return_value.json.return_value = (
-                get_smile_services_response()
-            )
 
             client.submit_job(partner_params, id_info_params)
     assert (

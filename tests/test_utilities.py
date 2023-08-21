@@ -52,95 +52,6 @@ def test_instance(
     assert client_utilities.api_key == api_key
     assert client_utilities.url == "https://testapi.smileidentity.com/v1"
 
-
-def get_smile_services_response() -> Dict[str, Any]:
-    """Returns supported Nigeria ID type examples for mocks"""
-    return {
-        "id_types": {
-            "NG": {
-                "NIN": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                ],
-                "CAC": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "company",
-                    "job_id",
-                ],
-                "TIN": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                ],
-                "VOTER_ID": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                ],
-                "BVN": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                ],
-                "PHONE_NUMBER": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                    "first_name",
-                    "last_name",
-                ],
-                "DRIVERS_LICENSE": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                    "first_name",
-                    "last_name",
-                    "dob",
-                ],
-                "PASSPORT": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                    "first_name",
-                    "last_name",
-                    "dob",
-                ],
-            },
-        },
-        "hosted_web": {
-            "doc_verification": {
-                "NG": {
-                    "name": "Nigeria",
-                    "id_types": {
-                        "VOTER_ID": {"label": "Voter's ID"},
-                        "NIN": {"label": "National ID"},
-                        "PASSPORT": {"label": "Passport"},
-                        "DRIVERS_LICENSE": {"label": "Driver's License"},
-                    },
-                }
-            },
-        },
-    }
-
-
 def test_validate_id_params(
     setup_client: Tuple[str, str, str], signature_fixture: Signature
 ) -> None:
@@ -167,7 +78,7 @@ def test_validate_id_params(
 
     assert (
         utilities.validate_id_params(
-            0, id_info_params, partner_params, use_validation_api=False
+            0, id_info_params, partner_params,
         )
         is None
     )
@@ -188,7 +99,6 @@ def test_validate_id_params(
         0,
         id_info_params,
         partner_params,
-        use_validation_api=False,
     )
 
     utilities = Utilities(partner_id, api_key, 0)
@@ -305,7 +215,6 @@ def test_validate_id_params_should_raise_when_provided_with_invalid_input(
     """Validate id parameters using the smile services endpoint which
     checks the provided id params, and partner params"""
 
-    stub_service("https://testapi.smileidentity.com/v1")
     kyc_id_info["country"] = ""
     with pytest.raises(ValueError) as value_error:
         Utilities.validate_id_params(
@@ -332,59 +241,6 @@ def test_validate_id_params_should_raise_when_provided_with_invalid_input(
             kyc_partner_params,
         )
     assert str(value_error.value) == "key id_number cannot be empty"
-    kyc_id_info["id_number"] = "A00000000"
-    kyc_id_info["country"] = "ZW"
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            kyc_partner_params,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "country ZW is invalid"
-
-    kyc_id_info["country"] = "NG"
-    kyc_id_info["id_type"] = "Not_Supported"
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            kyc_partner_params,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "id_type Not_Supported is invalid"
-    kyc_id_info["id_type"] = "PASSPORT"
-    kyc_partner_params["user_id"] = None
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            kyc_partner_params,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "key user_id cannot be empty"
-
-    kyc_partner_params["user_id"] = "kyb_test_user_008"
-    kyc_id_info["first_name"] = ""
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            kyc_partner_params,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "key first_name cannot be empty"
-    kyc_id_info["first_name"] = "FirstName"
-    updated_partner_params = dict(kyc_partner_params)
-    del updated_partner_params["user_id"]
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            updated_partner_params,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "key user_id is required"
 
 
 @responses.activate
@@ -395,7 +251,6 @@ def test_validate_id_params_raise_when_given_invalid_input_for_jt6(
 ) -> None:
     """Validates when wrong input for document verification is provided"""
 
-    stub_service("https://testapi.smileidentity.com/v1")
     kyc_id_info["country"] = ""
     with pytest.raises(ValueError) as value_error:
         Utilities.validate_id_params(
@@ -413,29 +268,6 @@ def test_validate_id_params_raise_when_given_invalid_input_for_jt6(
             partner_params_jt6,
         )
     assert str(value_error.value) == "key id_type cannot be empty"
-
-    kyc_id_info["id_type"] = "PASSPORT"
-    kyc_id_info["country"] = "ZW"
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            partner_params_jt6,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "country ZW is invalid"
-
-    kyc_id_info["country"] = "NG"
-    kyc_id_info["id_type"] = "Not_Supported"
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            partner_params_jt6,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "id_type Not_Supported is invalid"
-
 
 @responses.activate
 def test_get_job_status(
@@ -530,82 +362,3 @@ def test_get_job_status_raises_server_error(
         option_params,
         signature,
     )
-
-
-@responses.activate
-def test_get_smile_id_services(client_utilities: Utilities) -> None:
-    """Validates job status code after making test api calls to production
-    and sandbox through the servicesstub_services"""
-
-    stub_service("https://testapi.smileidentity.com/v1")
-    client_utilities.get_smile_id_services(0)
-
-    stub_service("https://api.smileidentity.com/v1")
-    client_utilities.get_smile_id_services(1)
-
-    stub_service("https://random-server.smileidentity.com/v1")
-    job_status = client_utilities.get_smile_id_services(
-        "https://random-server.smileidentity.com/v1"
-    )
-
-    assert job_status.status_code == 200
-
-
-def test_get_smile_id_services_success():
-    with patch("requests.get") as mock_get:
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = {
-            "code": "2204",
-            "error": "unauthorized",
-        }
-
-        response = Utilities.get_smile_id_services(0)
-        assert response.status_code == 200
-
-
-def test_get_smile_id_services_failure():
-    with patch("requests.get") as mock_get:
-        mock_get.return_value.status_code = 500
-        mock_get.return_value.json.return_value = {
-            "code": "2204",
-            "error": "unauthorized",
-        }
-
-        pytest.raises(ServerError, Utilities.get_smile_id_services, 0)
-
-
-def stub_service(url: str, json: Union[Dict[str, Any], Any] = None) -> None:
-    """When response from get_smile_services_response module call is not
-    json"""
-
-    if not json:
-        json = get_smile_services_response()
-
-    responses.add(
-        responses.GET,
-        f"{url}/services",
-        json=json,
-    )
-
-
-def test_error_return_data(client_utilities):
-    """Tests for error return data due to server error"""
-
-    with patch("requests.post") as mocked_post, patch(
-        "requests.get"
-    ) as mocked_get:
-        mocked_post.return_value.status_code = 500
-        mocked_post.return_value.ok = True
-        mocked_post.return_value.text = "Unauthorized"
-        mocked_post.return_value.json.return_value = {
-            "code": "2204",
-            "error": "unauthorized",
-        }
-        mocked_get.return_value.text = "Unauthorized"
-        mocked_get.return_value.json.return_value = {
-            "code": "2204",
-            "error": "unauthorized",
-        }
-
-        with pytest.raises(ServerError):
-            client_utilities.get_smile_id_services(0)

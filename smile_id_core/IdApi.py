@@ -38,7 +38,6 @@ class IdApi(Base):
         self,
         partner_params: Dict[str, Any],
         id_params: Dict[str, str],
-        use_validation_api: bool = True,
         options_params: Optional[OptionsParams] = None,
     ) -> Response:
         """Validate data params & query id_verification endpoint for KYC jobs.
@@ -49,7 +48,6 @@ class IdApi(Base):
         argument(s):
         partner_params: Dictionary containing all partner params
         id_params: Dictionary containing id info params
-        use_validation_api: Performs validation based on boolean value
         option_params: Dictionary containing optional info params such as
             return_job_status, return_image_links, and return_history.
             Each of these keys has a boolean value
@@ -80,7 +78,6 @@ class IdApi(Base):
             self.url,
             id_params,
             partner_params,
-            use_validation_api,
         )
 
         if partner_params.get("job_type") != JobType.ENHANCED_KYC:
