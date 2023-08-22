@@ -81,7 +81,7 @@ def test_invalid_job_type(
     )
     partner_params["job_type"] = JobType.BIOMETRIC_KYC
     with pytest.raises(ValueError) as value_error:
-        client.submit_job(partner_params, id_info_params, False)
+        client.submit_job(partner_params, id_info_params, None)
     assert str(value_error.value) == "Job type must be 5 for ID Api"
 
 
@@ -225,7 +225,7 @@ def test_validate_return_data(
             signature_fixture,
         )
 
-        result = client.submit_job(partner_params, id_info_params, False)
+        result = client.submit_job(partner_params, id_info_params, None)
         response = dict(result.json())
         assert response is not None
 
@@ -273,7 +273,7 @@ def test_validate_return_data_business_verification(
             signature_fixture,
         )
 
-        response = client.submit_job(partner_params, id_info_params, False)
+        response = client.submit_job(partner_params, id_info_params, None)
 
         assert response
 

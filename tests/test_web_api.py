@@ -91,7 +91,7 @@ def test_no_callback_url_jt1(
 ) -> None:
     """callback url is empty and job type is BIOMETRIC_KYC"""
     api_key, partner_id, sid_server, callback_url = setup_web_client
-    web_api = WebApi(partner_id, None, api_key, sid_server)
+    web_api = WebApi(partner_id, "", api_key, sid_server)
     web_partner_params["job_type"] = JobType.BIOMETRIC_KYC
     option_params["return_job_status"] = False
     pytest.raises(
