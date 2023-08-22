@@ -2,8 +2,7 @@
 import re
 import uuid
 from datetime import datetime, timedelta
-from typing import Any, Dict, Tuple, Union
-from unittest.mock import patch
+from typing import Any, Dict, Tuple
 from uuid import uuid4
 
 import pytest
