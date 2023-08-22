@@ -51,6 +51,7 @@ def test_instance(
     assert client_utilities.api_key == api_key
     assert client_utilities.url == "https://testapi.smileidentity.com/v1"
 
+
 def test_validate_id_params(
     setup_client: Tuple[str, str, str], signature_fixture: Signature
 ) -> None:
@@ -77,7 +78,9 @@ def test_validate_id_params(
 
     assert (
         utilities.validate_id_params(
-            0, id_info_params, partner_params,
+            0,
+            id_info_params,
+            partner_params,
         )
         is None
     )
@@ -267,6 +270,7 @@ def test_validate_id_params_raise_when_given_invalid_input_for_jt6(
             partner_params_jt6,
         )
     assert str(value_error.value) == "key id_type cannot be empty"
+
 
 @responses.activate
 def test_get_job_status(

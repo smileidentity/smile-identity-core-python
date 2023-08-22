@@ -67,9 +67,7 @@ class WebApi(Base):
         options_params: OptionsParams,
     ) -> Response:
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
-        return id_api.submit_job(
-            partner_params, id_info_params, options_params
-        )
+        return id_api.submit_job(partner_params, id_info_params, options_params)
 
     def submit_job(
         self,
@@ -140,9 +138,7 @@ class WebApi(Base):
             use_enrolled_image=options_params.get("use_enrolled_image", False),
             job_type=job_type,
         )
-        Utilities.validate_id_params(
-            self.url, id_info_params, partner_params
-        )
+        Utilities.validate_id_params(self.url, id_info_params, partner_params)
         self.__validate_return_data(options_params)
 
         signature_params = self.signature_params

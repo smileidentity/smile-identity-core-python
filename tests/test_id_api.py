@@ -167,6 +167,7 @@ def get_id_response(signature_fixture: Signature) -> Dict[str, Any]:
         "signature": signature.get("signature"),
     }
 
+
 def test_error_return_data(
     kyc_partner_params: Dict[str, Any],
     kyc_id_info: Dict[str, str],

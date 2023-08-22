@@ -147,6 +147,7 @@ def test_no_id_info_params_jt5(
         option_params,
     )
 
+
 def test_validate_return(
     option_params: OptionsParams,
     setup_web_client: Tuple[str, str, str, str],
@@ -166,6 +167,7 @@ def test_validate_return(
         kyc_id_info,
         option_params,
     )
+
 
 def test_no_partner_params(
     client_web: WebApi,
@@ -198,10 +200,10 @@ def test_success_true_smile_job_type_7(
     signature_fixture: Signature,
 ) -> None:
     responses.add(
-    responses.POST,
-    "https://testapi.smileidentity.com/v1/business_verification",
-    status=200,
-    json={"success": True, "smile_job_id": "023923"},
+        responses.POST,
+        "https://testapi.smileidentity.com/v1/business_verification",
+        status=200,
+        json={"success": True, "smile_job_id": "023923"},
     )
     """check return data for valid smile_job_type when option_params
     return_job_status is false"""
@@ -220,6 +222,7 @@ def test_success_true_smile_job_type_7(
         option_params,
     )
 
+
 @responses.activate
 def test_success_true_smile_job_type_5(
     web_partner_params: Dict[str, Any],
@@ -230,10 +233,10 @@ def test_success_true_smile_job_type_5(
     signature_fixture: Signature,
 ) -> None:
     responses.add(
-    responses.POST,
-    "https://testapi.smileidentity.com/v1/id_verification",
-    status=200,
-    json={"success": True, "smile_job_id": "023923"},
+        responses.POST,
+        "https://testapi.smileidentity.com/v1/id_verification",
+        status=200,
+        json={"success": True, "smile_job_id": "023923"},
     )
     """check return data for valid smile_job_type when option_params
     return_job_status is false"""
@@ -251,6 +254,7 @@ def test_success_true_smile_job_type_5(
         kyc_id_info,
         option_params,
     )
+
 
 @responses.activate
 def test_success_true_smile_job_type(
