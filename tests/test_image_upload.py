@@ -301,7 +301,9 @@ def test_validate_images_params():
         str(exc_info.value) == "check for image_type_id and image file mismatch"
     )
 
-    image_params: List[ImageParams] = [{"image": base64_img, "image_type_id": None}]  # type: ignore
+    image_params = [
+        {"image": base64_img, "image_type_id": None}  # type: ignore
+    ]
 
     with pytest.raises(ValueError) as exc_info:
         validate_images(
