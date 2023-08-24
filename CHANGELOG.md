@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- Breaking: Change `submit_job` method signature for both `WebApi` and `IDApi`.
+  `WebApi` and `IDApi` will no longer support `use_validation_api` parameter
+
+
 ## [2.1.2] - 2023-08-07
 ### Fixed
 - Set minimum typing-extensions version instead of exact version.
