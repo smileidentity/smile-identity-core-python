@@ -209,7 +209,7 @@ class WebApi(Base):
             self.partner_id, self.api_key
         ).generate_signature(timestamp)
 
-        response =  WebApi.execute_http(
+        response = WebApi.execute_http(
             f"{self.url}/token",
             {
                 "timestamp": signature_params["timestamp"],
@@ -221,7 +221,7 @@ class WebApi(Base):
                 "partner_id": self.partner_id,
             },
         )
-        
+
         return dict(response.json())
 
     def __validate_options(self, options_params: OptionsParams) -> None:
@@ -299,7 +299,7 @@ class WebApi(Base):
         job_status = self.utilities.get_job_status(
             partner_params, options_params, signature_params
         )
-        
+
         if not job_status["job_complete"] and counter < 20:
             return self.poll_job_status(
                 counter, partner_params, options_params, signature_params

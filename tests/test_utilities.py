@@ -485,10 +485,14 @@ def test_get_job_status(
         kyc_partner_params, options, signature
     )
 
-    assert none_option_param["result"]["PartnerParams"]["job_id"] \
+    assert (
+        none_option_param["result"]["PartnerParams"]["job_id"]
         == "52d0de86-be3b-4219-9e96-8195b0018944"
-    assert set_option_param["result"]["PartnerParams"]["job_id"] \
+    )
+    assert (
+        set_option_param["result"]["PartnerParams"]["job_id"]
         == "52d0de86-be3b-4219-9e96-8195b0018944"
+    )
 
     # Check for signature equals None
     signature = get_signature(partner_id, api_key)
@@ -496,14 +500,18 @@ def test_get_job_status(
         kyc_partner_params, options, None
     )
     assert none_signature["signature"] is not None
-    assert none_signature["result"]["PartnerParams"]["job_id"] \
+    assert (
+        none_signature["result"]["PartnerParams"]["job_id"]
         == "52d0de86-be3b-4219-9e96-8195b0018944"
+    )
 
     set_signature = client_utilities.get_job_status(
         kyc_partner_params, options, signature
     )
-    assert set_signature["result"]["PartnerParams"]["job_id"] \
+    assert (
+        set_signature["result"]["PartnerParams"]["job_id"]
         == "52d0de86-be3b-4219-9e96-8195b0018944"
+    )
 
 
 @responses.activate
