@@ -307,8 +307,8 @@ def test_validate_return_data(
             signature_fixture,
         )
 
-        result = client.submit_job(partner_params, id_info_params, False)
-        response = dict(result.json())
+        response = client.submit_job(partner_params, id_info_params, False)
+
         assert response is not None
 
         assert (

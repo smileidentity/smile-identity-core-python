@@ -529,7 +529,7 @@ def test_validate_return_data(
     )
 
     assert response
-    assert cast(Response, response).json() == job_status_response["json"]
+    assert response == job_status_response["json"]
 
 
 @responses.activate

@@ -43,7 +43,7 @@ class BusinessVerification(Base):
         self,
         partner_params: Dict[str, Any],
         id_params: Dict[str, str],
-    ) -> Response:
+    ) -> Dict[str, Any]:
         """Generate signature, creates payload and get response for KYb jobs.
 
         argument(s):
@@ -53,7 +53,7 @@ class BusinessVerification(Base):
             business_type, id_number and id_type
 
         Returns:
-            Response object, which contains response to the HTTP post request.
+            Dict[str, Any] which contains response to the HTTP post request.
         """
         Utilities.validate_partner_params(partner_params)
 
@@ -82,4 +82,4 @@ class BusinessVerification(Base):
                 f"Failed to post entity to {self.url}/business_verification,"
                 f" status={response.status_code}, response={response.json()}"
             )
-        return response
+        return response.json()
