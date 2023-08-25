@@ -8,7 +8,6 @@ the tax information returns only the company information
 """
 from typing import Any, Dict, Union
 
-from requests import Response
 
 from smile_id_core.base import Base
 from smile_id_core.constants import JobType
@@ -82,4 +81,4 @@ class BusinessVerification(Base):
                 f"Failed to post entity to {self.url}/business_verification,"
                 f" status={response.status_code}, response={response.json()}"
             )
-        return response.json()
+        return dict(response.json())

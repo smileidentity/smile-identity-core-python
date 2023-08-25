@@ -209,7 +209,7 @@ class WebApi(Base):
             self.partner_id, self.api_key
         ).generate_signature(timestamp)
 
-        return WebApi.execute_http(
+        response =  WebApi.execute_http(
             f"{self.url}/token",
             {
                 "timestamp": signature_params["timestamp"],
@@ -220,7 +220,9 @@ class WebApi(Base):
                 "callback_url": callback_url,
                 "partner_id": self.partner_id,
             },
-        ).json()
+        )
+        
+        return dict(response.json())
 
     def __validate_options(self, options_params: OptionsParams) -> None:
         """Perform validations on options params and callback_url."""

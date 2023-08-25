@@ -1,11 +1,10 @@
 """ Test class for Web API"""
 import os
 from datetime import datetime, timedelta
-from typing import Any, Dict, List, Tuple, cast
+from typing import Any, Dict, List, Tuple
 
 import pytest
 import responses
-from requests import Response
 
 from smile_id_core.constants import JobType
 from smile_id_core.ServerError import ServerError

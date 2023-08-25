@@ -1,7 +1,6 @@
 """ID API class for kyc services."""
 from typing import Any, Dict, Optional, Union
 
-from requests import Response
 
 from smile_id_core.base import Base
 from smile_id_core.BusinessVerification import BusinessVerification
@@ -97,4 +96,4 @@ class IdApi(Base):
                 f"Failed to post entity to {url},"
                 f" status={response.status_code}, response={response.json()}"
             )
-        return response.json()
+        return dict(response.json())

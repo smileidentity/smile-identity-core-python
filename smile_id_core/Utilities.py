@@ -151,7 +151,7 @@ class Utilities(Base):
             raise ServerError(
                 "Unable to confirm validity of the job_status response"
             )
-        return job_status.json()
+        return dict(job_status.json())
 
     def configure_job_query(
         self,
