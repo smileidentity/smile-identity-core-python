@@ -8,7 +8,6 @@ the tax information returns only the company information
 """
 from typing import Any, Dict, Union
 
-
 from smile_id_core.base import Base
 from smile_id_core.constants import JobType
 from smile_id_core.ServerError import ServerError
