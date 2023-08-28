@@ -49,11 +49,10 @@ To run the tests, run the following command:
 poetry run pytest
 ```
 
-Install [pre-commit](https://pre-commit.com/) to format code before committing.
+Install [pre-commit](https://pre-commit.com/) hooks to format code before committing.
 
 ```shell
-pip install pre-commit
-pre-commit install
+poetry run pre-commit install
 ```
 
 ## Documentation
