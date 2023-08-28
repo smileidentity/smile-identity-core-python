@@ -53,6 +53,7 @@ Install [pre-commit](https://pre-commit.com/) to format code before committing.
 
 ```shell
 pip install pre-commit
+pre-commit install
 ```
 
 ## Documentation
