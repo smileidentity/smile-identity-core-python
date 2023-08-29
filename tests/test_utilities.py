@@ -141,6 +141,31 @@ def get_smile_services_response() -> Dict[str, Any]:
     }
 
 
+def test_show_deprecation_when_use_validation_is_true(
+    setup_client: Tuple[str, str, str]
+) -> None:
+    api_key, partner_id, _ = setup_client
+    id_info_params = {
+        "first_name": "",
+        "last_name": "",
+        "country": "",
+        "id_type": "",
+        "id_number": "",
+        "dob": "",
+        "entered": None,
+    }
+    partner_params = {
+        "job_id": f"job-{uuid.uuid4()}",
+        "user_id": f"user-{uuid.uuid4()}",
+        "job_type": JobType.BUSINESS_VERIFICATION,
+    }
+    utilities = Utilities(partner_id, api_key, 0)
+    with pytest.deprecated_call():
+        utilities.validate_id_params(
+            0, id_info_params, partner_params, use_validation_api=True
+        )
+
+
 def test_validate_id_params(
     setup_client: Tuple[str, str, str], signature_fixture: Signature
 ) -> None:

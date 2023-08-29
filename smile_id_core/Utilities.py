@@ -232,7 +232,7 @@ class Utilities(Base):
         """
         if use_validation_api:
             warn(
-                "The fields use_validation_api is deprecated and "
+                "The field use_validation_api is deprecated and "
                 "will be removed in the future.",
                 category=DeprecationWarning,
                 stacklevel=2,
