@@ -6,6 +6,7 @@ performs signature parama validation.
 import json
 import sys
 from typing import Any, Dict, Optional, Union
+from warnings import warn
 
 import requests
 from requests import Response
@@ -229,6 +230,14 @@ class Utilities(Base):
         partner_params:
         use_validation_api:
         """
+        if use_validation_api:
+            warn(
+                "The field use_validation_api is deprecated and "
+                "will be removed in the future.",
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
+
         job_type = partner_params.get("job_type")
         if (
             job_type != JobType.DOCUMENT_VERIFICATION
@@ -247,50 +256,6 @@ class Utilities(Base):
                 raise ValueError(f"key {field} cannot be empty")
             else:
                 raise ValueError(f"key {field} cannot be empty")
-        if not use_validation_api:
-            return
-
-        response = Utilities.get_smile_id_services(sid_server)
-        if response.status_code != 200:
-            raise ServerError(
-                f"Failed to get to /services, status={response.status_code},"
-                f" response={response.json()}"
-            )
-        response_json = response.json()
-        if job_type == JobType.DOCUMENT_VERIFICATION:
-            doc_verification = response_json["hosted_web"]["doc_verification"]
-            if id_info_params["country"] not in doc_verification:
-                raise ValueError(
-                    f"country {id_info_params['country']} is invalid"
-                )
-            selected_country = doc_verification[id_info_params["country"]][
-                "id_types"
-            ]
-            if id_info_params["id_type"] not in selected_country:
-                raise ValueError(
-                    f"id_type {id_info_params['id_type']} is invalid"
-                )
-        else:
-            id_types_by_country = response_json["id_types"]
-            if id_info_params["country"] not in id_types_by_country:
-                raise ValueError(
-                    f"country {id_info_params['country']} is invalid"
-                )
-            selected_country = response_json["id_types"][
-                id_info_params["country"]
-            ]
-            if id_info_params["id_type"] not in selected_country:
-                raise ValueError(
-                    f"id_type {id_info_params['id_type']} is invalid"
-                )
-            id_params = selected_country[id_info_params["id_type"]]
-            for key in id_params:
-                if key not in id_info_params and key not in partner_params:
-                    raise ValueError(f"key {key} is required")
-                if key in id_info_params and not id_info_params[key]:
-                    raise ValueError(f"key {key} cannot be empty")
-                if key in partner_params and not partner_params.get(key):
-                    raise ValueError(f"key {key} cannot be empty")
 
     @staticmethod
     def get_smile_id_services(sid_server: Union[str, int]) -> Response:
