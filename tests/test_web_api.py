@@ -106,7 +106,7 @@ def test_no_id_info_params_jt5(
         image_params,
         {},
         option_params,
-        True,
+        False,
     )
 
     web_partner_params["job_type"] = JobType.BIOMETRIC_KYC
@@ -124,7 +124,7 @@ def test_no_id_info_params_jt5(
         image_params,
         {},
         option_params,
-        True,
+        False,
     )
 
 
@@ -197,7 +197,34 @@ def test_success_true_smile_job_type(
         option_params,
         False,
     )
-    #  == {"success": True, "smile_job_id": "0000000857"},)
+
+
+@responses.activate
+def test_show_deprecation_warning_for_use_validation_api(
+    web_partner_params: Dict[str, Any],
+    kyc_id_info: Dict[str, str],
+    image_params: List[ImageParams],
+    option_params: OptionsParams,
+    client_web: WebApi,
+    signature_fixture: Signature,
+) -> None:
+    """check return data for valid smile_job_type when option_params
+    return_job_status is false"""
+    signature = get_signature(signature_fixture)
+    stub_upload_request(signature)
+    signature["timestamp"] = (datetime.now() - timedelta(days=1)).isoformat()
+    stub_get_job_status(signature, True)
+    stub_get_job_status(signature, True, "ERROR MSG")
+    option_params["return_job_status"] = False
+
+    with pytest.deprecated_call():
+        assert client_web.submit_job(
+            web_partner_params,
+            image_params,
+            kyc_id_info,
+            option_params,
+            True,
+        )
 
 
 def test_missing_partner_params_for_at_least_1_param(
@@ -337,7 +364,7 @@ def test_boolean_options_params_non_jt5(
             image_params,
             kyc_id_info,
             option_params,
-            True,
+            False,
         )
     assert str(value_error.value) == "return_history needs to be a boolean"
 
