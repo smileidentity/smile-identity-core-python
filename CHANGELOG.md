@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.1.3] - 2023-08-29
 ### Changed
 - Ignore `use_validation_api` in `submit_job`, method deprecated and will be removed
 - Ignore `use_validation_api` and `sid_server` in `Utilities.validate_id_params`, methods deprecated and will be removed
