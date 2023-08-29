@@ -78,7 +78,7 @@ class WebApi(Base):
         images_params: List[ImageParams],
         id_info_params: Dict[str, Any],
         options_params: OptionsParams,
-        use_validation_api: bool = True,
+        use_validation_api: bool = False,
     ) -> Union[Response, Dict[str, Any]]:
         """Perform key/parameter validation, creates zipped file and uploads."""
         Utilities.validate_partner_params(partner_params)

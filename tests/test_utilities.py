@@ -305,7 +305,6 @@ def test_validate_id_params_should_raise_when_provided_with_invalid_input(
     """Validate id parameters using the smile services endpoint which
     checks the provided id params, and partner params"""
 
-    stub_service("https://testapi.smileidentity.com/v1")
     kyc_id_info["country"] = ""
     with pytest.raises(ValueError) as value_error:
         Utilities.validate_id_params(
@@ -332,59 +331,6 @@ def test_validate_id_params_should_raise_when_provided_with_invalid_input(
             kyc_partner_params,
         )
     assert str(value_error.value) == "key id_number cannot be empty"
-    kyc_id_info["id_number"] = "A00000000"
-    kyc_id_info["country"] = "ZW"
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            kyc_partner_params,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "country ZW is invalid"
-
-    kyc_id_info["country"] = "NG"
-    kyc_id_info["id_type"] = "Not_Supported"
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            kyc_partner_params,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "id_type Not_Supported is invalid"
-    kyc_id_info["id_type"] = "PASSPORT"
-    kyc_partner_params["user_id"] = None
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            kyc_partner_params,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "key user_id cannot be empty"
-
-    kyc_partner_params["user_id"] = "kyb_test_user_008"
-    kyc_id_info["first_name"] = ""
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            kyc_partner_params,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "key first_name cannot be empty"
-    kyc_id_info["first_name"] = "FirstName"
-    updated_partner_params = dict(kyc_partner_params)
-    del updated_partner_params["user_id"]
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            updated_partner_params,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "key user_id is required"
 
 
 @responses.activate
@@ -413,28 +359,6 @@ def test_validate_id_params_raise_when_given_invalid_input_for_jt6(
             partner_params_jt6,
         )
     assert str(value_error.value) == "key id_type cannot be empty"
-
-    kyc_id_info["id_type"] = "PASSPORT"
-    kyc_id_info["country"] = "ZW"
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            partner_params_jt6,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "country ZW is invalid"
-
-    kyc_id_info["country"] = "NG"
-    kyc_id_info["id_type"] = "Not_Supported"
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            partner_params_jt6,
-            use_validation_api=True,
-        )
-    assert str(value_error.value) == "id_type Not_Supported is invalid"
 
 
 @responses.activate

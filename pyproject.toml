@@ -26,9 +26,9 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.dependencies]
 pycryptodome = "^3.0.0"
 python = "^3.7"
-requests = "^2.0.0"
+requests = "^2.31.0"
 typing-extensions = "^4.2.0"
-types-requests = "^2.0.0.0"
+types-requests = "^2.31.0.2"
 
 [tool.poetry.group.dev]
 optional = true
@@ -81,6 +81,10 @@ warn_redundant_casts = true
 warn_unreachable = false
 warn_unused_configs = false
 warn_unused_ignores = false
+
+[[tool.mypy.overrides]]
+module = "yaml"
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 addopts = "-n auto"

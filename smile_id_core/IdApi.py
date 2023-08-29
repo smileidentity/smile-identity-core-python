@@ -38,7 +38,7 @@ class IdApi(Base):
         self,
         partner_params: Dict[str, Any],
         id_params: Dict[str, str],
-        use_validation_api: bool = True,
+        use_validation_api: bool = False,
         options_params: Optional[OptionsParams] = None,
     ) -> Response:
         """Validate data params & query id_verification endpoint for KYC jobs.

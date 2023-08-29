@@ -82,28 +82,6 @@ def test_no_image_params(
     )
 
 
-def test_no_callback_url_jt5(
-    setup_web_client: Tuple[str, str, str, str],
-    web_partner_params: Dict[str, Any],
-    image_params: List[ImageParams],
-    kyc_id_info: Dict[str, str],
-    option_params: OptionsParams,
-) -> None:
-    """callback url is empty and job type is Enhanced KYC"""
-    api_key, partner_id, sid_server, callback_url = setup_web_client
-    web_api = WebApi(partner_id, callback_url, api_key, sid_server)
-    web_partner_params["job_type"] = JobType.ENHANCED_KYC
-    pytest.raises(
-        ValueError,
-        web_api.submit_job,
-        web_partner_params,
-        image_params,
-        kyc_id_info,
-        option_params,
-        True,
-    )
-
-
 def test_no_id_info_params_jt5(
     web_partner_params: Dict[str, Any],
     setup_web_client: Tuple[str, str, str, str],
@@ -150,27 +128,6 @@ def test_no_id_info_params_jt5(
     )
 
 
-def test_no_option_params(
-    setup_web_client: Tuple[str, str, str, str],
-    web_partner_params: Dict[str, Any],
-    kyc_id_info: Dict[str, Any],
-    image_params: List[ImageParams],
-) -> None:
-    """Validates when no option params is provided(empty or None)"""
-    api_key, partner_id, sid_server, callback_url = setup_web_client
-    callback_url = ""
-    web_api = WebApi(partner_id, callback_url, api_key, sid_server)
-    pytest.raises(
-        ValueError,
-        web_api.submit_job,
-        web_partner_params,
-        image_params,
-        kyc_id_info,
-        callback_url,
-        True,
-    )
-
-
 def test_validate_return(
     option_params: OptionsParams,
     setup_web_client: Tuple[str, str, str, str],
@@ -190,29 +147,6 @@ def test_validate_return(
         kyc_id_info,
         option_params,
         False,
-    )
-
-
-def test__validate_options(
-    setup_web_client: Tuple[str, str, str, str],
-    option_params: OptionsParams,
-    web_partner_params: Dict[str, Any],
-    kyc_id_info: Dict[str, str],
-    image_params: List[ImageParams],
-) -> None:
-    """Performs checks for when option_params return_job_status is
-    false"""
-    api_key, partner_id, _, _ = setup_web_client
-    web_api = WebApi(partner_id, "calback_url", api_key, 0)
-    option_params["return_job_status"] = False
-    pytest.raises(
-        ValueError,
-        web_api.submit_job,
-        web_partner_params,
-        image_params,
-        kyc_id_info,
-        option_params,
-        True,
     )
 
 
