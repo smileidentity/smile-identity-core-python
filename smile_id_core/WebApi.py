@@ -3,6 +3,7 @@ import json
 import time
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
+from warnings import warn
 
 import requests
 from requests import Response
@@ -81,6 +82,13 @@ class WebApi(Base):
         use_validation_api: bool = False,
     ) -> Union[Response, Dict[str, Any]]:
         """Perform key/parameter validation, creates zipped file and uploads."""
+        if use_validation_api:
+            warn(
+                "The fields use_validation_api is deprecated and"
+                " will be removed in the future.",
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params.get("job_type")
 
@@ -100,7 +108,7 @@ class WebApi(Base):
                     self.url,
                     id_info_params,
                     partner_params,
-                    use_validation_api,
+                    False,
                 )
                 id_info_params = {
                     "first_name": None,
@@ -129,7 +137,7 @@ class WebApi(Base):
             return self.__call_id_api(
                 partner_params,
                 id_info_params,
-                use_validation_api,
+                False,
                 options_params,
             )
 
@@ -145,7 +153,7 @@ class WebApi(Base):
             job_type=job_type,
         )
         Utilities.validate_id_params(
-            self.url, id_info_params, partner_params, use_validation_api
+            self.url, id_info_params, partner_params, False
         )
         self.__validate_return_data(options_params)
 

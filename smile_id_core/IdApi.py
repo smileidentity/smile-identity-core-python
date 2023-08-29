@@ -1,5 +1,6 @@
 """ID API class for kyc services."""
 from typing import Any, Dict, Optional, Union
+from warnings import warn
 
 from requests import Response
 
@@ -57,6 +58,13 @@ class IdApi(Base):
         Returns: https post request output of type Response. Alternatively,
         raises a server or value error if there's an exception.
         """
+        if use_validation_api:
+            warn(
+                "The fields use_validation_api is deprecated and "
+                "will be removed in the future.",
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
         if not options_params:
             options_params = OptionsParams(
                 return_job_status=False,
@@ -80,7 +88,7 @@ class IdApi(Base):
             self.url,
             id_params,
             partner_params,
-            use_validation_api,
+            False,
         )
 
         if partner_params.get("job_type") != JobType.ENHANCED_KYC:

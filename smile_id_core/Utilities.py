@@ -6,6 +6,7 @@ performs signature parama validation.
 import json
 import sys
 from typing import Any, Dict, Optional, Union
+from warnings import warn
 
 import requests
 from requests import Response
@@ -229,6 +230,14 @@ class Utilities(Base):
         partner_params:
         use_validation_api:
         """
+        if use_validation_api:
+            warn(
+                "The fields use_validation_api is deprecated and "
+                "will be removed in the future.",
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
+
         job_type = partner_params.get("job_type")
         if (
             job_type != JobType.DOCUMENT_VERIFICATION
