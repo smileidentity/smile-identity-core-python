@@ -4,6 +4,7 @@ Additionally, the Utilities class makes a call to the Signature class and
 performs signature parama validation.
 """
 import json
+import re
 import sys
 from typing import Any, Dict, Optional, Union
 from warnings import warn
@@ -244,18 +245,13 @@ class Utilities(Base):
             and not id_info_params.get("entered")
         ):
             return
-
-        required_fields = ["country", "id_type"]
-        if job_type != JobType.DOCUMENT_VERIFICATION:
-            required_fields += ["id_number"]
-
-        for field in required_fields:
-            if field in id_info_params:
-                if id_info_params[field]:
-                    continue
-                raise ValueError(f"key {field} cannot be empty")
-            else:
-                raise ValueError(f"key {field} cannot be empty")
+        
+        if job_type != JobType.DOCUMENT_VERIFICATION and not id_info_params.get("id_number"):
+            raise ValueError('key id_number cannot be empty')
+        
+        country = id_info_params.get("country")
+        if not country or not isinstance(country, str) or not re.match(r'^[A-Z]{2}$', country):
+            raise ValueError('key country must be a valid 2-letter ISO 3166-1 alpha-2 country code.')
 
     @staticmethod
     def get_smile_id_services(sid_server: Union[str, int]) -> Response:
