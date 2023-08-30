@@ -343,6 +343,7 @@ def test_validate_id_params_should_raise_when_provided_with_invalid_input(
     )
     kyc_id_info["id_type"] = "PASSPORT"
     kyc_id_info["id_number"] = ""
+    kyc_id_info["country"] = "NG"
     with pytest.raises(ValueError) as value_error:
         Utilities.validate_id_params(
             client_utilities.url,
@@ -372,6 +373,7 @@ def test_validate_id_params_raise_when_given_invalid_input_for_jt6(
         "key country must be a valid 2-letter "
         "ISO 3166-1 alpha-2 country code."
     )
+
 
 @responses.activate
 def test_get_job_status(
