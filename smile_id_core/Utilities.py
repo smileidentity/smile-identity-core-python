@@ -246,10 +246,6 @@ class Utilities(Base):
         ):
             return
         
-        if (job_type != JobType.DOCUMENT_VERIFICATION and 
-            not id_info_params.get("id_number")):
-            raise ValueError('key id_number cannot be empty')
-        
         country = id_info_params.get("country")
         if (not country or 
             not isinstance(country, str) or 
@@ -257,6 +253,11 @@ class Utilities(Base):
             raise ValueError(
                 'key country must be a valid 2-letter ISO 3166-1 alpha-2 country code.'
             )
+
+        if job_type == JobType.DOCUMENT_VERIFICATION:
+            return
+        elif not id_info_params.get("id_number"):
+            raise ValueError('key id_number cannot be empty')
 
     @staticmethod
     def get_smile_id_services(sid_server: Union[str, int]) -> Response:
