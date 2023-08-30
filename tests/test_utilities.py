@@ -337,7 +337,10 @@ def test_validate_id_params_should_raise_when_provided_with_invalid_input(
             kyc_id_info,
             kyc_partner_params,
         )
-    assert str(value_error.value) == "key country must be a valid 2-letter ISO 3166-1 alpha-2 country code."
+    assert str(value_error.value) == (
+        "key country must be a valid 2-letter "
+        "ISO 3166-1 alpha-2 country code."
+    )
     kyc_id_info["id_type"] = "PASSPORT"
     kyc_id_info["id_number"] = ""
     with pytest.raises(ValueError) as value_error:
@@ -365,7 +368,10 @@ def test_validate_id_params_raise_when_given_invalid_input_for_jt6(
             kyc_id_info,
             partner_params_jt6,
         )
-    assert str(value_error.value) == "key country must be a valid 2-letter ISO 3166-1 alpha-2 country code."
+    assert str(value_error.value) == (
+        "key country must be a valid 2-letter "
+        "ISO 3166-1 alpha-2 country code."
+    )
 
 @responses.activate
 def test_get_job_status(
