@@ -295,7 +295,10 @@ def test_id_info_params(
             kyc_id_info,
             option_params,
         )
-    assert str(value_error.value) == "key country cannot be empty"
+    assert str(value_error.value) == (
+        "key country must be a valid 2-letter "
+        "ISO 3166-1 alpha-2 country code."
+    )
 
     kyc_id_info["id_number"] = None  # type: ignore
     kyc_id_info["country"] = "NG"

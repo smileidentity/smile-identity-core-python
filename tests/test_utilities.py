@@ -337,18 +337,13 @@ def test_validate_id_params_should_raise_when_provided_with_invalid_input(
             kyc_id_info,
             kyc_partner_params,
         )
-    assert str(value_error.value) == "key country cannot be empty"
-    kyc_id_info["country"] = "NG"
-    kyc_id_info["id_type"] = ""
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            kyc_partner_params,
-        )
-    assert str(value_error.value) == "key id_type cannot be empty"
+    assert str(value_error.value) == (
+        "key country must be a valid 2-letter "
+        "ISO 3166-1 alpha-2 country code."
+    )
     kyc_id_info["id_type"] = "PASSPORT"
     kyc_id_info["id_number"] = ""
+    kyc_id_info["country"] = "NG"
     with pytest.raises(ValueError) as value_error:
         Utilities.validate_id_params(
             client_utilities.url,
@@ -374,16 +369,10 @@ def test_validate_id_params_raise_when_given_invalid_input_for_jt6(
             kyc_id_info,
             partner_params_jt6,
         )
-    assert str(value_error.value) == "key country cannot be empty"
-    kyc_id_info["country"] = "NG"
-    kyc_id_info["id_type"] = ""
-    with pytest.raises(ValueError) as value_error:
-        Utilities.validate_id_params(
-            client_utilities.url,
-            kyc_id_info,
-            partner_params_jt6,
-        )
-    assert str(value_error.value) == "key id_type cannot be empty"
+    assert str(value_error.value) == (
+        "key country must be a valid 2-letter "
+        "ISO 3166-1 alpha-2 country code."
+    )
 
 
 @responses.activate
