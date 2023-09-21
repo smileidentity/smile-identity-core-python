@@ -240,8 +240,9 @@ class Utilities(Base):
             )
 
         job_type = partner_params.get("job_type")
+        is_docv_job = job_type == JobType.DOCUMENT_VERIFICATION or job_type == JobType.ENHANCED_DOCUMENT_VERIFICATION
         if (
-            job_type != JobType.DOCUMENT_VERIFICATION
+            not is_docv_job
             and not id_info_params.get("entered")
         ):
             return
@@ -258,6 +259,9 @@ class Utilities(Base):
 
         if job_type == JobType.DOCUMENT_VERIFICATION:
             return
+        elif job_type == JobType.ENHANCED_DOCUMENT_VERIFICATION:
+            if not id_info_params.get("id_type"):
+                raise ValueError("key id_type cannot be empty")
         elif not id_info_params.get("id_number"):
             raise ValueError("key id_number cannot be empty")
 

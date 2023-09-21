@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.5] - 2023-09-21
+### Added
+- Added Enhanced Document Verification to the WebApi class.
+
 ## [2.1.4] - 2023-08-30
 ### Changed
 - Remove `id_type` from required input `id_info` params for document verfication

@@ -248,7 +248,8 @@ def validate_images(
         if image_type_id == 0 or image_type_id == 2:
             has_selfie = True
 
-    if job_type == JobType.DOCUMENT_VERIFICATION and not has_id_image:
+    is_docv_job = job_type == JobType.DOCUMENT_VERIFICATION or job_type == JobType.ENHANCED_DOCUMENT_VERIFICATION
+    if is_docv_job and not has_id_image:
         raise ValueError(
             "You are attempting to complete a Document Verification job "
             "without providing an id card image."
@@ -256,15 +257,15 @@ def validate_images(
 
     if not (
         has_selfie
-        or (job_type == JobType.DOCUMENT_VERIFICATION and use_enrolled_image)
+        or (is_docv_job and use_enrolled_image)
     ):
         raise ValueError("You need to send through at least one selfie image.")
 
     if (
         has_id_image
         and has_selfie
-        and (job_type == JobType.DOCUMENT_VERIFICATION and use_enrolled_image)
-        and (job_type == JobType.DOCUMENT_VERIFICATION and not has_id_image)
+        and (is_docv_job and use_enrolled_image)
+        and (is_docv_job and not has_id_image)
     ):
         return False
     return True

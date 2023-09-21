@@ -1,4 +1,4 @@
-"""Document Verification class; verifies authenticity of docs.
+"""Enhanced Document Verification class; verifies authenticity of docs.
 
 This product lets you verify the authenticity of ID documents submitted by
 users and confirm these document actually belongs to the user by comparing the
@@ -37,7 +37,7 @@ connection = WebApi(partner_id, default_callback, api_key, sid_server)
 partner_params = {
     "job_id": f"job-{uuid.uuid4()}",  # your unique job_id
     "user_id": f"user-{uuid.uuid4()}",  # your unique user_id
-    "job_type": JobType.DOCUMENT_VERIFICATION,
+    "job_type": JobType.ENHANCED_DOCUMENT_VERIFICATION,
 }
 
 
@@ -105,7 +105,8 @@ image_details: List[ImageParams] = [
 
 # The ID Document Information
 id_info = {
-    "country": "NG",  # ID document country of issue 2-letter country code
+    "country": "GH",  # ID document country of issue 2-letter country code
+    "id_type": "PASSPORT" # The ID type
 }
 
 # Set the options for the job.
