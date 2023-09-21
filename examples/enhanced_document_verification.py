@@ -106,7 +106,7 @@ image_details: List[ImageParams] = [
 # The ID Document Information
 id_info = {
     "country": "GH",  # ID document country of issue 2-letter country code
-    "id_type": "PASSPORT" # The ID type
+    "id_type": "PASSPORT",  # The ID type
 }
 
 # Set the options for the job.

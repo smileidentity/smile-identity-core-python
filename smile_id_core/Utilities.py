@@ -240,12 +240,11 @@ class Utilities(Base):
             )
 
         job_type = partner_params.get("job_type")
-        is_docv_job = (job_type == JobType.DOCUMENT_VERIFICATION or
-                       job_type == JobType.ENHANCED_DOCUMENT_VERIFICATION)
-        if (
-            not is_docv_job
-            and not id_info_params.get("entered")
-        ):
+        is_docv_job = (
+            job_type == JobType.DOCUMENT_VERIFICATION
+            or job_type == JobType.ENHANCED_DOCUMENT_VERIFICATION
+        )
+        if not is_docv_job and not id_info_params.get("entered"):
             return
 
         country = id_info_params.get("country")

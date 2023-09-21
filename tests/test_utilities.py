@@ -374,6 +374,7 @@ def test_validate_id_params_raise_when_given_invalid_input_for_jt6(
         "ISO 3166-1 alpha-2 country code."
     )
 
+
 @responses.activate
 def test_validate_id_params_raise_when_country_is_invalid_for_jt11(
     partner_params_jt11: Dict[str, Any],
@@ -393,6 +394,7 @@ def test_validate_id_params_raise_when_country_is_invalid_for_jt11(
         "key country must be a valid 2-letter "
         "ISO 3166-1 alpha-2 country code."
     )
+
 
 @responses.activate
 def test_validate_id_params_raise_when_id_type_is_invalid_for_jt11(

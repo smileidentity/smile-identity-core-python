@@ -196,6 +196,7 @@ def partner_params_jt6() -> Dict[str, Any]:
     }
     return partner_params
 
+
 @pytest.fixture(scope="function")
 def partner_params_jt11() -> Dict[str, Any]:
     """Define partner params for jobtype 11 (Enhanced Document verification)."""
