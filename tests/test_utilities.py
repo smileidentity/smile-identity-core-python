@@ -380,8 +380,7 @@ def test_validate_id_params_raise_when_country_is_invalid_for_jt11(
     client_utilities: Utilities,
     kyc_id_info: Dict[str, str],
 ) -> None:
-    """Validates when country is not provided in id params for enhanced document verification"""
-
+    """Validates invalid country for enhanced document verification"""
     stub_service("https://testapi.smileidentity.com/v1")
     kyc_id_info["country"] = ""
     with pytest.raises(ValueError) as value_error:
@@ -401,7 +400,7 @@ def test_validate_id_params_raise_when_id_type_is_invalid_for_jt11(
     client_utilities: Utilities,
     kyc_id_info: Dict[str, str],
 ) -> None:
-    """Validates when id_type is not provided in id params for enhanced document verification"""
+    """Validates invalid id_type for enhanced document verification"""
 
     stub_service("https://testapi.smileidentity.com/v1")
     kyc_id_info["id_type"] = ""
