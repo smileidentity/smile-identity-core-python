@@ -240,10 +240,11 @@ class Utilities(Base):
             )
 
         job_type = partner_params.get("job_type")
-        if (
-            job_type != JobType.DOCUMENT_VERIFICATION
-            and not id_info_params.get("entered")
-        ):
+        is_docv_job = (
+            job_type == JobType.DOCUMENT_VERIFICATION
+            or job_type == JobType.ENHANCED_DOCUMENT_VERIFICATION
+        )
+        if not is_docv_job and not id_info_params.get("entered"):
             return
 
         country = id_info_params.get("country")
@@ -258,6 +259,9 @@ class Utilities(Base):
 
         if job_type == JobType.DOCUMENT_VERIFICATION:
             return
+        elif job_type == JobType.ENHANCED_DOCUMENT_VERIFICATION:
+            if not id_info_params.get("id_type"):
+                raise ValueError("key id_type cannot be empty")
         elif not id_info_params.get("id_number"):
             raise ValueError("key id_number cannot be empty")
 

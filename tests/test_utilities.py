@@ -376,6 +376,46 @@ def test_validate_id_params_raise_when_given_invalid_input_for_jt6(
 
 
 @responses.activate
+def test_validate_id_params_raise_when_country_is_invalid_for_jt11(
+    partner_params_jt11: Dict[str, Any],
+    client_utilities: Utilities,
+    kyc_id_info: Dict[str, str],
+) -> None:
+    """Validates invalid country for enhanced document verification"""
+    stub_service("https://testapi.smileidentity.com/v1")
+    kyc_id_info["country"] = ""
+    with pytest.raises(ValueError) as value_error:
+        Utilities.validate_id_params(
+            client_utilities.url,
+            kyc_id_info,
+            partner_params_jt11,
+        )
+    assert str(value_error.value) == (
+        "key country must be a valid 2-letter "
+        "ISO 3166-1 alpha-2 country code."
+    )
+
+
+@responses.activate
+def test_validate_id_params_raise_when_id_type_is_invalid_for_jt11(
+    partner_params_jt11: Dict[str, Any],
+    client_utilities: Utilities,
+    kyc_id_info: Dict[str, str],
+) -> None:
+    """Validates invalid id_type for enhanced document verification"""
+
+    stub_service("https://testapi.smileidentity.com/v1")
+    kyc_id_info["id_type"] = ""
+    with pytest.raises(ValueError) as value_error:
+        Utilities.validate_id_params(
+            client_utilities.url,
+            kyc_id_info,
+            partner_params_jt11,
+        )
+    assert str(value_error.value) == "key id_type cannot be empty"
+
+
+@responses.activate
 def test_get_job_status(
     signature_fixture: Signature,
     client_utilities: Utilities,
