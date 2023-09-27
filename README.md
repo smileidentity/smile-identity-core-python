@@ -49,6 +49,12 @@ To run the tests, run the following command:
 poetry run pytest
 ```
 
+Install [pre-commit](https://pre-commit.com/) hooks to format code before committing.
+
+```shell
+poetry run pre-commit install
+```
+
 ## Documentation
 
 This package requires specific input parameters, for more detail on these parameters please refer to our [documentation for Web API](https://docs.smileidentity.com/server-to-server/python).

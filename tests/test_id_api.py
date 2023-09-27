@@ -241,6 +241,31 @@ def test_validate_return_data(
         )
 
 
+def test_show_deprecation_warning_for_use_validation_api(
+    kyc_partner_params: Dict[str, Any],
+    kyc_id_info: Dict[str, str],
+    signature_fixture: Signature,
+    client: IdApi,
+) -> None:
+    """Uses mocked examples for payload responses; checks that
+    response status code is 200 and response body is not empty"""
+    partner_params, id_info_params = (
+        kyc_partner_params,
+        kyc_id_info,
+    )
+    with patch("requests.post") as mocked_post:
+        mocked_post.return_value.status_code = 200
+        mocked_post.return_value.ok = True
+        mocked_post.return_value.text.return_value = get_id_response(
+            signature_fixture,
+        )
+        mocked_post.return_value.json.return_value = get_id_response(
+            signature_fixture,
+        )
+
+        client.submit_job(partner_params, id_info_params)
+
+
 def test_validate_return_data_business_verification(
     kyc_partner_params: Dict[str, Any],
     kyc_id_info: Dict[str, str],
