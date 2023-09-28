@@ -65,7 +65,7 @@ class WebApi(Base):
         partner_params: Dict[str, Any],
         id_info_params: Dict[str, str],
         options_params: OptionsParams,
-    ) -> Response:
+    ) -> Dict[str, Any]:
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
         return id_api.submit_job(partner_params, id_info_params, options_params)
 
@@ -75,7 +75,7 @@ class WebApi(Base):
         images_params: List[ImageParams],
         id_info_params: Dict[str, Any],
         options_params: OptionsParams,
-    ) -> Union[Response, Dict[str, Any]]:
+    ) -> Dict[str, Any]:
         """Perform key/parameter validation, creates zipped file and uploads."""
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params.get("job_type")
@@ -193,7 +193,7 @@ class WebApi(Base):
         product: str,
         timestamp: Optional[str] = None,
         callback_url: Optional[str] = None,
-    ) -> Response:
+    ) -> Dict[str, Any]:
         """Create  authorization token used in Hosted Web Integration."""
         timestamp = timestamp or datetime.now().isoformat()
         callback_url = callback_url or self.call_back_url
@@ -201,7 +201,7 @@ class WebApi(Base):
             self.partner_id, self.api_key
         ).generate_signature(timestamp)
 
-        return WebApi.execute_http(
+        response = WebApi.execute_http(
             f"{self.url}/token",
             {
                 "timestamp": signature_params["timestamp"],
@@ -213,6 +213,8 @@ class WebApi(Base):
                 "partner_id": self.partner_id,
             },
         )
+
+        return dict(response.json())
 
     def __validate_options(self, options_params: OptionsParams) -> None:
         """Perform validations on options params and callback_url."""
@@ -273,7 +275,7 @@ class WebApi(Base):
         partner_params: Dict[str, str],
         options_params: OptionsParams,
         signature_params: Optional[SignatureParams],
-    ) -> Response:
+    ) -> Dict[str, Any]:
         """Get job status & check completion over some specified duration."""
         if signature_params is None:
             signature_params = get_signature(self.partner_id, self.api_key)
@@ -289,8 +291,8 @@ class WebApi(Base):
         job_status = self.utilities.get_job_status(
             partner_params, options_params, signature_params
         )
-        job_status_response = job_status.json()
-        if not job_status_response["job_complete"] and counter < 20:
+
+        if not job_status["job_complete"] and counter < 20:
             return self.poll_job_status(
                 counter, partner_params, options_params, signature_params
             )

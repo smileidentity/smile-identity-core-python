@@ -8,8 +8,6 @@ the tax information returns only the company information
 """
 from typing import Any, Dict, Union
 
-from requests import Response
-
 from smile_id_core.base import Base
 from smile_id_core.constants import JobType
 from smile_id_core.ServerError import ServerError
@@ -43,7 +41,7 @@ class BusinessVerification(Base):
         self,
         partner_params: Dict[str, Any],
         id_params: Dict[str, str],
-    ) -> Response:
+    ) -> Dict[str, Any]:
         """Generate signature, creates payload and get response for KYb jobs.
 
         argument(s):
@@ -53,7 +51,7 @@ class BusinessVerification(Base):
             business_type, id_number and id_type
 
         Returns:
-            Response object, which contains response to the HTTP post request.
+            Dict[str, Any] which contains response to the HTTP post request.
         """
         Utilities.validate_partner_params(partner_params)
 
@@ -82,4 +80,4 @@ class BusinessVerification(Base):
                 f"Failed to post entity to {self.url}/business_verification,"
                 f" status={response.status_code}, response={response.json()}"
             )
-        return response
+        return dict(response.json())

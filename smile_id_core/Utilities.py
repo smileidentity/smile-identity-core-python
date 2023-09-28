@@ -64,7 +64,7 @@ class Utilities(Base):
         partner_params: Dict[str, Any],
         option_params: OptionsParams,
         signature: Optional[SignatureParams] = None,
-    ) -> Response:
+    ) -> Dict[str, Any]:
         """Validate params (signature & partner) and queries job status.
 
         argument(s):
@@ -76,7 +76,7 @@ class Utilities(Base):
 
         Returns:
         Makes a call to _query_job_status which returns job_status of type
-        Response.
+        Dict[str, Any].
         """
         if signature is None:
             signature = get_signature(self.partner_id, self.api_key)
@@ -112,7 +112,7 @@ class Utilities(Base):
         job_id: str,
         option_params: OptionsParams,
         signature: SignatureParams,
-    ) -> Response:
+    ) -> Dict[str, Any]:
         """Make post request, checks validity of job status response/code.
 
         argument(s):
@@ -125,7 +125,7 @@ class Utilities(Base):
             a timestamp
 
         Returns:
-            Returns status if status code passes. This is of type Response
+            Returns status if status code passes. This is of type Dict[str, Any]
         """
         job_status = Utilities.execute_post(
             f"{self.url}/job_status",
@@ -152,7 +152,7 @@ class Utilities(Base):
             raise ServerError(
                 "Unable to confirm validity of the job_status response"
             )
-        return job_status
+        return dict(job_status.json())
 
     def configure_job_query(
         self,

@@ -268,7 +268,6 @@ def test_validate_id_params_raise_when_country_is_invalid_for_jt11(
     kyc_id_info: Dict[str, str],
 ) -> None:
     """Validates invalid country for enhanced document verification"""
-    stub_service("https://testapi.smileidentity.com/v1")
     kyc_id_info["country"] = ""
     with pytest.raises(ValueError) as value_error:
         Utilities.validate_id_params(
@@ -289,8 +288,6 @@ def test_validate_id_params_raise_when_id_type_is_invalid_for_jt11(
     kyc_id_info: Dict[str, str],
 ) -> None:
     """Validates invalid id_type for enhanced document verification"""
-
-    stub_service("https://testapi.smileidentity.com/v1")
     kyc_id_info["id_type"] = ""
     with pytest.raises(ValueError) as value_error:
         Utilities.validate_id_params(
@@ -328,8 +325,7 @@ def test_get_job_status(
         "history": True,
     }
 
-    assert job_status.status_code == 200
-    assert job_status.json() is not None
+    assert job_status is not None
     assert_request_called_with(
         "https://testapi.smileidentity.com/v1/job_status",
         responses.POST,
@@ -349,17 +345,34 @@ def test_get_job_status(
     set_option_param = client_utilities.get_job_status(
         kyc_partner_params, options, signature
     )
-    assert none_option_param.status_code == set_option_param.status_code
+
+    assert (
+        none_option_param["result"]["PartnerParams"]["job_id"]
+        == "52d0de86-be3b-4219-9e96-8195b0018944"
+    )
+    assert (
+        set_option_param["result"]["PartnerParams"]["job_id"]
+        == "52d0de86-be3b-4219-9e96-8195b0018944"
+    )
 
     # Check for signature equals None
     signature = get_signature(partner_id, api_key)
     none_signature = client_utilities.get_job_status(
         kyc_partner_params, options, None
     )
+    assert none_signature["signature"] is not None
+    assert (
+        none_signature["result"]["PartnerParams"]["job_id"]
+        == "52d0de86-be3b-4219-9e96-8195b0018944"
+    )
+
     set_signature = client_utilities.get_job_status(
         kyc_partner_params, options, signature
     )
-    assert none_signature.status_code == set_signature.status_code
+    assert (
+        set_signature["result"]["PartnerParams"]["job_id"]
+        == "52d0de86-be3b-4219-9e96-8195b0018944"
+    )
 
 
 @responses.activate
