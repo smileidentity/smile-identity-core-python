@@ -81,17 +81,18 @@ def test_no_image_params(
     )
 
 
-def test_no_callback_url_jt5(
+def test_no_callback_url_jt1(
     setup_web_client: Tuple[str, str, str, str],
     web_partner_params: Dict[str, Any],
     image_params: List[ImageParams],
     kyc_id_info: Dict[str, str],
     option_params: OptionsParams,
 ) -> None:
-    """callback url is empty and job type is Enhanced KYC"""
+    """callback url is empty and job type is BIOMETRIC_KYC"""
     api_key, partner_id, sid_server, callback_url = setup_web_client
-    web_api = WebApi(partner_id, callback_url, api_key, sid_server)
-    web_partner_params["job_type"] = JobType.ENHANCED_KYC
+    web_api = WebApi(partner_id, "", api_key, sid_server)
+    web_partner_params["job_type"] = JobType.BIOMETRIC_KYC
+    option_params["return_job_status"] = False
     pytest.raises(
         ValueError,
         web_api.submit_job,
@@ -99,7 +100,6 @@ def test_no_callback_url_jt5(
         image_params,
         kyc_id_info,
         option_params,
-        True,
     )
 
 
@@ -127,7 +127,6 @@ def test_no_id_info_params_jt5(
         image_params,
         {},
         option_params,
-        True,
     )
 
     web_partner_params["job_type"] = JobType.BIOMETRIC_KYC
@@ -145,28 +144,6 @@ def test_no_id_info_params_jt5(
         image_params,
         {},
         option_params,
-        True,
-    )
-
-
-def test_no_option_params(
-    setup_web_client: Tuple[str, str, str, str],
-    web_partner_params: Dict[str, Any],
-    kyc_id_info: Dict[str, Any],
-    image_params: List[ImageParams],
-) -> None:
-    """Validates when no option params is provided(empty or None)"""
-    api_key, partner_id, sid_server, callback_url = setup_web_client
-    callback_url = ""
-    web_api = WebApi(partner_id, callback_url, api_key, sid_server)
-    pytest.raises(
-        ValueError,
-        web_api.submit_job,
-        web_partner_params,
-        image_params,
-        kyc_id_info,
-        callback_url,
-        True,
     )
 
 
@@ -188,30 +165,6 @@ def test_validate_return(
         image_params,
         kyc_id_info,
         option_params,
-        False,
-    )
-
-
-def test__validate_options(
-    setup_web_client: Tuple[str, str, str, str],
-    option_params: OptionsParams,
-    web_partner_params: Dict[str, Any],
-    kyc_id_info: Dict[str, str],
-    image_params: List[ImageParams],
-) -> None:
-    """Performs checks for when option_params return_job_status is
-    false"""
-    api_key, partner_id, _, _ = setup_web_client
-    web_api = WebApi(partner_id, "calback_url", api_key, 0)
-    option_params["return_job_status"] = False
-    pytest.raises(
-        ValueError,
-        web_api.submit_job,
-        web_partner_params,
-        image_params,
-        kyc_id_info,
-        option_params,
-        True,
     )
 
 
@@ -233,6 +186,72 @@ def test_no_partner_params(
     assert (
         str(value_error.value)
         == "Please ensure that you send through partner params"
+    )
+
+
+@responses.activate
+def test_success_true_smile_job_type_7(
+    web_partner_params: Dict[str, Any],
+    kyc_id_info: Dict[str, str],
+    image_params: List[ImageParams],
+    option_params: OptionsParams,
+    client_web: WebApi,
+    signature_fixture: Signature,
+) -> None:
+    responses.add(
+        responses.POST,
+        "https://testapi.smileidentity.com/v1/business_verification",
+        status=200,
+        json={"success": True, "smile_job_id": "023923"},
+    )
+    """check return data for valid smile_job_type when option_params
+    return_job_status is false"""
+    signature = get_signature(signature_fixture)
+    stub_upload_request(signature)
+    signature["timestamp"] = (datetime.now() - timedelta(days=1)).isoformat()
+    stub_get_job_status(signature, True)
+    stub_get_job_status(signature, True, "ERROR MSG")
+    option_params["return_job_status"] = False
+    web_partner_params["job_type"] = JobType.BUSINESS_VERIFICATION
+    # TODO: Modify this code; shouldn't be hardcoded
+    assert client_web.submit_job(
+        web_partner_params,
+        image_params,
+        kyc_id_info,
+        option_params,
+    )
+
+
+@responses.activate
+def test_success_true_smile_job_type_5(
+    web_partner_params: Dict[str, Any],
+    kyc_id_info: Dict[str, str],
+    image_params: List[ImageParams],
+    option_params: OptionsParams,
+    client_web: WebApi,
+    signature_fixture: Signature,
+) -> None:
+    responses.add(
+        responses.POST,
+        "https://testapi.smileidentity.com/v1/id_verification",
+        status=200,
+        json={"success": True, "smile_job_id": "023923"},
+    )
+    """check return data for valid smile_job_type when option_params
+    return_job_status is false"""
+    signature = get_signature(signature_fixture)
+    stub_upload_request(signature)
+    signature["timestamp"] = (datetime.now() - timedelta(days=1)).isoformat()
+    stub_get_job_status(signature, True)
+    stub_get_job_status(signature, True, "ERROR MSG")
+    option_params["return_job_status"] = False
+    web_partner_params["job_type"] = JobType.ENHANCED_KYC
+    # TODO: Modify this code; shouldn't be hardcoded
+    assert client_web.submit_job(
+        web_partner_params,
+        image_params,
+        kyc_id_info,
+        option_params,
     )
 
 
@@ -260,7 +279,6 @@ def test_success_true_smile_job_type(
         image_params,
         kyc_id_info,
         option_params,
-        False,
     )
     #  == {"success": True, "smile_job_id": "0000000857"},)
 
@@ -333,7 +351,10 @@ def test_id_info_params(
             kyc_id_info,
             option_params,
         )
-    assert str(value_error.value) == "key country cannot be empty"
+    assert str(value_error.value) == (
+        "key country must be a valid 2-letter "
+        "ISO 3166-1 alpha-2 country code."
+    )
 
     kyc_id_info["id_number"] = None  # type: ignore
     kyc_id_info["country"] = "NG"
@@ -391,7 +412,6 @@ def test_boolean_options_params_non_jt5(
             image_params,
             kyc_id_info,
             option_params,
-            False,
         )
     assert str(value_error.value) == "return_job_status needs to be a boolean"
     option_params["return_job_status"] = True
@@ -402,7 +422,6 @@ def test_boolean_options_params_non_jt5(
             image_params,
             kyc_id_info,
             option_params,
-            True,
         )
     assert str(value_error.value) == "return_history needs to be a boolean"
 
@@ -414,7 +433,6 @@ def test_boolean_options_params_non_jt5(
             image_params,
             kyc_id_info,
             option_params,
-            False,
         )
     assert str(value_error.value) == "return_images needs to be a boolean"
 
@@ -426,7 +444,6 @@ def test_boolean_options_params_non_jt5(
             image_params,
             kyc_id_info,
             option_params,
-            False,
         )
     assert str(value_error.value) == "signature needs to be a boolean"
 
@@ -456,7 +473,6 @@ def test_submit_job_should_raise_error_when_pre_upload_fails(
             image_params,
             kyc_id_info,
             option_params,
-            False,
         )
     assert (
         str(value_error.value) == "Failed to post entity to"
@@ -486,7 +502,6 @@ def test_submit_job_should_raise_error_when_upload_fails(
             image_params,
             kyc_id_info,
             option_params,
-            False,
         )
 
     response = {"code": "2205", "error": error}
@@ -524,7 +539,6 @@ def test_validate_return_data(
         image_params,
         kyc_id_info,
         option_params,
-        False,
     )
 
     assert response

@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - Breaking: Changed return types of methods from `Response` to `Dict[str,Any]`
+- Breaking: Change `submit_job` method signature for both `WebApi` and `IDApi`.
+  `WebApi` and `IDApi` will no longer support `use_validation_api` parameter. Migration guide available [here](migration_guides/v2_2_0.md)
+
+## [2.1.5] - 2023-09-21
+### Added
+- Added Enhanced Document Verification to the WebApi class.
+
+## [2.1.4] - 2023-08-30
+### Changed
+- Remove `id_type` from required input `id_info` params for document verfication
+
+## [2.1.3] - 2023-08-29
+### Changed
+- Ignore `use_validation_api` in `submit_job`, method deprecated and will be removed
+- Ignore `use_validation_api` and `sid_server` in `Utilities.validate_id_params`, methods deprecated and will be removed
+### Added
+- Add git commit hook with pre-commit
 
 ## [2.1.2] - 2023-08-07
 ### Fixed

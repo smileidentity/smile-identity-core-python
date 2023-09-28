@@ -4,6 +4,7 @@ Additionally, the Utilities class makes a call to the Signature class and
 performs signature parama validation.
 """
 import json
+import re
 import sys
 from typing import Any, Dict, Optional, Union
 
@@ -219,100 +220,39 @@ class Utilities(Base):
         sid_server: Union[str, int],
         id_info_params: Dict[str, Any],
         partner_params: Dict[str, Any],
-        use_validation_api: bool = False,
     ) -> None:
-        """Validate id info parameters using the smile services endpoint.
+        """Validate id info parameters.
 
         argument(s):
         sid_server:
         id_info_params:
         partner_params:
-        use_validation_api:
         """
         job_type = partner_params.get("job_type")
+        is_docv_job = (
+            job_type == JobType.DOCUMENT_VERIFICATION
+            or job_type == JobType.ENHANCED_DOCUMENT_VERIFICATION
+        )
+        if not is_docv_job and not id_info_params.get("entered"):
+            return
+
+        country = id_info_params.get("country")
         if (
-            job_type != JobType.DOCUMENT_VERIFICATION
-            and not id_info_params.get("entered")
+            not country
+            or not isinstance(country, str)
+            or not re.match(r"^[A-Z]{2}$", country)
         ):
-            return
-
-        required_fields = ["country", "id_type"]
-        if job_type != JobType.DOCUMENT_VERIFICATION:
-            required_fields += ["id_number"]
-
-        for field in required_fields:
-            if field in id_info_params:
-                if id_info_params[field]:
-                    continue
-                raise ValueError(f"key {field} cannot be empty")
-            else:
-                raise ValueError(f"key {field} cannot be empty")
-        if not use_validation_api:
-            return
-
-        response = Utilities.get_smile_id_services(sid_server)
-        if response.status_code != 200:
-            raise ServerError(
-                f"Failed to get to /services, status={response.status_code},"
-                f" response={response.json()}"
+            raise ValueError(
+                "key country must be a valid 2-letter ISO 3166-1 alpha-2 country code."
             )
-        response_json = response.json()
+
         if job_type == JobType.DOCUMENT_VERIFICATION:
-            doc_verification = response_json["hosted_web"]["doc_verification"]
-            if id_info_params["country"] not in doc_verification:
-                raise ValueError(
-                    f"country {id_info_params['country']} is invalid"
-                )
-            selected_country = doc_verification[id_info_params["country"]][
-                "id_types"
-            ]
-            if id_info_params["id_type"] not in selected_country:
-                raise ValueError(
-                    f"id_type {id_info_params['id_type']} is invalid"
-                )
-        else:
-            id_types_by_country = response_json["id_types"]
-            if id_info_params["country"] not in id_types_by_country:
-                raise ValueError(
-                    f"country {id_info_params['country']} is invalid"
-                )
-            selected_country = response_json["id_types"][
-                id_info_params["country"]
-            ]
-            if id_info_params["id_type"] not in selected_country:
-                raise ValueError(
-                    f"id_type {id_info_params['id_type']} is invalid"
-                )
-            id_params = selected_country[id_info_params["id_type"]]
-            for key in id_params:
-                if key not in id_info_params and key not in partner_params:
-                    raise ValueError(f"key {key} is required")
-                if key in id_info_params and not id_info_params[key]:
-                    raise ValueError(f"key {key} cannot be empty")
-                if key in partner_params and not partner_params.get(key):
-                    raise ValueError(f"key {key} cannot be empty")
-
-    @staticmethod
-    def get_smile_id_services(sid_server: Union[str, int]) -> Response:
-        """Make endpoint calls based on production/sandbox specifications.
-
-        argument(s):
-        sid_server: specifies production or sandbox server
-
-        Returns:
-            Returns response from endpoint call of type Response
-        """
-        if sid_server in [0, 1, "0", "1"]:
-            url = sid_server_map[int(sid_server)]
-        else:
-            url = str(sid_server)
-        response = Utilities.execute_get(f"{url}/services")
-        if response.status_code != 200:
-            raise ServerError(
-                f"Failed to get to {url}/services,"
-                f" status={response.status_code}, response={response.json()}"
-            )
-        return response
+            return
+        elif job_type == JobType.ENHANCED_DOCUMENT_VERIFICATION:
+            if not id_info_params.get("id_type"):
+                raise ValueError("key id_type cannot be empty")
+        elif not id_info_params.get("id_number"):
+            raise ValueError("key id_number cannot be empty")
 
     @staticmethod
     def execute_get(url: str) -> Response:

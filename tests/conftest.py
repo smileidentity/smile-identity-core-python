@@ -198,6 +198,17 @@ def partner_params_jt6() -> Dict[str, Any]:
 
 
 @pytest.fixture(scope="function")
+def partner_params_jt11() -> Dict[str, Any]:
+    """Define partner params for jobtype 11 (Enhanced Document verification)."""
+    partner_params = {
+        "user_id": str(uuid4()),
+        "job_id": str(uuid4()),
+        "job_type": JobType.ENHANCED_DOCUMENT_VERIFICATION,
+    }
+    return partner_params
+
+
+@pytest.fixture(scope="function")
 def partner_params_util() -> Dict[str, Any]:
     """Define partner params for utitlity test class."""
     partner_params = {
