@@ -3,7 +3,6 @@ import json
 import time
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
-from warnings import warn
 
 import requests
 from requests import Response
@@ -65,13 +64,10 @@ class WebApi(Base):
         self,
         partner_params: Dict[str, Any],
         id_info_params: Dict[str, str],
-        use_validation_api: bool,
         options_params: OptionsParams,
     ) -> Response:
         id_api = IdApi(self.partner_id, self.api_key, self.sid_server)
-        return id_api.submit_job(
-            partner_params, id_info_params, use_validation_api, options_params
-        )
+        return id_api.submit_job(partner_params, id_info_params, options_params)
 
     def submit_job(
         self,
@@ -79,16 +75,8 @@ class WebApi(Base):
         images_params: List[ImageParams],
         id_info_params: Dict[str, Any],
         options_params: OptionsParams,
-        use_validation_api: bool = False,
     ) -> Union[Response, Dict[str, Any]]:
         """Perform key/parameter validation, creates zipped file and uploads."""
-        if use_validation_api:
-            warn(
-                "The field use_validation_api is deprecated and"
-                " will be removed in the future.",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
         Utilities.validate_partner_params(partner_params)
         job_type = partner_params.get("job_type")
 
@@ -108,7 +96,6 @@ class WebApi(Base):
                     self.url,
                     id_info_params,
                     partner_params,
-                    False,
                 )
                 id_info_params = {
                     "first_name": None,
@@ -137,7 +124,6 @@ class WebApi(Base):
             return self.__call_id_api(
                 partner_params,
                 id_info_params,
-                False,
                 options_params,
             )
 
@@ -152,9 +138,7 @@ class WebApi(Base):
             use_enrolled_image=options_params.get("use_enrolled_image", False),
             job_type=job_type,
         )
-        Utilities.validate_id_params(
-            self.url, id_info_params, partner_params, False
-        )
+        Utilities.validate_id_params(self.url, id_info_params, partner_params)
         self.__validate_return_data(options_params)
 
         signature_params = self.signature_params

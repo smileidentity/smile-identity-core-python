@@ -2,8 +2,7 @@
 import re
 import uuid
 from datetime import datetime, timedelta
-from typing import Any, Dict, Tuple, Union
-from unittest.mock import patch
+from typing import Any, Dict, Tuple
 from uuid import uuid4
 
 import pytest
@@ -53,119 +52,6 @@ def test_instance(
     assert client_utilities.url == "https://testapi.smileidentity.com/v1"
 
 
-def get_smile_services_response() -> Dict[str, Any]:
-    """Returns supported Nigeria ID type examples for mocks"""
-    return {
-        "id_types": {
-            "NG": {
-                "NIN": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                ],
-                "CAC": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "company",
-                    "job_id",
-                ],
-                "TIN": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                ],
-                "VOTER_ID": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                ],
-                "BVN": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                ],
-                "PHONE_NUMBER": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                    "first_name",
-                    "last_name",
-                ],
-                "DRIVERS_LICENSE": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                    "first_name",
-                    "last_name",
-                    "dob",
-                ],
-                "PASSPORT": [
-                    "country",
-                    "id_type",
-                    "id_number",
-                    "user_id",
-                    "job_id",
-                    "first_name",
-                    "last_name",
-                    "dob",
-                ],
-            },
-        },
-        "hosted_web": {
-            "doc_verification": {
-                "NG": {
-                    "name": "Nigeria",
-                    "id_types": {
-                        "VOTER_ID": {"label": "Voter's ID"},
-                        "NIN": {"label": "National ID"},
-                        "PASSPORT": {"label": "Passport"},
-                        "DRIVERS_LICENSE": {"label": "Driver's License"},
-                    },
-                }
-            },
-        },
-    }
-
-
-def test_show_deprecation_when_use_validation_is_true(
-    setup_client: Tuple[str, str, str]
-) -> None:
-    api_key, partner_id, _ = setup_client
-    id_info_params = {
-        "first_name": "",
-        "last_name": "",
-        "country": "",
-        "id_type": "",
-        "id_number": "",
-        "dob": "",
-        "entered": None,
-    }
-    partner_params = {
-        "job_id": f"job-{uuid.uuid4()}",
-        "user_id": f"user-{uuid.uuid4()}",
-        "job_type": JobType.BUSINESS_VERIFICATION,
-    }
-    utilities = Utilities(partner_id, api_key, 0)
-    with pytest.deprecated_call():
-        utilities.validate_id_params(
-            0, id_info_params, partner_params, use_validation_api=True
-        )
-
-
 def test_validate_id_params(
     setup_client: Tuple[str, str, str], signature_fixture: Signature
 ) -> None:
@@ -192,7 +78,9 @@ def test_validate_id_params(
 
     assert (
         utilities.validate_id_params(
-            0, id_info_params, partner_params, use_validation_api=False
+            0,
+            id_info_params,
+            partner_params,
         )
         is None
     )
@@ -213,7 +101,6 @@ def test_validate_id_params(
         0,
         id_info_params,
         partner_params,
-        use_validation_api=False,
     )
 
     utilities = Utilities(partner_id, api_key, 0)
@@ -361,7 +248,6 @@ def test_validate_id_params_raise_when_given_invalid_input_for_jt6(
 ) -> None:
     """Validates when wrong input for document verification is provided"""
 
-    stub_service("https://testapi.smileidentity.com/v1")
     kyc_id_info["country"] = ""
     with pytest.raises(ValueError) as value_error:
         Utilities.validate_id_params(
@@ -508,82 +394,3 @@ def test_get_job_status_raises_server_error(
         option_params,
         signature,
     )
-
-
-@responses.activate
-def test_get_smile_id_services(client_utilities: Utilities) -> None:
-    """Validates job status code after making test api calls to production
-    and sandbox through the servicesstub_services"""
-
-    stub_service("https://testapi.smileidentity.com/v1")
-    client_utilities.get_smile_id_services(0)
-
-    stub_service("https://api.smileidentity.com/v1")
-    client_utilities.get_smile_id_services(1)
-
-    stub_service("https://random-server.smileidentity.com/v1")
-    job_status = client_utilities.get_smile_id_services(
-        "https://random-server.smileidentity.com/v1"
-    )
-
-    assert job_status.status_code == 200
-
-
-def test_get_smile_id_services_success():
-    with patch("requests.get") as mock_get:
-        mock_get.return_value.status_code = 200
-        mock_get.return_value.json.return_value = {
-            "code": "2204",
-            "error": "unauthorized",
-        }
-
-        response = Utilities.get_smile_id_services(0)
-        assert response.status_code == 200
-
-
-def test_get_smile_id_services_failure():
-    with patch("requests.get") as mock_get:
-        mock_get.return_value.status_code = 500
-        mock_get.return_value.json.return_value = {
-            "code": "2204",
-            "error": "unauthorized",
-        }
-
-        pytest.raises(ServerError, Utilities.get_smile_id_services, 0)
-
-
-def stub_service(url: str, json: Union[Dict[str, Any], Any] = None) -> None:
-    """When response from get_smile_services_response module call is not
-    json"""
-
-    if not json:
-        json = get_smile_services_response()
-
-    responses.add(
-        responses.GET,
-        f"{url}/services",
-        json=json,
-    )
-
-
-def test_error_return_data(client_utilities):
-    """Tests for error return data due to server error"""
-
-    with patch("requests.post") as mocked_post, patch(
-        "requests.get"
-    ) as mocked_get:
-        mocked_post.return_value.status_code = 500
-        mocked_post.return_value.ok = True
-        mocked_post.return_value.text = "Unauthorized"
-        mocked_post.return_value.json.return_value = {
-            "code": "2204",
-            "error": "unauthorized",
-        }
-        mocked_get.return_value.text = "Unauthorized"
-        mocked_get.return_value.json.return_value = {
-            "code": "2204",
-            "error": "unauthorized",
-        }
-
-        with pytest.raises(ServerError):
-            client_utilities.get_smile_id_services(0)

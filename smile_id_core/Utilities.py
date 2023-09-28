@@ -7,7 +7,6 @@ import json
 import re
 import sys
 from typing import Any, Dict, Optional, Union
-from warnings import warn
 
 import requests
 from requests import Response
@@ -221,24 +220,14 @@ class Utilities(Base):
         sid_server: Union[str, int],
         id_info_params: Dict[str, Any],
         partner_params: Dict[str, Any],
-        use_validation_api: bool = False,
     ) -> None:
-        """Validate id info parameters using the smile services endpoint.
+        """Validate id info parameters.
 
         argument(s):
         sid_server:
         id_info_params:
         partner_params:
-        use_validation_api:
         """
-        if use_validation_api:
-            warn(
-                "The field use_validation_api is deprecated and "
-                "will be removed in the future.",
-                category=DeprecationWarning,
-                stacklevel=2,
-            )
-
         job_type = partner_params.get("job_type")
         is_docv_job = (
             job_type == JobType.DOCUMENT_VERIFICATION
@@ -264,28 +253,6 @@ class Utilities(Base):
                 raise ValueError("key id_type cannot be empty")
         elif not id_info_params.get("id_number"):
             raise ValueError("key id_number cannot be empty")
-
-    @staticmethod
-    def get_smile_id_services(sid_server: Union[str, int]) -> Response:
-        """Make endpoint calls based on production/sandbox specifications.
-
-        argument(s):
-        sid_server: specifies production or sandbox server
-
-        Returns:
-            Returns response from endpoint call of type Response
-        """
-        if sid_server in [0, 1, "0", "1"]:
-            url = sid_server_map[int(sid_server)]
-        else:
-            url = str(sid_server)
-        response = Utilities.execute_get(f"{url}/services")
-        if response.status_code != 200:
-            raise ServerError(
-                f"Failed to get to {url}/services,"
-                f" status={response.status_code}, response={response.json()}"
-            )
-        return response
 
     @staticmethod
     def execute_get(url: str) -> Response:
