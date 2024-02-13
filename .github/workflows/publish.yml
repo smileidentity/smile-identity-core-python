@@ -27,27 +27,25 @@ jobs:
       - name: Install dependencies
         run: poetry install --only main
       - name: get cvml package version
-        id: get_version
-        run: echo "::set-output name=version::$(poetry version --short)"
+        run: echo "VERSION=$(poetry version --short)" >> $GITHUB_ENV
       - name: check if git tag exists
-        id: check_tag
         run: |
           git fetch --tags
-          if [[ $(git tag -l ${{ steps.get_version.outputs.version }} | wc -l) -eq '1' ]]; then
+          if [[ $(git tag -l $VERSION | wc -l) -eq '1' ]]; then
             echo "git tag already exists"
-            echo "::set-output name=publish::false"
+            echo "PUBLISH=false" >> $GITHUB_ENV
           else
             echo "git tag does not exist"
-            echo "::set-output name=publish::true"
+            echo "PUBLISH=true" >> $GITHUB_ENV
           fi
       - name: create git tag
-        if: steps.check_tag.outputs.publish == 'true'
-        run: git tag ${{ steps.get_version.outputs.version }}
+        if: env.PUBLISH == 'true'
+        run: git tag $VERSION
       - name: push git tag
-        if: steps.check_tag.outputs.publish == 'true'
+        if: env.PUBLISH == 'true'
         run: git push --tags
       - name: build and publish to pypi
-        if: steps.check_tag.outputs.publish == 'true'
+        if: env.PUBLISH == 'true'
         run: poetry publish --build --username $PYPI_USERNAME --password $PYPI_TOKEN
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
