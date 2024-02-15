@@ -152,7 +152,7 @@ def get_id_response(signature_fixture: Signature) -> Dict[str, Any]:
             "phone": "08000000000",
             "legal_name": "SMILE IDENTITY NIGERIA LIMITED",
             "state": "LAGOS",
-            "email": "smile@smileidentity.com",
+            "email": "smile@usesmileid.com",
             "status": "ACTIVE",
         },
         "fiduciaries": [
