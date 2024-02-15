@@ -4,7 +4,7 @@ This queries for an individual using their ID number from one of our supported
 ID Types. This API will return the personal information of the individual
 found in the database of the ID authority.
 See
-https://docs.smileidentity.com/products/for-individuals-kyc/identity-lookup
+https://docs.usesmileid.com/products/for-individuals-kyc/identity-lookup
 for how to setup and retrieve configuration values for the IdApi class.
 """
 

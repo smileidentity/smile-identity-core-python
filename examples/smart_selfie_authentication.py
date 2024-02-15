@@ -5,7 +5,7 @@ access your system or service.
 SmartSelfie™ Authentication can be used as part of a multi-factor
 authentication system.
 
-See https://docs.smileidentity.com/server-to-server/python/products/
+See https://docs.usesmileid.com/server-to-server/python/products/
 biometric-kyc for how to setup and retrieve configuration values for the
 WebApi class.
 """

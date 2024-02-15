@@ -55,10 +55,10 @@ class JobType(IntEnum):
 # Defines production and sandbox test endpoints
 
 sid_server_map = {
-    0: "https://testapi.smileidentity.com/v1",
-    1: "https://api.smileidentity.com/v1",
+    0: "https://testapi.usesmileid.com/v1",
+    1: "https://api.usesmileid.com/v1",
 }
 
-# See https://docs.smileidentity.com/further-reading/faqs/what-are-the-image-types-i-can-upload-to-smile-id
+# See https://docs.usesmileid.com/further-reading/faqs/what-are-the-image-types-i-can-upload-to-smile-id
 FILENAME_IMAGE_TYPES: typing.List[int] = [0, 1, 4, 5]
 BASE64_IMAGE_TYPES: typing.List[int] = [2, 3, 6, 7]
