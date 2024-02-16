@@ -5,7 +5,7 @@ grayscale liveness images and one colored image)  to either the photo of the
 user on file in an ID authority database or a photo of their ID card.
 
 See
-https://docs.smileidentity.com/server-to-server/python/products/biometric-kyc
+https://docs.usesmileid.com/server-to-server/python/products/biometric-kyc
 for how to setup and retrieve configuration values for the WebApi class.
 """
 

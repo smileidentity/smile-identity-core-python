@@ -10,7 +10,7 @@ Requirements to run this job:
 3. Document type
 4. Country of issuance.
 See
-https://docs.smileidentity.com/products/for-individuals-kyc/document-verification
+https://docs.usesmileid.com/products/for-individuals-kyc/document-verification
 for how to setup and retrieve configuration values for the WebApi class.
 """
 
