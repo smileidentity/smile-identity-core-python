@@ -32,7 +32,7 @@ types-requests = "^2.0.0.0"
 [tool.poetry.group.dev]
 optional = true
 [tool.poetry.group.dev.dependencies]
-black = ">=22.8,<24.0"
+black = ">=22.8"
 coverage = "7.2.7"
 isort = "^5.10.1"
 keepachangelog-manager = ">=3.3.1"
