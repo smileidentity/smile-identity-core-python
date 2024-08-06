@@ -5,7 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-### Changed
+
+## [3.0.0] - 2024-08-06
+
+- Breaking: Drop support for python3.7. Add support for python 3.12
 - Breaking: Changed return types of methods from `Response` to `Dict[str,Any]`
 - Breaking: Change `submit_job` method signature for both `WebApi` and `IDApi`.
   `WebApi` and `IDApi` will no longer support `use_validation_api` parameter. Migration guide available [here](migration_guides/v2_2_0.md)
