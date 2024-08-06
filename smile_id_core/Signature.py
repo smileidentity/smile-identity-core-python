@@ -1,4 +1,5 @@
 """This Signature class creates and validates generated signatures."""
+
 import base64
 import hashlib
 import hmac

@@ -1,4 +1,5 @@
 """Define strict typings to paramters used throughout the SmileID SDK."""
+
 import sys
 from typing import Union
 

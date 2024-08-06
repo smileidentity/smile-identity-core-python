@@ -1,4 +1,5 @@
 """Test class for ID API"""
+
 from datetime import datetime
 from typing import Any, Dict, Tuple
 from unittest.mock import patch
@@ -179,9 +180,10 @@ def test_error_return_data(
         kyc_id_info,
     )
     with pytest.raises(ServerError) as value_error:
-        with patch("requests.post") as mocked_post, patch(
-            "requests.get"
-        ) as mocked_get:
+        with (
+            patch("requests.post") as mocked_post,
+            patch("requests.get") as mocked_get,
+        ):
             mocked_post.return_value.status_code = 400
             mocked_post.return_value.ok = True
             mocked_post.return_value.text.return_value = {

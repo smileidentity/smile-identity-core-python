@@ -1,4 +1,5 @@
 """Test class for Business Verification"""
+
 from datetime import datetime
 from typing import Any, Dict, Tuple
 from unittest.mock import patch
@@ -226,9 +227,10 @@ def test_error_return_data(
     """Validate Error retrun data"""
     kyb_partner_params["job_type"] = JobType.BUSINESS_VERIFICATION
     with pytest.raises(ServerError) as value_error:
-        with patch("requests.post") as mocked_post, patch(
-            "requests.get"
-        ) as mocked_get:
+        with (
+            patch("requests.post") as mocked_post,
+            patch("requests.get") as mocked_get,
+        ):
             mocked_post.return_value.status_code = 400
             mocked_post.return_value.ok = True
             mocked_post.return_value.text.return_value = {

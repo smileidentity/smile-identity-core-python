@@ -1,4 +1,5 @@
 """WebAPI allows ID authority/third parties User validation by partners."""
+
 import json
 import time
 from datetime import datetime
