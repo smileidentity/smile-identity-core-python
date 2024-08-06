@@ -1,7 +1,7 @@
-"""Smart-selfie authentication compares a selfie to a selfie on file.
+"""Smart-selfie registration that runs anti-spoof before registring the selfie.
 
-See https://docs.usesmileid.com/server-to-server/python/products/
-biometric-kyc for how to setup and retrieve configuration values for the
+See https://docs.usesmileid.com/integration-options/server-to-server/python/products/smartselfie-tm-authentication
+for how to setup and retrieve configuration values for the
 WebApi class.
 """
 
