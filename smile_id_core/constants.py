@@ -1,4 +1,5 @@
 """Contains constants used across smile, like image types and job types."""
+
 import typing
 from enum import IntEnum
 
