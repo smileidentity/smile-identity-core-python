@@ -1,4 +1,5 @@
 """Fixture file to allow for code re-usability and reduce duplication."""
+
 import base64
 import json
 import os
@@ -453,7 +454,8 @@ def get_pre_upload_response(signature_key: SignatureParams) -> Dict[str, Any]:
 
 
 def stub_upload_request(
-    signature: SignatureParams, fail_with_message: str = None  # type: ignore
+    signature: SignatureParams,
+    fail_with_message: str = None,  # type: ignore
 ) -> Dict[str, Any]:
     """Stub to get upload request.
 

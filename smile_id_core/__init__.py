@@ -1,4 +1,5 @@
 """Defines and exports all classes used throughout this project."""
+
 from smile_id_core.base import Base
 from smile_id_core.BusinessVerification import BusinessVerification
 from smile_id_core.constants import ImageTypes, JobType

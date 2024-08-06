@@ -1,4 +1,5 @@
 """ServerError Class."""
+
 __all__ = ["ServerError"]
 
 

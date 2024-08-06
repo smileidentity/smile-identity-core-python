@@ -1,4 +1,5 @@
 """Test class of Utilities"""
+
 import re
 import uuid
 from datetime import datetime, timedelta
@@ -340,7 +341,9 @@ def test_get_job_status(
         use_enrolled_image=False,
     )
     none_option_param = client_utilities.get_job_status(
-        kyc_partner_params, None, signature  # type: ignore
+        kyc_partner_params,
+        None,  # type: ignore
+        signature,
     )
     set_option_param = client_utilities.get_job_status(
         kyc_partner_params, options, signature
