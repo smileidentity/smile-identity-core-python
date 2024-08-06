@@ -27,7 +27,7 @@ The `Utilities` Class allows you as the Partner to have access to our general Ut
 
 ## Installation
 
-**Note** This package **requires python3.7 or higher**.
+**Note** This package **requires python3.8 or higher**.
 
 This package can be added to your project as:
 
