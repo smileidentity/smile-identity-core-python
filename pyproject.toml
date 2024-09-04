@@ -41,7 +41,7 @@ mypy = "1.4.1"
 pre-commit = { version = "^3.3.3", python = ">= 3.8" }
 pydocstyle = "^6.3.0"
 pylint = "2.13.9"
-pytest = "^7.0.1"
+pytest = ">=7.0.1,<9.0.0"
 pytest-cov = "^4.0.0"
 pytest-xdist = "^3.0.2"
 responses = ">=0.17,<0.26"
