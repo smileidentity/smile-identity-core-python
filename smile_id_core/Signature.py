@@ -2,7 +2,7 @@
 import base64
 import hashlib
 import hmac
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from smile_id_core.types import SignatureParams
@@ -44,7 +44,7 @@ class Signature:
         A dictionary containing generated signature and timestamp
         """
         if timestamp is None:
-            timestamp = datetime.now().isoformat()
+            timestamp = datetime.now(timezone.utc).isoformat()
         hmac_new = hmac.new(
             self.api_key.encode("utf-8"), digestmod=hashlib.sha256
         )
