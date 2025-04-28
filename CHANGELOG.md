@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.1] - 2025-04-28
+
+- Standardise the timestamp format used to match expectations.
+
 ## [3.0.0] - 2024-08-06
 
 - Breaking: Drop support for python3.7. Add support for python 3.12
