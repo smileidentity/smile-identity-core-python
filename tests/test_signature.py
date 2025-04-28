@@ -2,7 +2,7 @@
 import base64
 import hashlib
 import hmac
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Tuple
 
 import pytest
