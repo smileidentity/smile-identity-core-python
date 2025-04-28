@@ -1,7 +1,7 @@
 """WebAPI allows ID authority/third parties User validation by partners."""
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Union
 
 import requests
@@ -195,7 +195,7 @@ class WebApi(Base):
         callback_url: Optional[str] = None,
     ) -> Dict[str, Any]:
         """Create  authorization token used in Hosted Web Integration."""
-        timestamp = timestamp or datetime.now().isoformat()
+        timestamp = timestamp or datetime.now(timezone.utc).isoformat()
         callback_url = callback_url or self.call_back_url
         signature_params = Signature(
             self.partner_id, self.api_key
