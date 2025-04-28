@@ -2,7 +2,7 @@
 import base64
 import hashlib
 import hmac
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Tuple
 
 import pytest
@@ -25,7 +25,7 @@ def test_generate_signature(
     signature_fixture: Signature,
 ) -> None:
     """Generates and validates generated singature"""
-    timestamp = datetime.now().isoformat()
+    timestamp = datetime.now(timezone.utc).isoformat()
     api_key, partner_id, _ = setup_client
     signature = signature_fixture.generate_signature(timestamp=timestamp)
     assert signature["timestamp"] == timestamp
