@@ -1,4 +1,5 @@
 """Unit tests for different constants used across the SmileAPI"""
+
 from smile_id_core.constants import ImageTypes, JobType
 
 
