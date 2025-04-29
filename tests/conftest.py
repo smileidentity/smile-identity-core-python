@@ -1,4 +1,5 @@
 """Fixture file to allow for code re-usability and reduce duplication."""
+
 import base64
 import json
 import os

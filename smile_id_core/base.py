@@ -1,4 +1,5 @@
 """Constains reusable functions across this repository."""
+
 from typing import Union
 
 from smile_id_core import constants
