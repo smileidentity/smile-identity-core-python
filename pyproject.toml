@@ -50,7 +50,7 @@ types-mock = ">=4.0.15.2,<6.0.0.0"
 [tool.poetry.group.github-actions]
 optional = true
 [tool.poetry.group.github-actions.dependencies]
-pytest-github-actions-annotate-failures = ">=0.1.7,<0.3.0"
+pytest-github-actions-annotate-failures = ">=0.1.7,<0.4.0"
 
 [tool.black]
 line-length = 80
