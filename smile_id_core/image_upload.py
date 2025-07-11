@@ -1,4 +1,5 @@
 """Prepare & validate image data, and generate zipped file to be submitted."""
+
 import io
 import json
 import os

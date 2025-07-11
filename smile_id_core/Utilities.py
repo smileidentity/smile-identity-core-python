@@ -3,6 +3,7 @@
 Additionally, the Utilities class makes a call to the Signature class and
 performs signature parama validation.
 """
+
 import json
 import re
 import sys

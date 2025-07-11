@@ -6,6 +6,7 @@ business registration search will return the company information,
 directors, beneficial owners and fiduciaries of a business while
 the tax information returns only the company information
 """
+
 from typing import Any, Dict, Union
 
 from smile_id_core.base import Base

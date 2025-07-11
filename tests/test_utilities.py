@@ -1,4 +1,5 @@
 """Test class of Utilities"""
+
 import re
 import uuid
 from datetime import datetime, timedelta

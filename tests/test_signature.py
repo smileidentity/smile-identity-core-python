@@ -1,4 +1,5 @@
 """Test class for the SIgnature class"""
+
 import base64
 import hashlib
 import hmac
