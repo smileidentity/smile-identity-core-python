@@ -36,7 +36,7 @@ black = ">=22.8,<24.0"
 coverage = "7.6.1"
 isort = "^5.10.1"
 mock = ">=4.0.3,<6.0.0"
-mypy = "1.13.0"
+mypy = "1.14.1"
 pre-commit = { version = "^3.3.3", python = ">= 3.8" }
 pydocstyle = "^6.3.0"
 pylint = "3.2.7"
@@ -44,7 +44,7 @@ pytest = ">=7.0.1,<9.0.0"
 pytest-cov = ">=4,<6"
 pytest-xdist = "^3.0.2"
 responses = ">=0.17,<0.26"
-ruff = ">=0.0.282,<0.8.2"
+ruff = ">=0.0.282,<0.12.3"
 types-mock = ">=4.0.15.2,<6.0.0.0"
 
 [tool.poetry.group.github-actions]
