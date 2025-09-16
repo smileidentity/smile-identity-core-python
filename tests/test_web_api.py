@@ -1,4 +1,4 @@
-""" Test class for Web API"""
+"""Test class for Web API"""
 
 import os
 from datetime import datetime, timedelta
@@ -27,7 +27,7 @@ are tested"""
 
 
 def test_handle_wrong_credentials(
-    setup_web_client: Tuple[str, str, str, str]
+    setup_web_client: Tuple[str, str, str, str],
 ) -> None:
     """Setups/initialises relevant params for tests and validates them"""
     api_key, partner_id, sid_server, callback_url = setup_web_client
