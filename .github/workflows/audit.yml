@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-22.04
     permissions:
       contents: read
-      issues: write
+      issues: ${{ github.event_name != 'pull_request' && 'write' || 'none' }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
       - name: Install poetry
@@ -25,9 +25,9 @@ jobs:
           python-version: '3.10'
           cache: 'poetry'
       - name: Install pip-audit
-        run: pip install pip-audit
+        run: pip install pip-audit==2.9.0
       - name: Export requirements
-        run: poetry export -f requirements.txt --without-hashes -o requirements-audit.txt
+        run: poetry export -f requirements.txt --with dev --without-hashes -o requirements-audit.txt
       - name: Run pip-audit
         run: pip-audit -r requirements-audit.txt
       - name: Create issue on failure
@@ -38,6 +38,8 @@ jobs:
           EXISTING=$(gh issue list --label "security-audit" --state open --json number --jq 'length')
           if [ "$EXISTING" -gt 0 ]; then exit 0; fi
           TITLE_DATE=$(date +%Y-%m-%d)
+          gh label create "security-audit" --color "D93F0B" --description "Automated security audit finding" 2>/dev/null || true
+          gh label create "priority:high" --color "B60205" --description "High priority" 2>/dev/null || true
           gh issue create \
             --title "Security: Python dependency vulnerabilities detected (${TITLE_DATE})" \
             --label "security-audit,priority:high" \

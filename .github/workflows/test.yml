@@ -18,7 +18,7 @@ jobs:
           python-version: '3.10'
           cache: 'poetry'
       - name: Verify lockfile integrity
-        run: poetry lock --check
+        run: poetry check --lock
       - name: Install dependencies
         run: poetry install --with dev
       - name: check ruff
