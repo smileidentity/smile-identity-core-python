@@ -68,4 +68,5 @@ class Signature:
         Returns:
             A bool based on signature message generated validation
         """
-        return self.generate_signature(timestamp)["signature"] == msg_signature
+        expected = self.generate_signature(timestamp)["signature"]
+        return hmac.compare_digest(expected, msg_signature)
