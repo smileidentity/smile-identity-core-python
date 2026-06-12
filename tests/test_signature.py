@@ -1,9 +1,9 @@
 """Test class for the SIgnature class"""
 
-import os
 import base64
 import hashlib
 import hmac
+import os
 from datetime import datetime, timezone
 from typing import Tuple
 
