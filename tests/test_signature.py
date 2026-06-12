@@ -1,5 +1,6 @@
 """Test class for the SIgnature class"""
 
+import os
 import base64
 import hashlib
 import hmac
@@ -38,8 +39,8 @@ def test_generate_signature(
     calculated_signature = base64.b64encode(hmac_new.digest()).decode("utf-8")
 
     assert signature["signature"] == calculated_signature
-    
-    
+
+
 def test_confirm_signature(
     setup_client: Tuple[str, str, str],
     signature_fixture: Signature,
@@ -55,9 +56,12 @@ def test_confirm_signature(
     hmac_new.update("sid_request".encode("utf-8"))
     valid_signature = base64.b64encode(hmac_new.digest()).decode("utf-8")
 
-    assert signature_fixture.confirm_signature(timestamp, valid_signature) is True
+    assert (
+        signature_fixture.confirm_signature(timestamp, valid_signature) is True
+    )
 
     # should reject a signature that does not match
-    import os
     fake_signature = base64.b64encode(os.urandom(32)).decode("utf-8")
-    assert signature_fixture.confirm_signature(timestamp, fake_signature) is False
+    assert (
+        signature_fixture.confirm_signature(timestamp, fake_signature) is False
+    )
