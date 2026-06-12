@@ -3,6 +3,7 @@
 import base64
 import hashlib
 import hmac
+import os
 from datetime import datetime, timezone
 from typing import Tuple
 
@@ -38,3 +39,29 @@ def test_generate_signature(
     calculated_signature = base64.b64encode(hmac_new.digest()).decode("utf-8")
 
     assert signature["signature"] == calculated_signature
+
+
+def test_confirm_signature(
+    setup_client: Tuple[str, str, str],
+    signature_fixture: Signature,
+) -> None:
+    """Validates confirm_signature accepts valid and rejects invalid signatures"""
+    api_key, partner_id, _ = setup_client
+    timestamp = datetime.now(timezone.utc).isoformat()
+
+    # should confirm a valid incoming signature
+    hmac_new = hmac.new(api_key.encode("utf-8"), digestmod=hashlib.sha256)
+    hmac_new.update(timestamp.encode("utf-8"))
+    hmac_new.update(str(partner_id).encode("utf-8"))
+    hmac_new.update("sid_request".encode("utf-8"))
+    valid_signature = base64.b64encode(hmac_new.digest()).decode("utf-8")
+
+    assert (
+        signature_fixture.confirm_signature(timestamp, valid_signature) is True
+    )
+
+    # should reject a signature that does not match
+    fake_signature = base64.b64encode(os.urandom(32)).decode("utf-8")
+    assert (
+        signature_fixture.confirm_signature(timestamp, fake_signature) is False
+    )
