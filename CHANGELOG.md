@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Remove the `base64imgString` entry from the upload zip. Base64 images are sent in `info.json`, so the entry is not needed.
+
 ## [3.0.1] - 2025-04-28
 
 - Standardise the timestamp format used to match expectations.

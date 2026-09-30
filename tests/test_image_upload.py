@@ -1,5 +1,6 @@
 import base64
 import io
+import json
 import os
 import tempfile
 import zipfile
@@ -118,6 +119,32 @@ def test_generate_zip_file() -> None:
             "info.json",
             os.path.basename(image_path),
         ]
+
+
+def test_generate_zip_file__base64_images_only_in_info_json() -> None:
+    """Base64 images travel in info.json, with no extra zip entries"""
+    image_params: List[ImageParams] = [
+        {"image_type_id": 2, "image": base64_img},
+        {"image_type_id": 3, "image": base64_img},
+    ]
+
+    zip_stream = generate_zip_file(
+        partner_id="partner_id",
+        callback_url="callback_url",
+        upload_url="upload_url",
+        partner_params="partner_params",  # type: ignore
+        image_params=image_params,
+        id_info_params="id_info_params",  # type: ignore
+        signature_params={"signature": "signature", "timestamp": "timestamp"},
+    )
+
+    with zipfile.ZipFile(io.BytesIO(bytes(zip_stream))) as zipped_file:
+        assert zipped_file.namelist() == ["info.json"]
+        info = json.loads(zipped_file.read("info.json"))
+    assert [image["image"] for image in info["images"]] == [
+        base64_img,
+        base64_img,
+    ]
 
 
 def test_validate_images__ok_file_exists() -> None:
