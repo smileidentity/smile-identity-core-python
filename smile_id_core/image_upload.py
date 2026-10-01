@@ -8,12 +8,7 @@ from typing import Any, ByteString, Dict, List, Optional, cast
 
 from smile_id_core import constants
 from smile_id_core.constants import JobType
-from smile_id_core.types import (
-    Base64Image,
-    FileImage,
-    ImageParams,
-    SignatureParams,
-)
+from smile_id_core.types import FileImage, ImageParams, SignatureParams
 from smile_id_core.Utilities import validate_signature_params
 
 
@@ -63,16 +58,9 @@ def generate_zip_file(
         zip_buffer, "a", zipfile.ZIP_DEFLATED, False
     ) as zip_file:
         zip_file.writestr("info.json", data=json.dumps(info_json))
+        # Base64 images travel inside info.json, so only files go in the zip.
         for image in image_params:
             if (
-                "image" in image
-                and image["image_type_id"] in constants.BASE64_IMAGE_TYPES
-            ):
-                image = cast(Base64Image, image)
-                zip_file.writestr(
-                    "base64imgString", os.path.basename(image["image"])
-                )
-            elif (
                 "file_name" in image
                 and image["image_type_id"] in constants.FILENAME_IMAGE_TYPES
             ):
