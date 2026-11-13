@@ -3,6 +3,7 @@
 import os
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Tuple
+from unittest.mock import call, patch
 
 import pytest
 import responses
@@ -618,3 +619,135 @@ def test_poll_job_status(
         option_params,
         signature_fixture.generate_signature(None),
     )
+
+
+JOB_STATUS_URL = "https://testapi.smileidentity.com/v1/job_status"
+
+
+def job_status_calls() -> int:
+    """Count the job status requests sent"""
+    return len([c for c in responses.calls if c.request.url == JOB_STATUS_URL])
+
+
+@responses.activate
+def test_poll_job_status_keeps_polling_after_plain_text_429(
+    client_web: WebApi,
+    signature_fixture: Signature,
+    web_partner_params: Dict[str, Any],
+    kyc_id_info: Dict[str, str],
+    option_params: OptionsParams,
+    image_params: List[ImageParams],
+) -> None:
+    """A 429 without a JSON body does not end polling"""
+    signature = get_signature(signature_fixture)
+    stub_upload_request(signature)
+    responses.add(
+        responses.POST,
+        JOB_STATUS_URL,
+        status=429,
+        body="Too Many Requests",
+        content_type="text/plain",
+    )
+    job_status_response = stub_get_job_status(signature, True)
+
+    with patch("time.sleep") as sleep:
+        response = client_web.submit_job(
+            web_partner_params, image_params, kyc_id_info, option_params
+        )
+
+    assert response == job_status_response["json"]
+    assert sleep.call_args_list == [call(2), call(2)]
+    assert job_status_calls() == 2
+
+
+@responses.activate
+def test_poll_job_status_waits_for_retry_after(
+    client_web: WebApi,
+    signature_fixture: Signature,
+    web_partner_params: Dict[str, Any],
+    kyc_id_info: Dict[str, str],
+    option_params: OptionsParams,
+    image_params: List[ImageParams],
+) -> None:
+    """Retry-After stretches the poll interval, capped at 60 seconds"""
+    signature = get_signature(signature_fixture)
+    stub_upload_request(signature)
+    for retry_after in ["7", "90", "1", "Wed, 21 Oct 2026 07:28:00 GMT"]:
+        responses.add(
+            responses.POST,
+            JOB_STATUS_URL,
+            status=429,
+            json={"error": "Too many requests"},
+            headers={"Retry-After": retry_after},
+        )
+    job_status_response = stub_get_job_status(signature, True)
+
+    with patch("time.sleep") as sleep:
+        response = client_web.submit_job(
+            web_partner_params, image_params, kyc_id_info, option_params
+        )
+
+    assert response == job_status_response["json"]
+    # Each gap between polls is max(Retry-After, poll interval): 2 before
+    # poll 1, then 7, 60, 4 (1 < 4), 4 (a date is ignored).
+    assert sleep.call_args_list == [
+        call(2),
+        call(5),
+        call(2),
+        call(58),
+        call(2),
+        call(4),
+        call(4),
+    ]
+    assert job_status_calls() == 5
+
+
+@responses.activate
+def test_poll_job_status_raises_when_every_poll_gets_429(
+    client_web: WebApi,
+    signature_fixture: Signature,
+    web_partner_params: Dict[str, Any],
+    kyc_id_info: Dict[str, str],
+    option_params: OptionsParams,
+    image_params: List[ImageParams],
+) -> None:
+    """429s do not extend the poll budget"""
+    signature = get_signature(signature_fixture)
+    stub_upload_request(signature)
+    responses.add(
+        responses.POST,
+        JOB_STATUS_URL,
+        status=429,
+        body="Too Many Requests",
+        headers={"Retry-After": "1"},
+    )
+
+    with patch("time.sleep"), pytest.raises(ServerError) as server_error:
+        client_web.submit_job(
+            web_partner_params, image_params, kyc_id_info, option_params
+        )
+
+    assert "response=429:Too Many Requests" in str(server_error.value)
+    assert job_status_calls() == 20
+
+
+@responses.activate
+def test_poll_job_status_raises_on_other_errors(
+    client_web: WebApi,
+    signature_fixture: Signature,
+    web_partner_params: Dict[str, Any],
+    kyc_id_info: Dict[str, str],
+    option_params: OptionsParams,
+    image_params: List[ImageParams],
+) -> None:
+    """Statuses other than 429 still end polling at once"""
+    signature = get_signature(signature_fixture)
+    stub_upload_request(signature)
+    stub_get_job_status(signature, True, "ERROR MSG")
+
+    with patch("time.sleep"), pytest.raises(ServerError):
+        client_web.submit_job(
+            web_partner_params, image_params, kyc_id_info, option_params
+        )
+
+    assert job_status_calls() == 1

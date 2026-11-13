@@ -139,11 +139,19 @@ class Utilities(Base):
         )
 
         if job_status.status_code != 200:
-            raise ServerError(
+            # a 429 may come from a proxy without a JSON body
+            body = (
+                job_status.text
+                if job_status.status_code == 429
+                else job_status.json()
+            )
+            error = ServerError(
                 f"Failed to post entity to {self.url}/job_status,"
                 f" response={job_status.status_code}:{job_status.reason} -"
-                f" {job_status.json()}"
+                f" {body}"
             )
+            error.response = job_status
+            raise error
         job_status_json_resp = job_status.json()
         timestamp = job_status_json_resp["timestamp"]
         server_signature = job_status_json_resp["signature"]
