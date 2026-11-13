@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Remove the `base64imgString` entry from the upload zip. Base64 images are sent in `info.json`, so the entry is not needed.
-- `WebApi.submit_job` with `return_job_status` keeps polling when a job status request gets HTTP 429. It waits for `Retry-After` (whole seconds, capped at 60) or the usual poll interval, whichever is longer, within the same 20 polls. A 429 without a JSON body now raises `ServerError` rather than a JSON decode error. `ServerError` has a new `response` attribute holding the failed job status response.
+- `WebApi.submit_job` with `return_job_status` keeps polling when a job status request gets HTTP 429. It waits for `Retry-After` (whole seconds, capped at 60) or the usual poll interval, whichever is longer, within the same 20 polls. A failed job status request without a JSON body now raises `ServerError` rather than a JSON decode error. `ServerError` has a new `response` attribute holding the failed job status response.
 
 ## [3.0.1] - 2025-04-28
 
