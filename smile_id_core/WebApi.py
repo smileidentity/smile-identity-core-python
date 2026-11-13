@@ -289,9 +289,26 @@ class WebApi(Base):
             time.sleep(4)
         if not isinstance(self.utilities, Utilities):
             raise ValueError("Utilities not initialized")
-        job_status = self.utilities.get_job_status(
-            partner_params, options_params, signature_params
-        )
+        try:
+            job_status = self.utilities.get_job_status(
+                partner_params, options_params, signature_params
+            )
+        except ServerError as error:
+            response = error.response
+            if response is None or response.status_code != 429 or counter >= 20:
+                raise
+            # The job may still finish, so poll again. Wait for Retry-After
+            # (whole seconds, capped at 60) or the usual interval, whichever
+            # is longer; the next call sleeps the usual interval itself.
+            retry_after = response.headers.get("Retry-After", "").strip()
+            if retry_after.isdecimal():
+                next_interval = 2 if counter + 1 < 4 else 4
+                extra = min(int(retry_after), 60) - next_interval
+                if extra > 0:
+                    time.sleep(extra)
+            return self.poll_job_status(
+                counter, partner_params, options_params, signature_params
+            )
 
         if not job_status["job_complete"] and counter < 20:
             return self.poll_job_status(
